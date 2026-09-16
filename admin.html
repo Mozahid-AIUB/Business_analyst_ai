@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sentinel Staff Console</title>
+<meta name="description" content="Staff console for the Sentinel Risk Desk platform: accounts, usage activity and the raw event log. Not part of the customer application.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+
+<!-- Staff sign-in gate. Filled and shown by admin.js when there is no
+     session, or when the session belongs to a customer rather than staff. -->
+<div class="auth-gate" id="admin-gate" hidden></div>
+
+<div id="admin-shell" hidden>
+
+<!-- The customer app has a full navigation rail; a console with one screen
+     does not need one, so the sidebar shell is laid down as a top bar. -->
+<header class="sidebar" style="position:sticky;top:0;width:auto;height:auto;flex-direction:row;align-items:center;gap:14px;padding:10px 18px;border-right:0;border-bottom:1px solid var(--line);">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M10 1.8 3.2 4.6v5.1c0 4 2.9 7.4 6.8 8.5 3.9-1.1 6.8-4.5 6.8-8.5V4.6L10 1.8Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M6.9 10.1l2.1 2.2 4.1-4.6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <div class="brand-name">Sentinel Risk Desk</div>
+      <div class="brand-sub">Staff console</div>
+    </div>
+  </div>
+
+  <div class="sidebar-foot" style="margin-top:0;margin-left:auto;padding:0;border-top:0;flex:none;">
+    <a href="index.html" class="btn btn-sm">Customer app</a>
+    <span class="hint mono" id="admin-who"></span>
+    <button class="btn btn-sm" id="admin-signout" type="button">Sign out</button>
+    <button class="icon-btn" data-theme-toggle type="button" aria-label="Switch to dark theme">
+      <svg class="theme-icon-dark" width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M16.5 12.3A7 7 0 0 1 7.7 3.5a7 7 0 1 0 8.8 8.8Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+      </svg>
+      <svg class="theme-icon-light" width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true" hidden>
+        <circle cx="10" cy="10" r="3.6" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M10 1.6v2M10 16.4v2M18.4 10h-2M3.6 10h-2M15.9 4.1l-1.4 1.4M5.5 14.5l-1.4 1.4M15.9 15.9l-1.4-1.4M5.5 5.5 4.1 4.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main class="main"><div class="page">
+
+  <div class="section-head">
+    <span class="eyebrow">Staff console</span>
+    <h1>Who is using the platform, and for what</h1>
+    <p class="lede">
+      Every account, every sign-in, every file scanned and every health score run — with the
+      rows processed, the exposure flagged and the trend over the last month. This console is
+      separate from the customer application at <a href="index.html">index.html</a> and is
+      reachable only with a staff account.
+    </p>
+  </div>
+
+  <div class="stack" id="admin-body"></div>
+
+  <p class="footnote">
+    The console reads the same account and usage store the customer application writes to. It runs
+    no models of its own — every number here is counted from recorded events, not estimated.
+  </p>
+
+</div></main>
+</div>
+
+<script src="assets/ui.js"></script>
+<!-- data.js reads BRI.ML at load time for its random-number helpers, so ml.js
+     has to come first even though the console does no modelling itself. -->
+<script src="assets/ml.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/auth.js"></script>
+<script src="assets/admin.js"></script>
+
+</body>
+</html>

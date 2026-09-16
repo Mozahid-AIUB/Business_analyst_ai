@@ -724,6 +724,103 @@
     return toCSV(headers, rows);
   }
 
+  /* ------------------------- Sensitive data guard ------------------------ */
+  /* US deployment makes this worth having rather than merely nice.
+
+     A file containing full card numbers puts whoever holds it inside PCI DSS
+     scope, and a file containing Social Security numbers engages state breach
+     notification law in every state that has one. Neither is something a
+     customer should discover after the fact, and neither is something this
+     product needs: the models score behaviour - amount, timing, channel,
+     velocity - and never look at an account identifier.
+
+     So the platform detects those columns on upload and says so, rather than
+     silently accepting them. Detection is deliberately conservative about
+     card numbers - a Luhn check on the digits, not just "looks numeric" -
+     because crying wolf on an order-reference column would train people to
+     ignore the warning. */
+
+  function luhnValid(digits) {
+    var sum = 0, alt = false;
+    for (var i = digits.length - 1; i >= 0; i--) {
+      var n = digits.charCodeAt(i) - 48;
+      if (n < 0 || n > 9) return false;
+      if (alt) { n *= 2; if (n > 9) n -= 9; }
+      sum += n;
+      alt = !alt;
+    }
+    return digits.length >= 13 && digits.length <= 19 && sum % 10 === 0;
+  }
+
+  var SENSITIVE_NAME_PATTERNS = [
+    { re: /(^|_)(pan|card_?(no|num|number)|cc_?(no|num|number)|credit_?card)($|_)/, kind: 'card number' },
+    { re: /(^|_)(ssn|social_?security|tax_?id|ein|itin)($|_)/, kind: 'government ID' },
+    { re: /(^|_)(cvv|cvc|csc|security_?code|pin)($|_)/, kind: 'card security code' },
+    { re: /(^|_)(routing|iban|sort_?code|account_?(no|num|number)|bank_?account)($|_)/, kind: 'bank account number' },
+    { re: /(^|_)(dob|date_?of_?birth|birth_?date)($|_)/, kind: 'date of birth' },
+    { re: /(^|_)(passport|drivers?_?licen[sc]e|national_?id)($|_)/, kind: 'identity document' }
+  ];
+
+  var SSN_RE = /^\d{3}-\d{2}-\d{4}$/;
+
+  function inspectSensitive(rows, headers, sampleSize) {
+    var sample = rows.slice(0, sampleSize || 200);
+    var found = [];
+
+    headers.forEach(function (h) {
+      var norm = normaliseHeader(h);
+      var byName = null;
+      for (var i = 0; i < SENSITIVE_NAME_PATTERNS.length; i++) {
+        if (SENSITIVE_NAME_PATTERNS[i].re.test(norm)) { byName = SENSITIVE_NAME_PATTERNS[i].kind; break; }
+      }
+
+      var cardHits = 0, ssnHits = 0, checked = 0;
+      for (var r = 0; r < sample.length; r++) {
+        var raw = sample[r][h];
+        if (raw == null || raw === '') continue;
+        checked++;
+        var str = String(raw).trim();
+        if (SSN_RE.test(str)) { ssnHits++; continue; }
+        var digits = str.replace(/[\s-]/g, '');
+        if (/^\d{13,19}$/.test(digits) && luhnValid(digits)) cardHits++;
+      }
+
+      /* A single Luhn-valid value is a coincidence; a column of them is a
+         column of card numbers. */
+      var byValue = null;
+      if (checked >= 4 && cardHits / checked > 0.6) byValue = 'card number';
+      else if (checked >= 4 && ssnHits / checked > 0.6) byValue = 'Social Security number';
+
+      if (byName || byValue) {
+        found.push({
+          header: h,
+          kind: byValue || byName,
+          detectedBy: byValue ? 'values' : 'column name',
+          matches: byValue ? Math.max(cardHits, ssnHits) : 0,
+          checked: checked
+        });
+      }
+    });
+
+    return {
+      columns: found,
+      severity: found.some(function (f) {
+        return /card number|Social Security|security code/.test(f.kind);
+      }) ? 'high' : (found.length ? 'medium' : 'none')
+    };
+  }
+
+  /* Keep the last four digits so an investigator can still recognise a card
+     across rows, and drop everything that makes the number usable. */
+  function maskValue(value) {
+    var str = String(value == null ? '' : value);
+    var digits = str.replace(/[\s-]/g, '');
+    if (/^\d{9,19}$/.test(digits)) return '•••• ' + digits.slice(-4);
+    if (SSN_RE.test(str)) return '•••-••-' + str.slice(-4);
+    if (str.length <= 4) return '••••';
+    return str.slice(0, 1) + '••••' + str.slice(-1);
+  }
+
   /* ---------------------------- Column mapping --------------------------- */
 
   function normaliseHeader(h) {
@@ -787,6 +884,9 @@
     toCSV: toCSV,
     objectsToCSV: objectsToCSV,
     autoMap: autoMap,
+    inspectSensitive: inspectSensitive,
+    maskValue: maskValue,
+    luhnValid: luhnValid,
     mappingCoverage: mappingCoverage,
     normaliseHeader: normaliseHeader,
     num: num,

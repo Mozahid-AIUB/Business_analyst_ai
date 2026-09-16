@@ -6,10 +6,16 @@
    inverted: a warm near-black, not a blue-black, so the two themes read as one
    identity seen under different light.
 
-   The complete palette lives on bare :root. The dark blocks redefine only the
-   tokens, once under the OS media query (guarded so an explicit light choice
-   still wins) and once under the [data-theme] stamp (so the toggle wins in
-   both directions). No component styles live inside a theme block.
+   Cream is the default in every case. The page deliberately does NOT follow
+   prefers-color-scheme: the client asked for this palette to be the product's
+   face, so a viewer whose operating system is dark still opens on cream and
+   reaches the dark variant only by choosing it. That choice stamps
+   data-theme="dark" on the root element, which is the single block below that
+   redefines the tokens.
+
+   (To follow the operating system instead, duplicate that block inside
+   @media (prefers-color-scheme: dark) with a :root:not([data-theme="light"])
+   guard, and restore the matchMedia branch in initTheme.)
    ========================================================================== */
 
 :root {
@@ -59,36 +65,6 @@
   --font-display: "Archivo", "Segoe UI", system-ui, sans-serif;
   --font-body:    "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   --font-mono:    "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --paper:        #14110c;
-    --surface:      #1e1a14;
-    --surface-2:    #26211a;
-    --surface-3:    #332c22;
-    --ink:          #f5f1e8;
-    --ink-2:        #b5ad9c;
-    --muted:        #8a8376;
-    --line:         #322c22;
-    --line-strong:  #4a4234;
-    --accent:       #93a4f0;
-    --accent-hover: #aab8f5;
-    --accent-soft:  #232742;
-    --accent-ink:   #c4cdfa;
-    --good-soft:    #13260f;
-    --warning-soft: #2e2510;
-    --serious-soft: #2e1d14;
-    --critical-soft:#2d1614;
-    --s1:           #3987e5;
-    --s2:           #d95926;
-    --s3:           #199e70;
-    --grid:         #2a2419;
-    --axis:         #4a4234;
-    --shadow-sm:    0 1px 2px rgba(0, 0, 0, .45);
-    --shadow-md:    0 6px 22px -6px rgba(0, 0, 0, .65);
-  }
 }
 
 :root[data-theme="dark"] {
@@ -265,6 +241,21 @@ a { color: var(--accent); }
   flex: none;
 }
 .nav-item[aria-selected="true"] .nav-num { color: var(--accent); }
+
+/* Sits below the section list, separated, because it leaves the product. */
+.staff-link {
+  margin: 6px 10px 0;
+  text-decoration: none;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  padding-top: 13px;
+  color: var(--muted);
+}
+.staff-link:hover { background: transparent; color: var(--accent); }
+.staff-link .nav-num { font-size: 12px; }
+@media (max-width: 900px) {
+  .staff-link { margin: 0; border-top: 0; padding-top: 7px; }
+}
 
 .sidebar-foot {
   margin-top: auto;
@@ -454,12 +445,6 @@ a { color: var(--accent); }
 :root[data-theme="dark"] .chip-warning,
 :root[data-theme="dark"] .chip-serious,
 :root[data-theme="dark"] .chip-good { filter: brightness(1.2); }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .chip-critical,
-  :root:not([data-theme="light"]) .chip-warning,
-  :root:not([data-theme="light"]) .chip-serious,
-  :root:not([data-theme="light"]) .chip-good { filter: brightness(1.2); }
-}
 
 .stripe { width: 3px; border-radius: 2px; align-self: stretch; flex: none; min-height: 18px; }
 .stripe-critical { background: var(--critical); }
@@ -482,7 +467,7 @@ a { color: var(--accent); }
 }
 .field-unit { font-family: var(--font-mono); font-size: 10px; color: var(--muted); }
 
-input[type="text"], input[type="number"], select, textarea {
+input[type="text"], input[type="number"], input[type="password"], select, textarea {
   width: 100%;
   font-family: var(--font-mono);
   font-size: 12.5px;
@@ -564,9 +549,6 @@ input[type="range"]::-moz-range-thumb {
 }
 .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
 :root[data-theme="dark"] .btn-primary { color: #14110c; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .btn-primary { color: #14110c; }
-}
 .btn-sm { padding: 5px 10px; font-size: 11.5px; }
 .btn-block { width: 100%; }
 
@@ -1024,6 +1006,45 @@ table.data .dim { color: var(--muted); }
   padding: 8px 11px;
 }
 
+/* The reveal button overlaps the input's right edge, so the input carries
+   enough right padding that a long password never runs under it. */
+.pw-wrap { position: relative; display: block; }
+.pw-input { padding-right: 38px; }
+.pw-toggle {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  border-radius: 6px;
+}
+.pw-toggle:hover { color: var(--ink); background: var(--surface-3); border-color: transparent; }
+.pw-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.pw-strength {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+.pw-strength .bartrack { flex: 1 1 auto; height: 4px; }
+.pw-strength-label {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: .04em;
+  color: var(--muted);
+  min-width: 62px;
+  text-align: right;
+}
+
 .auth-demo {
   border: 1px dashed var(--line-strong);
   border-radius: var(--r-md);
@@ -1070,9 +1091,6 @@ table.data .dim { color: var(--muted); }
   font-size: 12px;
 }
 :root[data-theme="dark"] .avatar { color: #14110c; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .avatar { color: #14110c; }
-}
 
 .user-meta { min-width: 0; flex: 1 1 auto; }
 .user-name {

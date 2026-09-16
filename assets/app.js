@@ -9,11 +9,23 @@
 
   var ML = window.BRI.ML;
   var D = window.BRI.Data;
+  var UI = window.BRI.UI;
+
+  /* Everything below is the shared presentation layer in ui.js, which the
+     staff console loads too. Aliased once here so the rest of the file reads
+     the same as it did when these lived locally. */
+  var $ = UI.$, el = UI.el, clear = UI.clear;
+  var fmtMoney = UI.fmtMoney, fmtInt = UI.fmtInt, fmtPct = UI.fmtPct, fmt = UI.fmt;
+  var nowStamp = UI.nowStamp, fmtTs = UI.fmtTs, fmtAgo = UI.fmtAgo, initialsOf = UI.initialsOf;
+  var svg = UI.svg, attachTip = UI.attachTip, hideTip = UI.hideTip;
+  var renderAttributions = UI.renderAttributions;
+  var openModal = UI.openModal, openExport = UI.openExport;
+  var initTheme = UI.initTheme;
 
   /* ================================ state ================================ */
 
   var state = {
-    tab: 'scanner',
+    tab: 'dashboard',
     runLog: [],
     fraud: null,
     business: null,
@@ -22,48 +34,6 @@
     health: { mode: 'manual', rows: [], headers: [], mapping: {}, result: null, portfolio: null },
     method: { model: 'ensemble', threshold: null }
   };
-
-  var $ = function (id) { return document.getElementById(id); };
-
-  function el(tag, cls, text) {
-    var n = document.createElement(tag);
-    if (cls) n.className = cls;
-    if (text != null) n.textContent = text;
-    return n;
-  }
-
-  function clear(node) { while (node && node.firstChild) node.removeChild(node.firstChild); }
-
-  /* ============================== formatting ============================= */
-
-  function fmtMoney(v, dp) {
-    if (v == null || isNaN(v)) return '—';
-    var abs = Math.abs(v), sign = v < 0 ? '-' : '';
-    if (abs >= 1e9) return sign + '$' + (abs / 1e9).toFixed(2) + 'B';
-    if (abs >= 1e6) return sign + '$' + (abs / 1e6).toFixed(2) + 'M';
-    if (abs >= 1e3) return sign + '$' + (abs / 1e3).toFixed(1) + 'K';
-    return sign + '$' + abs.toFixed(dp == null ? 2 : dp);
-  }
-
-  function fmtInt(v) {
-    if (v == null || isNaN(v)) return '—';
-    return Math.round(v).toLocaleString('en-US');
-  }
-
-  function fmtPct(v, dp) {
-    if (v == null || isNaN(v)) return '—';
-    return (v * 100).toFixed(dp == null ? 1 : dp) + '%';
-  }
-
-  function fmt(v, dp) {
-    if (v == null || isNaN(v)) return '—';
-    return v.toFixed(dp == null ? 3 : dp);
-  }
-
-  function nowStamp() {
-    var d = new Date();
-    return d.toISOString().replace('T', ' ').slice(0, 19);
-  }
 
   /* ================================ run log ============================== */
 
@@ -89,39 +59,6 @@
   }
 
   /* ============================= chart helpers =========================== */
-
-  var NS = 'http://www.w3.org/2000/svg';
-
-  function svg(tag, attrs) {
-    var n = document.createElementNS(NS, tag);
-    if (attrs) Object.keys(attrs).forEach(function (k) { n.setAttribute(k, attrs[k]); });
-    return n;
-  }
-
-  var tooltipNode = null;
-
-  function showTip(evt, html) {
-    if (!tooltipNode) {
-      tooltipNode = el('div', 'tooltip');
-      document.body.appendChild(tooltipNode);
-    }
-    tooltipNode.innerHTML = html;
-    tooltipNode.hidden = false;
-    var r = tooltipNode.getBoundingClientRect();
-    var x = evt.clientX + 14, y = evt.clientY - r.height - 10;
-    if (x + r.width > window.innerWidth - 8) x = evt.clientX - r.width - 14;
-    if (y < 8) y = evt.clientY + 18;
-    tooltipNode.style.left = x + 'px';
-    tooltipNode.style.top = y + 'px';
-  }
-
-  function hideTip() { if (tooltipNode) tooltipNode.hidden = true; }
-
-  function attachTip(node, htmlFn) {
-    node.addEventListener('mouseenter', function (e) { showTip(e, htmlFn()); });
-    node.addEventListener('mousemove', function (e) { showTip(e, htmlFn()); });
-    node.addEventListener('mouseleave', hideTip);
-  }
 
   /* --------------------------- risk distribution ------------------------- */
 
@@ -248,46 +185,6 @@
     });
     container.appendChild(legend);
   }
-
-  /* --------------------------- attribution bars -------------------------- */
-
-  function renderAttributions(container, items, opts) {
-    opts = opts || {};
-    clear(container);
-    if (!items.length) { container.appendChild(el('div', 'empty', 'No attributions available.')); return; }
-    var maxAbs = Math.max.apply(null, items.map(function (i) { return Math.abs(i.value); })) || 1;
-    var wrap = el('div', 'attr');
-
-    items.forEach(function (it) {
-      var row = el('div', 'attr-row');
-      var name = el('div', 'attr-name', it.label);
-      name.title = it.hint || it.label;
-      var track = el('div', 'attr-track');
-      var zero = el('div', 'attr-zero');
-      zero.style.left = '50%';
-      track.appendChild(zero);
-      var bar = el('div', 'attr-bar ' + (it.value >= 0 ? 'up' : 'down'));
-      var w = (Math.abs(it.value) / maxAbs) * 48;
-      if (it.value >= 0) { bar.style.left = '50%'; bar.style.width = w + '%'; }
-      else { bar.style.right = '50%'; bar.style.width = w + '%'; }
-      track.appendChild(bar);
-      attachTip(track, function () {
-        return '<div class="t-title">' + it.label + '</div>' +
-               (it.hint ? '<div class="t-row"><span>' + it.hint + '</span></div>' : '') +
-               (it.detail ? '<div class="t-row"><span>Observed</span><b>' + it.detail + '</b></div>' : '') +
-               '<div class="t-row"><span>' + (opts.unit || 'Effect') + '</span><b>' +
-               (it.value >= 0 ? '+' : '') + (opts.format ? opts.format(it.value) : fmt(it.value, 4)) + '</b></div>';
-      });
-      var val = el('div', 'attr-val', (it.value >= 0 ? '+' : '') + (opts.format ? opts.format(it.value) : fmt(it.value, 3)));
-      row.appendChild(name);
-      row.appendChild(track);
-      row.appendChild(val);
-      wrap.appendChild(row);
-    });
-    container.appendChild(wrap);
-  }
-
-  /* --------------------------------- gauge ------------------------------- */
 
   var GRADE_COLOUR = {
     excellent: 'var(--good)', strong: 'var(--good)', good: 'var(--s1)',
@@ -2338,162 +2235,25 @@
     host.appendChild(stats);
   }
 
-  /* ================================ modals =============================== */
-
-  function openModal(title, bodyNode) {
-    var back = el('div', 'modal-back');
-    var modal = el('div', 'modal');
-    var head = el('div', 'modal-head');
-    head.appendChild(el('h3', null, title));
-    var close = el('button', 'icon-btn');
-    close.type = 'button';
-    close.setAttribute('aria-label', 'Close');
-    close.textContent = '×';
-    close.style.fontSize = '18px';
-    close.addEventListener('click', function () { document.body.removeChild(back); });
-    head.appendChild(close);
-    modal.appendChild(head);
-    var body = el('div', 'modal-body');
-    body.appendChild(bodyNode);
-    modal.appendChild(body);
-    back.appendChild(modal);
-    back.addEventListener('click', function (e) { if (e.target === back) document.body.removeChild(back); });
-    document.addEventListener('keydown', function esc(e) {
-      if (e.key === 'Escape' && back.parentNode) { document.body.removeChild(back); document.removeEventListener('keydown', esc); }
-    });
-    document.body.appendChild(back);
-    close.focus();
-    return back;
-  }
-
-  function openExport(filename, content, rowCount) {
-    track('export', { kind: filename.replace(/_\d+\.(csv|json)$/, ''), rows: rowCount });
-    var body = el('div');
-    var info = el('div', 'hint');
-    info.textContent = fmtInt(rowCount) + ' records · ' + filename;
-    body.appendChild(info);
-
-    var ta = el('textarea');
-    ta.value = content;
-    ta.readOnly = true;
-    ta.setAttribute('aria-label', 'Export contents');
-    body.appendChild(ta);
-
-    var row = el('div', 'btn-row');
-    var copy = el('button', 'btn btn-primary', 'Copy to clipboard');
-    copy.type = 'button';
-    copy.addEventListener('click', function () {
-      ta.select();
-      var done = function () { copy.textContent = 'Copied'; setTimeout(function () { copy.textContent = 'Copy to clipboard'; }, 1600); };
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(content).then(done, function () { document.execCommand('copy'); done(); });
-      } else { document.execCommand('copy'); done(); }
-    });
-    row.appendChild(copy);
-
-    var dl = el('a', 'btn');
-    dl.textContent = 'Download file';
-    dl.download = filename;
-    dl.href = URL.createObjectURL(new Blob([content], { type: filename.slice(-4) === 'json' ? 'application/json' : 'text/csv' }));
-    row.appendChild(dl);
-    body.appendChild(row);
-
-    body.appendChild(el('div', 'hint', 'Download works when the platform is opened from a file or a web host. Copy to clipboard works everywhere, including inside an embedded preview.'));
-    openModal('Export', body);
-  }
-
   /* ============================== chrome ================================= */
 
   function setTab(tab) {
     state.tab = tab;
-    ['scanner', 'health', 'method', 'admin'].forEach(function (t) {
+    ['dashboard', 'scanner', 'health', 'method'].forEach(function (t) {
       var btn = $('tab-' + t), panel = $('panel-' + t);
       if (btn) btn.setAttribute('aria-selected', t === tab ? 'true' : 'false');
       if (panel) panel.hidden = t !== tab;
     });
+    if (tab === 'dashboard') renderDashboard();
     if (tab === 'method') renderMethodology();
-    if (tab === 'admin') renderAdmin();
     if (tab === 'health' && !state.health.result && state.health.mode === 'manual') computeHealth();
     window.scrollTo(0, 0);
-  }
-
-  /* --------------------------------------------------------------- theme */
-  /* Three states, not two: an explicit choice stamps the root element, and the
-     default "system" setting stamps nothing and follows prefers-color-scheme.
-     The stored preference is a per-viewer convenience, so every access is
-     wrapped - it throws in a private window and comes back empty after a
-     cleared cache, and the page has to render correctly either way. */
-
-  function currentlyDark() {
-    var stamp = document.documentElement.getAttribute('data-theme');
-    if (stamp) return stamp === 'dark';
-    return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  }
-
-  function syncThemeButton() {
-    var btn = $('theme-toggle');
-    if (!btn) return;
-    var dark = currentlyDark();
-    var moon = $('theme-icon-dark'), sun = $('theme-icon-light');
-    if (moon) moon.hidden = dark;
-    if (sun) sun.hidden = !dark;
-    btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
-  }
-
-  function initTheme() {
-    var btn = $('theme-toggle');
-    if (!btn) return;
-
-    var stored = null;
-    try { stored = localStorage.getItem('sentinel-theme'); } catch (e) { /* private mode */ }
-    if (stored === 'dark' || stored === 'light') document.documentElement.setAttribute('data-theme', stored);
-    syncThemeButton();
-
-    btn.addEventListener('click', function () {
-      var next = currentlyDark() ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      try { localStorage.setItem('sentinel-theme', next); } catch (e) { /* ignore */ }
-      syncThemeButton();
-    });
-
-    /* Follow the OS while the viewer has not chosen for themselves. */
-    if (window.matchMedia) {
-      var mq = window.matchMedia('(prefers-color-scheme: dark)');
-      var onChange = function () {
-        if (!document.documentElement.getAttribute('data-theme')) syncThemeButton();
-      };
-      if (mq.addEventListener) mq.addEventListener('change', onChange);
-      else if (mq.addListener) mq.addListener(onChange);
-    }
   }
 
   /* =============================== accounts ============================== */
 
   var Auth = window.BRI.Auth;
   var session = { user: null, mode: 'signin' };
-
-  function fmtTs(ts) {
-    if (!ts) return '—';
-    var d = new Date(ts);
-    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return d.getDate() + ' ' + months[d.getMonth()] + ' ' +
-           String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
-  }
-
-  function fmtAgo(ts) {
-    if (!ts) return 'never';
-    var s = (Date.now() - ts) / 1000;
-    if (s < 90) return 'just now';
-    if (s < 5400) return Math.round(s / 60) + ' min ago';
-    if (s < 172800) return Math.round(s / 3600) + ' h ago';
-    return Math.round(s / 86400) + ' days ago';
-  }
-
-  function initialsOf(user) {
-    var parts = String(user.name || user.email).trim().split(/\s+/);
-    if (parts.length > 1) return (parts[0][0] + parts[1][0]).toUpperCase();
-    return String(user.name || user.email).slice(0, 2).toUpperCase();
-  }
 
   function track(type, meta) {
     try { Auth.track(type, meta); } catch (e) { /* tracking must never break a scoring run */ }
@@ -2503,8 +2263,86 @@
 
   var DEMO_ACCOUNTS = [
     { email: 'admin@rebintech.com', password: 'admin1234', role: 'Administrator' },
-    { email: 'owner@demo.com', password: 'owner1234', role: 'Business owner' }
+    { email: 'customer@demo.com', password: 'customer1234', role: 'Customer' }
   ];
+
+  var EYE_OPEN = '<svg width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true">' +
+    '<path d="M1.8 10S5 4.8 10 4.8 18.2 10 18.2 10 15 15.2 10 15.2 1.8 10 1.8 10Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>' +
+    '<circle cx="10" cy="10" r="2.4" stroke="currentColor" stroke-width="1.5"/></svg>';
+
+  var EYE_OFF = '<svg width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true">' +
+    '<path d="M7.9 5.2A7.6 7.6 0 0 1 10 4.8c5 0 8.2 5.2 8.2 5.2a15.6 15.6 0 0 1-2.7 3.1M13 13.6a7.4 7.4 0 0 1-3 .6c-5 0-8.2-4.2-8.2-4.2a15.4 15.4 0 0 1 3.5-3.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<path d="M8.3 8.3a2.4 2.4 0 0 0 3.4 3.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+    '<path d="M3.2 3.2l13.6 13.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+
+  /* The icon shows the state you get by pressing it, the label says what the
+     press does - a screen reader user never sees the icon, so the two carry
+     the same meaning by different routes. */
+  function setReveal(button, input, reveal) {
+    input.type = reveal ? 'text' : 'password';
+    button.innerHTML = reveal ? EYE_OFF : EYE_OPEN;
+    var label = reveal ? 'Hide password' : 'Show password';
+    button.setAttribute('aria-label', label);
+    button.title = label;
+    button.setAttribute('aria-pressed', reveal ? 'true' : 'false');
+  }
+
+  /* Length carries most of the strength, so it is scored in its own right and
+     variety only tops it up: 'Password1' has three character classes and is
+     still trivially guessable, while a long all-lowercase passphrase is not.
+     Anything under the 8-character floor auth.js enforces is called out as
+     short rather than weak, because the sign-up will refuse it outright. */
+  function scorePassword(pw) {
+    if (!pw) return null;
+    if (pw.length < 8) return { pct: 12, label: 'Too short', colour: 'var(--critical)' };
+
+    var points = 0;
+    if (pw.length >= 8) points += 1;
+    if (pw.length >= 12) points += 1;
+    if (pw.length >= 16) points += 1;
+    if (/[a-z]/.test(pw)) points += 1;
+    if (/[A-Z]/.test(pw)) points += 1;
+    if (/[0-9]/.test(pw)) points += 1;
+    if (/[^A-Za-z0-9]/.test(pw)) points += 1;
+
+    /* A single repeated character or a straight run of one class is length
+       without variety, and the point total flatters it. */
+    if (/^(.)\1+$/.test(pw)) points = 1;
+
+    if (points <= 2) return { pct: 30, label: 'Weak', colour: 'var(--critical)' };
+    if (points <= 4) return { pct: 55, label: 'Fair', colour: 'var(--warning)' };
+    if (points <= 5) return { pct: 78, label: 'Strong', colour: 'var(--s1)' };
+    return { pct: 100, label: 'Excellent', colour: 'var(--good)' };
+  }
+
+  function strengthMeter() {
+    var node = el('div', 'pw-strength');
+    node.id = 'auth-password-strength';
+
+    var track = el('div', 'bartrack');
+    var fill = el('div', 'barfill');
+    fill.style.width = '0%';
+    track.appendChild(fill);
+    node.appendChild(track);
+
+    var label = el('span', 'pw-strength-label');
+    label.id = 'auth-password-strength-label';
+    /* Polite, not assertive: the reading changes on every keystroke and should
+       not interrupt what the user is typing. */
+    label.setAttribute('aria-live', 'polite');
+    node.appendChild(label);
+
+    return {
+      node: node,
+      update: function (value) {
+        var s = scorePassword(value);
+        fill.style.width = (s ? s.pct : 0) + '%';
+        fill.style.background = s ? s.colour : 'transparent';
+        label.textContent = s ? s.label : '';
+        label.style.color = s ? s.colour : 'var(--muted)';
+      }
+    };
+  }
 
   function showGate(mode) {
     session.mode = mode || 'signin';
@@ -2543,7 +2381,7 @@
     head.appendChild(el('h1', null, session.mode === 'signin' ? 'Welcome back' : 'Create your account'));
     head.appendChild(el('p', 'lede', session.mode === 'signin'
       ? 'Sign in to scan transactions and score financial health.'
-      : 'Business owners can open an account here. It takes a moment.'));
+      : 'Anyone can open an account. It takes a moment.'));
     panel.appendChild(head);
 
     var form = el('form', 'auth-form');
@@ -2567,15 +2405,58 @@
       return i;
     }
 
+    /* Same field, with the input wrapped so the reveal button can sit over its
+       right edge. Returns the .field so callers can hang a meter under it. */
+    function passwordField(id, label, placeholder, autocomplete) {
+      var f = el('div', 'field');
+      var l = el('label');
+      l.setAttribute('for', id);
+      l.appendChild(document.createTextNode(label));
+      f.appendChild(l);
+
+      var wrap = el('div', 'pw-wrap');
+      var i = el('input', 'pw-input');
+      i.type = 'password';
+      i.id = id;
+      i.placeholder = placeholder || '';
+      if (autocomplete) i.autocomplete = autocomplete;
+      wrap.appendChild(i);
+
+      var toggle = el('button', 'icon-btn pw-toggle');
+      toggle.type = 'button';           /* inside a form, a bare button submits */
+      toggle.id = id + '-toggle';
+      toggle.tabIndex = -1;
+      setReveal(toggle, i, false);
+      toggle.addEventListener('click', function () {
+        setReveal(toggle, i, i.type === 'password');
+        i.focus();
+      });
+      wrap.appendChild(toggle);
+
+      f.appendChild(wrap);
+      form.appendChild(f);
+      f.input = i;
+      return f;
+    }
+
     var nameIn = null, companyIn = null;
     if (session.mode === 'signup') {
       nameIn = field('auth-name', 'Your name', 'text', 'Maya Rahman', 'name');
       companyIn = field('auth-company', 'Company', 'text', 'Northgate Trading', 'organization');
     }
     var emailIn = field('auth-email', 'Email', 'text', 'you@company.com', 'email');
-    var passIn = field('auth-password', 'Password', 'password',
+    var passField = passwordField('auth-password', 'Password',
       session.mode === 'signup' ? 'At least 8 characters' : '',
       session.mode === 'signup' ? 'new-password' : 'current-password');
+    var passIn = passField.input;
+
+    var pass2In = null, meter = null;
+    if (session.mode === 'signup') {
+      meter = strengthMeter();
+      passField.appendChild(meter.node);
+      passIn.addEventListener('input', function () { meter.update(passIn.value); });
+      pass2In = passwordField('auth-password2', 'Confirm password', 'Repeat it', 'new-password').input;
+    }
 
     var submit = el('button', 'btn btn-primary btn-block',
       session.mode === 'signin' ? 'Sign in' : 'Create account and sign in');
@@ -2585,6 +2466,18 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       err.hidden = true;
+
+      /* Checked here rather than in Auth: a mismatch is a typo in this form,
+         not a fact about the account, so it should not cost a round trip and
+         should not clear the first field the way a real failure does. */
+      if (pass2In && passIn.value !== pass2In.value) {
+        err.textContent = 'Those passwords do not match.';
+        err.hidden = false;
+        pass2In.value = '';
+        pass2In.focus();
+        return;
+      }
+
       try {
         var user = session.mode === 'signin'
           ? Auth.signIn(emailIn.value, passIn.value)
@@ -2594,6 +2487,8 @@
         err.textContent = ex.message;
         err.hidden = false;
         passIn.value = '';
+        if (pass2In) pass2In.value = '';
+        if (meter) meter.update('');
         passIn.focus();
       }
     });
@@ -2612,10 +2507,13 @@
         var use = el('button', 'btn btn-sm', a.role);
         use.type = 'button';
         use.addEventListener('click', function () {
+          /* In signup mode this rebuilds the gate as sign-in, so the confirm
+             field and the meter are gone by the time anything is submitted -
+             these are existing accounts, there is nothing to confirm. */
+          if (session.mode !== 'signin') { showGate('signin'); return; }
           emailIn.value = a.email;
           passIn.value = a.password;
-          if (session.mode === 'signin') submit.click();
-          else showGate('signin');
+          submit.click();
         });
         row.appendChild(use);
         demo.appendChild(row);
@@ -2640,7 +2538,7 @@
     var meta = el('div', 'user-meta');
     meta.appendChild(el('div', 'user-name', session.user.name));
     meta.appendChild(el('div', 'user-role',
-      (session.user.role === 'admin' ? 'Administrator' : 'Business owner') +
+      (session.user.role === 'admin' ? 'Staff' : 'Customer') +
       (session.user.company && session.user.company !== '—' ? ' · ' + session.user.company : '')));
     block.appendChild(meta);
 
@@ -2665,156 +2563,53 @@
     $('app-layout').hidden = false;
     renderUserBlock();
 
-    var adminTab = $('tab-admin');
-    if (adminTab) adminTab.hidden = user.role !== 'admin';
-    if (user.role !== 'admin' && state.tab === 'admin') setTab('scanner');
-    else setTab(state.tab);
+    /* Staff work lives on its own page, so the customer app only offers the
+       door. A customer never sees it. */
+    var staffLink = $('staff-link');
+    if (staffLink) staffLink.hidden = user.role !== 'admin';
+    setTab(state.tab);
   }
 
-  /* ============================ admin console ============================ */
+  /* ============================== DASHBOARD ============================== */
+  /* The customer's own landing view. It answers "what happened, and what needs
+     me next" from this account's recorded activity - deliberately not from the
+     platform-wide figures, which belong to staff and live on the other page. */
 
-  var ACTIVITY_SERIES = [
-    { key: 'scan', label: 'Scans', colour: 'var(--s1)' },
-    { key: 'health', label: 'Health scores', colour: 'var(--s2)' },
-    { key: 'login', label: 'Sign-ins', colour: 'var(--s3)' }
-  ];
-
-  function renderActivityChart(container, events, days) {
-    clear(container);
-    var dayMs = 86400000;
-    var midnight = new Date();
-    midnight.setHours(0, 0, 0, 0);
-    var first = midnight.getTime() - (days - 1) * dayMs;
-
-    var buckets = [];
-    for (var d = 0; d < days; d++) buckets.push({ t: first + d * dayMs, scan: 0, health: 0, login: 0 });
-
-    events.forEach(function (e) {
-      var i = Math.floor((e.ts - first) / dayMs);
-      if (i < 0 || i >= days) return;
-      if (e.type === 'scan') buckets[i].scan++;
-      else if (e.type === 'health' || e.type === 'portfolio') buckets[i].health++;
-      else if (e.type === 'login') buckets[i].login++;
-    });
-
-    var maxStack = 1;
-    buckets.forEach(function (b) { maxStack = Math.max(maxStack, b.scan + b.health + b.login); });
-
-    var W = 660, H = 170, padL = 34, padR = 8, padT = 10, padB = 26;
-    var plotW = W - padL - padR, plotH = H - padT - padB;
-    var s = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img' });
-    s.setAttribute('aria-label', 'Platform activity per day over the last ' + days + ' days');
-
-    [0, 0.5, 1].forEach(function (f) {
-      var y = padT + plotH - f * plotH;
-      s.appendChild(svg('line', { x1: padL, y1: y, x2: W - padR, y2: y, class: 'grid-line' }));
-      var t = svg('text', { x: padL - 6, y: y + 3, 'text-anchor': 'end' });
-      t.textContent = fmtInt(maxStack * f);
-      s.appendChild(t);
-    });
-
-    var slot = plotW / days, bw = Math.min(26, slot - 4);
-    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-    buckets.forEach(function (b, i) {
-      var x = padL + i * slot + (slot - bw) / 2;
-      var yCursor = padT + plotH;
-      var total = b.scan + b.health + b.login;
-
-      ACTIVITY_SERIES.forEach(function (ser) {
-        var v = b[ser.key];
-        if (!v) return;
-        var h = (v / maxStack) * plotH;
-        yCursor -= h;
-        var rect = svg('rect', {
-          x: x, y: yCursor, width: bw, height: Math.max(h, 1.5), rx: 2,
-          fill: ser.colour, stroke: 'var(--surface)', 'stroke-width': 1
-        });
-        s.appendChild(rect);
-      });
-
-      /* One hit area per day, taller than the bars, so the tooltip is easy to
-         reach even on a quiet day. */
-      var hit = svg('rect', {
-        x: padL + i * slot, y: padT, width: slot, height: plotH, fill: 'transparent'
-      });
-      var dd = new Date(b.t);
-      attachTip(hit, function () {
-        return '<div class="t-title">' + dd.getDate() + ' ' + months[dd.getMonth()] + '</div>' +
-          ACTIVITY_SERIES.map(function (ser) {
-            return '<div class="t-row"><span>' + ser.label + '</span><b>' + fmtInt(b[ser.key]) + '</b></div>';
-          }).join('') +
-          '<div class="t-row"><span>Total</span><b>' + fmtInt(total) + '</b></div>';
-      });
-      s.appendChild(hit);
-
-      if (i % Math.ceil(days / 7) === 0 || i === days - 1) {
-        var lab = svg('text', { x: padL + i * slot + slot / 2, y: H - 8, 'text-anchor': 'middle' });
-        lab.textContent = dd.getDate() + ' ' + months[dd.getMonth()];
-        s.appendChild(lab);
-      }
-    });
-
-    s.appendChild(svg('line', { x1: padL, y1: padT + plotH, x2: W - padR, y2: padT + plotH, class: 'axis-line' }));
-    container.appendChild(s);
-
-    var legend = el('div', 'spark-legend');
-    ACTIVITY_SERIES.forEach(function (ser) {
-      var sp = el('span');
-      var i2 = el('i');
-      i2.style.background = ser.colour;
-      sp.appendChild(i2);
-      sp.appendChild(document.createTextNode(ser.label));
-      legend.appendChild(sp);
-    });
-    container.appendChild(legend);
-  }
-
-  function renderAdmin() {
-    var host = $('admin-body');
-    if (!host) return;
+  function renderDashboard() {
+    var host = $('dashboard-body');
+    if (!host || !session.user) return;
     clear(host);
-    if (!session.user || session.user.role !== 'admin') {
-      host.appendChild(el('div', 'card')).appendChild(
-        el('div', 'empty', 'This section is available to administrators only.'));
-      return;
-    }
 
-    var users = Auth.listUsers();
-    var events = Auth.events();
-    var byId = {};
-    users.forEach(function (u) { byId[u.id] = u; });
+    var mine = [];
+    try {
+      mine = Auth.events({ userId: session.user.id });
+    } catch (e) { mine = []; }
 
-    var dayMs = 86400000, now = Date.now();
-    var scans = events.filter(function (e) { return e.type === 'scan'; });
-    var healths = events.filter(function (e) { return e.type === 'health'; });
-    var exports_ = events.filter(function (e) { return e.type === 'export'; });
-    var active7 = users.filter(function (u) { return u.lastLoginAt && now - u.lastLoginAt < 7 * dayMs; });
-    var rowsProcessed = scans.reduce(function (a, e) { return a + (e.meta.rows || 0); }, 0);
+    var scans = mine.filter(function (e) { return e.type === 'scan'; });
+    var healths = mine.filter(function (e) { return e.type === 'health'; });
+    var rows = scans.reduce(function (a, e) { return a + (e.meta.rows || 0); }, 0);
+    var high = scans.reduce(function (a, e) { return a + (e.meta.high || 0); }, 0);
     var exposure = scans.reduce(function (a, e) { return a + (e.meta.exposure || 0); }, 0);
-    var flagged = scans.reduce(function (a, e) { return a + (e.meta.high || 0) + (e.meta.medium || 0); }, 0);
 
-    if (Auth.isDemo) {
-      var diag = Auth.diagnostics();
-      var banner = el('div', 'banner banner-warn');
-      banner.innerHTML = '<span><b>Demo mode.</b> Accounts and activity live in this browser only — ' +
-        'nothing is shared between devices and anyone with the browser can edit it. ' +
-        diag.seededUsers + ' of ' + diag.users + ' accounts and ' + fmtInt(diag.seededEvents) +
-        ' of ' + fmtInt(diag.events) + ' events are seeded sample data, marked <b>sample</b> in the tables below. ' +
-        'Connecting a server replaces this without changing the screens.' +
-        (diag.storageWorks ? '' : ' <b>Storage is blocked in this browser, so nothing will survive a reload.</b>') +
-        '</span>';
-      host.appendChild(banner);
-    }
+    var greet = el('div', 'card');
+    var gh = el('div', 'card-head');
+    gh.appendChild(el('h3', null, 'Welcome back, ' + String(session.user.name).split(' ')[0]));
+    gh.appendChild(el('span', 'card-note', session.user.lastLoginAt
+      ? 'Previous sign-in ' + fmtAgo(session.user.lastLoginAt)
+      : 'First sign-in'));
+    greet.appendChild(gh);
+    greet.appendChild(el('div', 'hint', session.user.company && session.user.company !== '—'
+      ? 'Signed in for ' + session.user.company + '.'
+      : 'Add your company name in your account to label exports.'));
+    host.appendChild(greet);
 
     var tiles = el('div', 'stat-row');
     [
-      ['Accounts', fmtInt(users.length), users.filter(function (u) { return !u.active; }).length + ' disabled'],
-      ['Active this week', fmtInt(active7.length), fmtPct(active7.length / Math.max(1, users.length)) + ' of accounts'],
-      ['Scans run', fmtInt(scans.length), fmtInt(healths.length) + ' health scores'],
-      ['Rows processed', fmtInt(rowsProcessed), fmtInt(flagged) + ' flagged'],
-      ['Exposure reviewed', fmtMoney(exposure), 'Across all scans'],
-      ['Exports taken', fmtInt(exports_.length), 'Queue and scored output']
+      ['Files scanned', fmtInt(scans.length), fmtInt(rows) + ' transactions'],
+      ['High risk found', fmtInt(high), scans.length ? fmtPct(high / Math.max(1, rows), 2) + ' of rows' : 'nothing scanned yet'],
+      ['Exposure reviewed', fmtMoney(exposure), 'Sum of expected loss'],
+      ['Health scores run', fmtInt(healths.length), healths.length
+        ? 'Last ' + fmtAgo(healths[0].ts) : 'none yet']
     ].forEach(function (t) {
       var n = el('div', 'stat');
       n.appendChild(el('div', 'stat-label', t[0]));
@@ -2824,263 +2619,68 @@
     });
     host.appendChild(tiles);
 
-    /* activity */
-    var actCard = el('div', 'card');
-    var ah = el('div', 'card-head');
-    ah.appendChild(el('h3', null, 'Activity — last 30 days'));
-    ah.appendChild(el('span', 'card-note', fmtInt(events.length) + ' events recorded'));
-    actCard.appendChild(ah);
-    var actChart = el('div', 'chart');
-    actCard.appendChild(actChart);
-    renderActivityChart(actChart, events, 30);
-    host.appendChild(actCard);
-
-    /* accounts table */
-    var uCard = el('div', 'card flush');
-    var uh = el('div', 'card-head');
-    uh.style.padding = '14px 16px 0';
-    uh.appendChild(el('h3', null, 'Accounts'));
-    var uExp = el('button', 'btn btn-sm', 'Export');
-    uExp.type = 'button';
-    uExp.addEventListener('click', function () {
-      openExport('accounts_' + Date.now() + '.csv', D.objectsToCSV(users.map(function (u) {
-        var us = userStats(u, events);
-        return {
-          name: u.name, email: u.email, company: u.company, role: u.role,
-          status: u.active ? 'active' : 'disabled',
-          signed_up: new Date(u.createdAt).toISOString(),
-          last_login: u.lastLoginAt ? new Date(u.lastLoginAt).toISOString() : '',
-          logins: u.loginCount, scans: us.scans, health_scores: us.healths,
-          rows_processed: us.rows, sample_data: u.seeded ? 'yes' : 'no'
-        };
-      })), users.length);
+    /* Jump-off points, because a dashboard that only reports is a dead end. */
+    var actions = el('div', 'console-grid');
+    [
+      ['Scan a transaction file', 'Upload a CSV and get a queue ordered by expected loss.', 'scanner'],
+      ['Score a business', 'Type the figures in, or score a whole portfolio from a file.', 'health'],
+      ['See how it decides', 'The models, the held-out metrics and the run log behind every score.', 'method']
+    ].forEach(function (a) {
+      var c = el('div', 'card');
+      c.appendChild(el('h3', null, a[0]));
+      var p = el('div', 'hint');
+      p.style.marginTop = '6px';
+      p.textContent = a[1];
+      c.appendChild(p);
+      var b = el('button', 'btn btn-sm', 'Open');
+      b.type = 'button';
+      b.style.marginTop = '12px';
+      b.addEventListener('click', function () { setTab(a[2]); });
+      c.appendChild(b);
+      actions.appendChild(c);
     });
-    uh.appendChild(uExp);
-    uCard.appendChild(uh);
+    host.appendChild(actions);
 
-    var uWrap = el('div', 'table-wrap scroll-y');
-    uWrap.style.marginTop = '12px';
-    var ut = el('table', 'data');
-    var uthead = el('thead');
-    var utr = el('tr');
-    ['', 'Account', 'Company', 'Role', 'Signed up', 'Last seen', 'Logins', 'Scans', 'Rows', 'Health', 'Status', ''].forEach(function (h) {
-      utr.appendChild(el('th', null, h));
-    });
-    uthead.appendChild(utr);
-    ut.appendChild(uthead);
-    var utb = el('tbody');
+    var recent = el('div', 'card flush');
+    var rh = el('div', 'card-head');
+    rh.style.padding = '14px 16px 0';
+    rh.appendChild(el('h3', null, 'Your recent activity'));
+    recent.appendChild(rh);
 
-    users.slice().sort(function (a, b) { return (b.lastLoginAt || 0) - (a.lastLoginAt || 0); }).forEach(function (u) {
-      var us = userStats(u, events);
-      var row = el('tr');
-
-      var sc = el('td');
-      sc.style.width = '6px';
-      sc.style.padding = '0 0 0 12px';
-      sc.appendChild(el('div', 'stripe ' + (!u.active ? 'stripe-neutral' : (us.scans ? 'stripe-good' : 'stripe-warning'))));
-      row.appendChild(sc);
-
-      var who = el('td', 'wrap');
-      who.appendChild(el('div', null, u.name));
-      var sub = el('div', 'dim');
-      sub.style.fontSize = '11px';
-      sub.textContent = u.email;
-      who.appendChild(sub);
-      row.appendChild(who);
-
-      row.appendChild(el('td', 'dim', u.company || '—'));
-
-      var rd = el('td');
-      rd.appendChild(el('span', 'chip ' + (u.role === 'admin' ? 'chip-good' : 'chip-neutral'),
-        u.role === 'admin' ? 'admin' : 'owner'));
-      if (u.seeded) rd.appendChild(el('span', 'chip chip-neutral', 'sample'));
-      row.appendChild(rd);
-
-      row.appendChild(el('td', 'dim', fmtTs(u.createdAt)));
-      var seen = el('td', 'dim', fmtAgo(u.lastLoginAt));
-      seen.title = u.lastLoginAt ? fmtTs(u.lastLoginAt) : 'Has never signed in';
-      row.appendChild(seen);
-      row.appendChild(el('td', 'n', fmtInt(u.loginCount)));
-      row.appendChild(el('td', 'n', fmtInt(us.scans)));
-      row.appendChild(el('td', 'n', fmtInt(us.rows)));
-      row.appendChild(el('td', 'n', fmtInt(us.healths)));
-
-      var st = el('td');
-      st.appendChild(el('span', 'chip ' + (u.active ? 'chip-good' : 'chip-critical'), u.active ? 'active' : 'disabled'));
-      row.appendChild(st);
-
-      var act = el('td');
-      if (u.role !== 'admin') {
-        var tg = el('button', 'btn btn-sm', u.active ? 'Disable' : 'Enable');
-        tg.type = 'button';
-        tg.addEventListener('click', function () {
-          try {
-            Auth.setActive(u.id, !u.active);
-            track('admin_toggle_user', { userId: u.id, active: !u.active });
-            renderAdmin();
-          } catch (ex) { alert(ex.message); }
-        });
-        act.appendChild(tg);
-      }
-      row.appendChild(act);
-      utb.appendChild(row);
-    });
-    ut.appendChild(utb);
-    uWrap.appendChild(ut);
-    uCard.appendChild(uWrap);
-    host.appendChild(uCard);
-
-    /* scan + health history side by side */
-    var grid = el('div', 'console-grid');
-    grid.appendChild(historyCard('Scan history', scans, 120, function (e) {
-      var u = byId[e.userId];
-      return [
-        ['when', fmtTs(e.ts), 'dim'],
-        ['who', u ? u.name : 'unknown', null],
-        ['file', e.meta.file || 'upload', 'dim'],
-        ['rows', fmtInt(e.meta.rows), 'n'],
-        ['high', fmtInt(e.meta.high), 'n'],
-        ['exposure', fmtMoney(e.meta.exposure), 'n']
-      ];
-    }, ['When', 'User', 'File', 'Rows', 'High', 'Exposure'], function (e) {
-      return e.meta.high > 0 ? 'stripe-critical' : 'stripe-good';
-    }));
-
-    grid.appendChild(historyCard('Health score history', healths, 120, function (e) {
-      var u = byId[e.userId];
-      return [
-        ['when', fmtTs(e.ts), 'dim'],
-        ['who', u ? u.name : 'unknown', null],
-        ['company', e.meta.company || '—', 'dim'],
-        ['score', e.meta.score != null ? e.meta.score.toFixed(1) : '—', 'n'],
-        ['grade', e.meta.grade || '—', 'dim'],
-        ['pfail', e.meta.failureProb != null ? fmtPct(e.meta.failureProb, 1) : '—', 'n']
-      ];
-    }, ['When', 'User', 'Company', 'Score', 'Grade', 'p(fail)'], function (e) {
-      var sc2 = e.meta.score;
-      if (sc2 == null) return 'stripe-neutral';
-      return sc2 >= 75 ? 'stripe-good' : (sc2 >= 40 ? 'stripe-warning' : 'stripe-critical');
-    }));
-    host.appendChild(grid);
-
-    /* feature usage */
-    var fCard = el('div', 'card');
-    var fh = el('div', 'card-head');
-    fh.appendChild(el('h3', null, 'What gets used'));
-    fh.appendChild(el('span', 'card-note', 'Every recorded event, by type'));
-    fCard.appendChild(fh);
-
-    var counts = {};
-    events.forEach(function (e) { counts[e.type] = (counts[e.type] || 0) + 1; });
-    var LABELS = {
-      login: 'Sign-in', signup: 'Account created', logout: 'Sign-out',
-      scan: 'Transaction scan', health: 'Health score', portfolio: 'Portfolio scoring',
-      export: 'Export taken', retrain: 'Model refit', admin_toggle_user: 'Account enabled or disabled'
-    };
-    var fChart = el('div');
-    renderAttributions(fChart, Object.keys(counts).map(function (k) {
-      return { label: LABELS[k] || k, value: counts[k], hint: 'Events of type "' + k + '"' };
-    }).sort(function (a, b) { return b.value - a.value; }),
-      { unit: 'Events', format: function (v) { return fmtInt(v); } });
-    fCard.appendChild(fChart);
-    fCard.appendChild(el('div', 'hint',
-      'Counts are events, not sessions — a single visit usually produces one sign-in and several scans.'));
-    host.appendChild(fCard);
-
-    /* raw export */
-    var expCard = el('div', 'card');
-    var eh = el('div', 'card-head');
-    eh.appendChild(el('h3', null, 'Raw usage export'));
-    expCard.appendChild(eh);
-    expCard.appendChild(el('div', 'hint',
-      'The full event log with every recorded field, for reporting or for loading into another system.'));
-    var erow = el('div', 'btn-row');
-    erow.style.marginTop = '10px';
-    var csvBtn = el('button', 'btn', 'Export events as CSV');
-    csvBtn.type = 'button';
-    csvBtn.addEventListener('click', function () {
-      openExport('usage_events_' + Date.now() + '.csv', D.objectsToCSV(events.map(function (e) {
-        var u = byId[e.userId];
-        return {
-          timestamp: new Date(e.ts).toISOString(), type: e.type,
-          user_email: u ? u.email : '', user_name: u ? u.name : '', company: u ? u.company : '',
-          rows: e.meta.rows != null ? e.meta.rows : '',
-          high: e.meta.high != null ? e.meta.high : '',
-          medium: e.meta.medium != null ? e.meta.medium : '',
-          exposure: e.meta.exposure != null ? e.meta.exposure : '',
-          score: e.meta.score != null ? e.meta.score : '',
-          failure_probability: e.meta.failureProb != null ? e.meta.failureProb : '',
-          file: e.meta.file || '', sample_data: e.seeded ? 'yes' : 'no'
-        };
-      })), events.length);
-    });
-    erow.appendChild(csvBtn);
-    var jsonBtn = el('button', 'btn', 'Export everything as JSON');
-    jsonBtn.type = 'button';
-    jsonBtn.addEventListener('click', function () {
-      openExport('console_export_' + Date.now() + '.json',
-        JSON.stringify({ exportedAt: nowStamp(), provider: Auth.provider, users: users, events: events }, null, 2),
-        users.length + events.length);
-    });
-    erow.appendChild(jsonBtn);
-    expCard.appendChild(erow);
-    host.appendChild(expCard);
-  }
-
-  function userStats(user, events) {
-    var scans = 0, healths = 0, rows = 0;
-    events.forEach(function (e) {
-      if (e.userId !== user.id) return;
-      if (e.type === 'scan') { scans++; rows += e.meta.rows || 0; }
-      else if (e.type === 'health') healths++;
-    });
-    return { scans: scans, healths: healths, rows: rows };
-  }
-
-  function historyCard(title, events, limit, cellsFn, headers, stripeFn) {
-    var card = el('div', 'card flush');
-    var h = el('div', 'card-head');
-    h.style.padding = '14px 16px 0';
-    h.appendChild(el('h3', null, title));
-    h.appendChild(el('span', 'card-note', fmtInt(events.length) + ' records'));
-    card.appendChild(h);
-
-    if (!events.length) {
-      card.appendChild(el('div', 'empty', 'Nothing recorded yet.'));
-      return card;
+    if (!mine.length) {
+      recent.appendChild(el('div', 'empty', 'Nothing yet. Scan a file and it will appear here.'));
+    } else {
+      var LABELS = {
+        login: 'Signed in', signup: 'Account created', logout: 'Signed out',
+        scan: 'Scanned a file', health: 'Scored a business', portfolio: 'Scored a portfolio',
+        export: 'Took an export', retrain: 'Refitted the models'
+      };
+      var wrap = el('div', 'table-wrap scroll-y');
+      wrap.style.marginTop = '12px';
+      var t = el('table', 'data');
+      var thead = el('thead');
+      var tr = el('tr');
+      ['When', 'Action', 'Detail'].forEach(function (h) { tr.appendChild(el('th', null, h)); });
+      thead.appendChild(tr);
+      t.appendChild(thead);
+      var tb = el('tbody');
+      mine.slice(0, 40).forEach(function (e) {
+        var row = el('tr');
+        row.appendChild(el('td', 'dim', fmtTs(e.ts)));
+        row.appendChild(el('td', null, LABELS[e.type] || e.type));
+        var detail = '';
+        if (e.type === 'scan') detail = (e.meta.file || 'upload') + ' · ' + fmtInt(e.meta.rows) + ' rows · ' + fmtInt(e.meta.high) + ' high risk';
+        else if (e.type === 'health') detail = 'Score ' + (e.meta.score != null ? e.meta.score.toFixed(1) : '—') + ' · ' + (e.meta.grade || '');
+        else if (e.type === 'portfolio') detail = fmtInt(e.meta.rows) + ' companies';
+        else if (e.type === 'export') detail = fmtInt(e.meta.rows) + ' records';
+        row.appendChild(el('td', 'wrap dim', detail));
+        tb.appendChild(row);
+      });
+      t.appendChild(tb);
+      wrap.appendChild(t);
+      recent.appendChild(wrap);
     }
-
-    var wrap = el('div', 'table-wrap scroll-y');
-    wrap.style.marginTop = '12px';
-    var t = el('table', 'data');
-    var thead = el('thead');
-    var tr = el('tr');
-    tr.appendChild(el('th', null, ''));
-    headers.forEach(function (hd) { tr.appendChild(el('th', null, hd)); });
-    thead.appendChild(tr);
-    t.appendChild(thead);
-
-    var tb = el('tbody');
-    events.slice(0, limit).forEach(function (e) {
-      var row = el('tr');
-      var sc = el('td');
-      sc.style.width = '6px';
-      sc.style.padding = '0 0 0 12px';
-      sc.appendChild(el('div', 'stripe ' + stripeFn(e)));
-      row.appendChild(sc);
-      cellsFn(e).forEach(function (c) { row.appendChild(el('td', c[2], c[1])); });
-      tb.appendChild(row);
-    });
-    t.appendChild(tb);
-    wrap.appendChild(t);
-    card.appendChild(wrap);
-    if (events.length > limit) {
-      var note = el('div', 'hint');
-      note.style.padding = '10px 16px';
-      note.textContent = 'Showing the most recent ' + fmtInt(limit) + ' of ' + fmtInt(events.length) + '. Export for the full set.';
-      card.appendChild(note);
-    }
-    return card;
+    host.appendChild(recent);
   }
 
   /* ================================= boot ================================ */
@@ -3095,7 +2695,7 @@
 
   function boot() {
     initTheme();
-    ['scanner', 'health', 'method', 'admin'].forEach(function (t) {
+    ['dashboard', 'scanner', 'health', 'method'].forEach(function (t) {
       var b = $('tab-' + t);
       if (b) b.addEventListener('click', function () { setTab(t); });
     });
@@ -3121,7 +2721,7 @@
         renderHealthControls();
         computeHealth();
         renderMethodology();
-        if (state.tab === 'admin') renderAdmin();
+        if (state.tab === 'dashboard') renderDashboard();
         var totalFit = state.runLog.filter(function (e) { return e.job === 'fit'; }).reduce(function (a, e) { return a + e.ms; }, 0);
         setStatus(state.runLog.length + ' jobs · ' + totalFit.toFixed(0) + ' ms total fit', false);
       }, 40);

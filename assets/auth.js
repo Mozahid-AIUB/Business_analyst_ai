@@ -119,6 +119,29 @@
     return h;
   }
 
+  /* The handful that show up at the top of every breach dump. A real system
+     would check a downloaded list of the top hundred thousand; this is the
+     same rule at demo scale, so the shape is already correct when it moves. */
+  var COMMON_PASSWORDS = [
+    'password', 'password1', 'password123', '12345678', '123456789', 'qwerty123',
+    'letmein', 'welcome1', 'admin123', 'abc12345', 'iloveyou', 'sunshine',
+    'football', 'monkey123'
+  ];
+
+  function isCommonPassword(password) {
+    var lower = String(password).toLowerCase();
+    return COMMON_PASSWORDS.indexOf(lower) !== -1;
+  }
+
+  /* A password built out of the address it protects is guessable by anyone who
+     knows the address. Short local parts ('bob', 'hr') are skipped because
+     they collide with ordinary words too often to be evidence of anything. */
+  function containsEmailLocalPart(password, email) {
+    var local = String(email || '').split('@')[0].toLowerCase();
+    if (local.length < 4) return false;
+    return String(password).toLowerCase().indexOf(local) !== -1;
+  }
+
   function randomId(prefix) {
     var s = '';
     for (var i = 0; i < 4; i++) s += Math.floor(Math.random() * 0xffff).toString(16).padStart(4, '0');
@@ -186,7 +209,7 @@
 
     function addUser(email, name, company, role, daysAgo, seeded) {
       var salt = randomId();
-      var pw = role === 'admin' ? 'admin1234' : 'owner1234';
+      var pw = role === 'admin' ? 'admin1234' : 'customer1234';
       var u = {
         id: randomId('u_'), email: normaliseEmail(email), name: name, company: company,
         role: role, salt: salt, hash: hashPassword(pw, salt),
@@ -201,13 +224,13 @@
        sign-in screen, which is the correct behaviour for a demo and the wrong
        behaviour for anything else. */
     var admin = addUser('admin@rebintech.com', 'ReBin Tech', 'ReBin Tech', 'admin', 34, false);
-    var owner = addUser('owner@demo.com', 'Demo Owner', 'Demo Trading Co', 'owner', 30, false);
+    var customer = addUser('customer@demo.com', 'Demo Customer', 'Northwind Payments', 'customer', 30, false);
 
     var seeded = SEED_COMPANIES.map(function (c, i) {
-      return addUser(c[0], c[1], c[2], 'owner', 28 - i * 4, true);
+      return addUser(c[0], c[1], c[2], 'customer', 28 - i * 4, true);
     });
 
-    var all = [admin, owner].concat(seeded);
+    var all = [admin, customer].concat(seeded);
 
     function ev(user, type, ts, meta) {
       store.events.push({
@@ -281,6 +304,12 @@
       email = normaliseEmail(email);
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new Error('Enter a valid email address.');
       if (!password || password.length < 8) throw new Error('Use a password of at least 8 characters.');
+      if (isCommonPassword(password)) {
+        throw new Error('That password is too common. Choose something less guessable.');
+      }
+      if (containsEmailLocalPart(password, email)) {
+        throw new Error('Your password should not contain your email address.');
+      }
       var store = db();
       if (store.users.some(function (u) { return u.email === email; })) {
         throw new Error('An account already exists for that email. Sign in instead.');
@@ -288,7 +317,7 @@
       var salt = randomId();
       var user = {
         id: randomId('u_'), email: email, name: (name || '').trim() || email.split('@')[0],
-        company: (company || '').trim() || '—', role: 'owner',
+        company: (company || '').trim() || '—', role: 'customer',
         salt: salt, hash: hashPassword(password, salt),
         createdAt: Date.now(), lastLoginAt: null, loginCount: 0, active: true, seeded: false
       };
@@ -414,7 +443,7 @@
          email text not null,
          name text,
          company text,
-         role text not null default 'owner',
+         role text not null default 'customer',
          active boolean not null default true,
          created_at timestamptz not null default now(),
          last_login_at timestamptz,
