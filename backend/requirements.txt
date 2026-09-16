@@ -1,0 +1,30 @@
+# Pinned exactly. Resolved and test-verified against Python 3.14 on Windows.
+
+fastapi==0.141.1
+uvicorn[standard]==0.53.0
+sqlalchemy==2.0.54
+pydantic==2.13.5
+pydantic-settings==2.15.0
+email-validator==2.3.0
+
+# Passwords
+passlib[bcrypt]==1.7.4
+# Held at 4.0.1 on purpose. passlib 1.7.4 probes the bcrypt backend at import
+# with a >72-byte secret; bcrypt >=4.1 raises ValueError on that instead of
+# truncating, so passlib cannot initialise at all. Unpin only when passlib
+# 1.7.5+ ships with the fix.
+bcrypt==4.0.1
+
+# Tokens
+python-jose[cryptography]==3.5.0
+
+# OAuth2 form parsing - required by FastAPI for form-encoded posts
+python-multipart==0.0.32
+
+# PostgreSQL driver. Unused with the SQLite default, needed the moment
+# DATABASE_URL points at Postgres, so it ships in the image.
+psycopg[binary]==3.2.12
+
+# Tests
+pytest==9.1.1
+httpx==0.28.1

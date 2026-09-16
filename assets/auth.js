@@ -20,14 +20,14 @@
    salted and iterated rather than stored in the clear - not because that makes
    this safe, but so the data shape is already correct when it moves.
 
-   To go live, implement the same seven methods against a real backend and
-   change PROVIDER. `providers.supabase` below is a worked sketch of that, with
-   the SQL schema it expects. Nothing in app.js needs to change.
+   To go live, set PROVIDER to 'api' and API_BASE to the FastAPI backend in
+   ../backend. That provider is written and sits below this one; nothing in
+   app.js or admin.js changes, because both call through the same interface.
    ========================================================================== */
 (function (global) {
   'use strict';
 
-  var PROVIDER = 'demo';          /* 'demo' | 'supabase' */
+  var PROVIDER = 'demo';          /* 'demo' | 'api' */
   /* Bump these when the stored shape changes. Renaming the customer role left
      v1 browsers holding accounts whose role still read "owner", which the
      console then displayed - a rename in the source does not reach data that
@@ -432,73 +432,130 @@
 
   var memorySession = null;
 
-  /* ---------------------------------------------------- supabase sketch */
-  /* Not wired up - this is the contract the demo provider is standing in for,
-     kept here so swapping is a matter of filling in two constants and flipping
-     PROVIDER above.
+  /* ------------------------------------------------------- API provider */
+  /* Talks to the FastAPI backend in ../backend. Switch by setting PROVIDER to
+     'api' at the top of this file and API_BASE to wherever the API is served.
 
-     Load the client from an allowed CDN before this file:
-       <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+     One shape difference worth knowing about: the demo provider is synchronous
+     because localStorage is, while a network call cannot be. Every method here
+     returns a Promise, and the callers in app.js and admin.js handle both -
+     they wrap each call in Promise.resolve(...).then(...), which leaves the
+     demo provider working unchanged and lets this one await properly.
 
-     Schema:
+     The access token is held in memory rather than localStorage. A token in
+     localStorage is readable by any script that gets onto the page, and this
+     application renders user-supplied text; the refresh token is the only
+     thing that persists, so a stolen page context cannot outlive the tab. */
 
-       create table profiles (
-         id uuid primary key references auth.users on delete cascade,
-         email text not null,
-         name text,
-         company text,
-         role text not null default 'customer',
-         active boolean not null default true,
-         created_at timestamptz not null default now(),
-         last_login_at timestamptz,
-         login_count int not null default 0
-       );
+  var API_BASE = '';              /* e.g. https://api.yourdomain.com */
+  var accessToken = null;
 
-       create table usage_events (
-         id bigserial primary key,
-         user_id uuid not null references auth.users on delete cascade,
-         type text not null,
-         meta jsonb not null default '{}',
-         ts timestamptz not null default now()
-       );
-       create index on usage_events (user_id, ts desc);
-       create index on usage_events (type, ts desc);
+  function apiCall(path, options) {
+    options = options || {};
+    var headers = { 'Content-Type': 'application/json' };
+    if (accessToken) headers.Authorization = 'Bearer ' + accessToken;
 
-       alter table profiles enable row level security;
-       alter table usage_events enable row level security;
+    return fetch(API_BASE + path, {
+      method: options.method || 'GET',
+      headers: headers,
+      credentials: 'include',      /* refresh token rides in an httpOnly cookie */
+      body: options.body ? JSON.stringify(options.body) : undefined
+    }).then(function (res) {
+      if (res.status === 204) return null;
+      return res.json().catch(function () { return {}; }).then(function (data) {
+        if (res.ok) return data;
+        /* FastAPI puts validation failures in `detail`, which may be a string
+           or a list of field errors; surface something a person can act on. */
+        var msg = data.detail;
+        if (Array.isArray(msg)) msg = msg.map(function (d) { return d.msg || ''; }).join('. ');
+        throw new Error(msg || ('Request failed (' + res.status + ')'));
+      });
+    });
+  }
 
-       -- a user sees only their own rows; an admin sees everything
-       create policy "own profile" on profiles for select
-         using (id = auth.uid() or exists (
-           select 1 from profiles p where p.id = auth.uid() and p.role = 'admin'));
-
-       create policy "own events" on usage_events for select
-         using (user_id = auth.uid() or exists (
-           select 1 from profiles p where p.id = auth.uid() and p.role = 'admin'));
-
-       create policy "insert own events" on usage_events for insert
-         with check (user_id = auth.uid());
-
-     Row-level security is the part that makes this real: the rules live in the
-     database, so a user editing their own browser cannot read anyone else's
-     rows the way they can in the demo provider. */
-
-  var SUPABASE_URL = '';          /* e.g. https://xxxx.supabase.co */
-  var SUPABASE_ANON_KEY = '';
-
-  function supabaseProvider() {
-    if (!global.supabase || !SUPABASE_URL || !SUPABASE_ANON_KEY) {
-      throw new Error('Supabase is selected but SUPABASE_URL / SUPABASE_ANON_KEY are not set in auth.js.');
+  function apiProvider() {
+    if (!API_BASE) {
+      throw new Error('PROVIDER is "api" but API_BASE is not set in auth.js.');
     }
-    /* Implement signUp, signIn, signOut, currentUser, listUsers, setActive,
-       track and events against supabase.createClient(...) here. The rest of
-       the application calls nothing else. */
-    throw new Error('Supabase provider not implemented yet.');
+    return {
+      name: 'api',
+
+      signUp: function (email, password, name, company) {
+        return apiCall('/auth/register', {
+          method: 'POST',
+          body: { email: email, password: password, name: name, company: company }
+        }).then(function () {
+          return this.signIn(email, password);
+        }.bind(this));
+      },
+
+      signIn: function (email, password) {
+        return apiCall('/auth/login', {
+          method: 'POST',
+          body: { email: email, password: password }
+        }).then(function (data) {
+          accessToken = data.access_token;
+          return data.user;
+        });
+      },
+
+      signOut: function () {
+        var done = apiCall('/auth/logout', { method: 'POST' })
+          .catch(function () { /* the local session ends either way */ });
+        accessToken = null;
+        return done;
+      },
+
+      currentUser: function () {
+        if (!accessToken) {
+          /* A page reload loses the in-memory token; the refresh cookie is
+             what restores the session. */
+          return apiCall('/auth/refresh', { method: 'POST' })
+            .then(function (data) {
+              accessToken = data.access_token;
+              return data.user;
+            })
+            .catch(function () { return null; });
+        }
+        return apiCall('/auth/me').catch(function () { return null; });
+      },
+
+      listUsers: function () { return apiCall('/admin/users'); },
+
+      setActive: function (userId, active) {
+        return apiCall('/admin/users/' + userId, { method: 'PATCH', body: { active: active } });
+      },
+
+      track: function (type, meta) {
+        /* Usage tracking must never interrupt someone's work, so a failure
+           here is swallowed rather than surfaced. */
+        return apiCall('/events', { method: 'POST', body: { type: type, meta: meta || {} } })
+          .catch(function () { return null; });
+      },
+
+      events: function (filter) {
+        var q = [];
+        if (filter && filter.type) q.push('type=' + encodeURIComponent(filter.type));
+        if (filter && filter.userId) q.push('user_id=' + encodeURIComponent(filter.userId));
+        if (filter && filter.since) q.push('since=' + encodeURIComponent(new Date(filter.since).toISOString()));
+        return apiCall('/events' + (q.length ? '?' + q.join('&') : ''));
+      },
+
+      reset: function () {
+        throw new Error('reset() is a demo-provider convenience and has no server equivalent.');
+      },
+
+      diagnostics: function () {
+        return apiCall('/health').then(function (h) {
+          return { provider: 'api', base: API_BASE, storageWorks: true, server: h };
+        });
+      }
+    };
   }
 
   /* --------------------------------------------------------------- export */
 
-  var active = PROVIDER === 'supabase' ? supabaseProvider() : demoProvider;
+  var active = PROVIDER === 'api' ? apiProvider() : demoProvider;
 
   global.BRI = global.BRI || {};
   global.BRI.Auth = {

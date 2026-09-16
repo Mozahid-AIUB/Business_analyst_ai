@@ -11,6 +11,7 @@
 (function () {
   'use strict';
 
+  var Brand = window.BRI.Brand;
   var UI = window.BRI.UI, Auth = window.BRI.Auth, D = window.BRI.Data;
   var $ = UI.$, el = UI.el, clear = UI.clear, fmtInt = UI.fmtInt, fmtMoney = UI.fmtMoney,
       fmtPct = UI.fmtPct, fmt = UI.fmt, fmtTs = UI.fmtTs, fmtAgo = UI.fmtAgo,
@@ -132,8 +133,15 @@
       return;
     }
 
-    var users = Auth.listUsers();
-    var events = Auth.events();
+    /* Both providers go through a promise: localStorage answers at once, the
+       API cannot. */
+    Promise.all([
+      Promise.resolve().then(function () { return Auth.listUsers(); }).catch(function () { return []; }),
+      Promise.resolve().then(function () { return Auth.events(); }).catch(function () { return []; })
+    ]).then(function (res) { paintConsole(host, res[0] || [], res[1] || []); });
+  }
+
+  function paintConsole(host, users, events) {
     var byId = {};
     users.forEach(function (u) { byId[u.id] = u; });
 
@@ -267,9 +275,13 @@
         tg.type = 'button';
         tg.addEventListener('click', function () {
           try {
-            Auth.setActive(u.id, !u.active);
-            track('admin_toggle_user', { userId: u.id, active: !u.active });
-            renderAdmin();
+            Promise.resolve()
+              .then(function () { return Auth.setActive(u.id, !u.active); })
+              .then(function () {
+                track('admin_toggle_user', { userId: u.id, active: !u.active });
+                renderAdmin();
+              })
+              .catch(function (ex) { alert(ex.message); });
           } catch (ex) { alert(ex.message); }
         });
         act.appendChild(tg);
@@ -457,7 +469,7 @@
       '<path d="M6.9 10.1l2.1 2.2 4.1-4.6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     brand.appendChild(mark);
     var bt = el('div');
-    bt.appendChild(el('div', 'brand-name', 'Sentinel Risk Desk'));
+    bt.appendChild(el('div', 'brand-name', Brand.name));
     bt.appendChild(el('div', 'brand-sub', 'Staff console'));
     brand.appendChild(bt);
     card.appendChild(brand);
@@ -513,8 +525,12 @@
          session down before anything renders, so a customer who lands here
          is not left holding a signed-in session against a staff URL. */
       if (user.role !== 'admin') {
-        Auth.signOut();
-        fail(NOT_STAFF);
+        /* End the session before saying no, so a refusal cannot be retried
+           by simply reloading the page. */
+        Promise.resolve()
+          .then(function () { return Auth.signOut(); })
+          .catch(function () {})
+          .then(function () { fail(NOT_STAFF); });
         return;
       }
       enterConsole(user);
@@ -559,9 +575,13 @@
   }
 
   function signOut() {
-    Auth.signOut();
-    session.user = null;
-    showGate(null);
+    Promise.resolve()
+      .then(function () { return Auth.signOut(); })
+      .catch(function () {})
+      .then(function () {
+        session.user = null;
+        showGate(null);
+      });
   }
 
   /* ================================= boot ================================ */
@@ -580,7 +600,12 @@
     try { existing = Auth.currentUser(); } catch (e) { existing = null; }
 
     if (existing && existing.role === 'admin') enterConsole(existing);
-    else if (existing) { Auth.signOut(); showGate(NOT_STAFF); }
+    else if (existing) {
+      Promise.resolve()
+        .then(function () { return Auth.signOut(); })
+        .catch(function () {})
+        .then(function () { showGate(NOT_STAFF); });
+    }
     else showGate(null);
   }
 

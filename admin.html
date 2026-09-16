@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="assets/app.css">
 </head>
-<body>
+<body data-page="console">
 
 <!-- Staff sign-in gate. Filled and shown by admin.js when there is no
      session, or when the session belongs to a customer rather than staff. -->
@@ -29,7 +29,7 @@
       </svg>
     </div>
     <div class="brand-text">
-      <div class="brand-name">Sentinel Risk Desk</div>
+      <div class="brand-name" data-brand="name">Sentinel Risk Desk</div>
       <div class="brand-sub">Staff console</div>
     </div>
   </div>
@@ -73,6 +73,7 @@
 </div></main>
 </div>
 
+<script src="assets/brand.js"></script>
 <script src="assets/ui.js"></script>
 <!-- data.js reads BRI.ML at load time for its random-number helpers, so ml.js
      has to come first even though the console does no modelling itself. -->

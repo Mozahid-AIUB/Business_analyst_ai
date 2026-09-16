@@ -10,6 +10,7 @@
   var ML = window.BRI.ML;
   var D = window.BRI.Data;
   var UI = window.BRI.UI;
+  var Brand = window.BRI.Brand;
 
   /* Everything below is the shared presentation layer in ui.js, which the
      staff console loads too. Aliased once here so the rest of the file reads
@@ -2360,8 +2361,8 @@
       '<path d="M6.9 10.1l2.1 2.2 4.1-4.6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     brand.appendChild(mark);
     var bt = el('div');
-    bt.appendChild(el('div', 'brand-name', 'Sentinel Risk Desk'));
-    bt.appendChild(el('div', 'brand-sub', 'Risk & Intelligence'));
+    bt.appendChild(el('div', 'brand-name', Brand.name));
+    bt.appendChild(el('div', 'brand-sub', Brand.tagline));
     brand.appendChild(bt);
     card.appendChild(brand);
 
@@ -2478,19 +2479,30 @@
         return;
       }
 
-      try {
-        var user = session.mode === 'signin'
-          ? Auth.signIn(emailIn.value, passIn.value)
-          : Auth.signUp(emailIn.value, passIn.value, nameIn ? nameIn.value : '', companyIn ? companyIn.value : '');
-        enterApp(user);
-      } catch (ex) {
-        err.textContent = ex.message;
-        err.hidden = false;
-        passIn.value = '';
-        if (pass2In) pass2In.value = '';
-        if (meter) meter.update('');
-        passIn.focus();
-      }
+      /* The demo provider answers at once and a network call cannot, so both
+         go through a promise. A round trip also needs the button disabled, or
+         an impatient double-click submits twice. */
+      var label = submit.textContent;
+      submit.disabled = true;
+      submit.textContent = session.mode === 'signin' ? 'Signing in…' : 'Creating account…';
+
+      Promise.resolve()
+        .then(function () {
+          return session.mode === 'signin'
+            ? Auth.signIn(emailIn.value, passIn.value)
+            : Auth.signUp(emailIn.value, passIn.value, nameIn ? nameIn.value : '', companyIn ? companyIn.value : '');
+        })
+        .then(function (user) { enterApp(user); })
+        .catch(function (ex) {
+          submit.disabled = false;
+          submit.textContent = label;
+          err.textContent = ex.message;
+          err.hidden = false;
+          passIn.value = '';
+          if (pass2In) pass2In.value = '';
+          if (meter) meter.update('');
+          passIn.focus();
+        });
     });
 
     panel.appendChild(form);
@@ -2550,9 +2562,18 @@
       '<path d="M12.5 14.5v2h-9v-13h9v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
       '<path d="M8 10h8.5m0 0-2.4-2.4M16.5 10l-2.4 2.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     out.addEventListener('click', function () {
-      Auth.signOut();
-      session.user = null;
-      showGate('signin');
+      /* Wait for the sign-out to land before offering the form again. Against
+         the API provider the old session is still live until the server says
+         otherwise, and showing the gate early lets a second sign-in race the
+         first one's teardown. */
+      out.disabled = true;
+      Promise.resolve()
+        .then(function () { return Auth.signOut(); })
+        .catch(function () { /* the local session ends regardless */ })
+        .then(function () {
+          session.user = null;
+          showGate('signin');
+        });
     });
     block.appendChild(out);
   }
@@ -2580,10 +2601,13 @@
     if (!host || !session.user) return;
     clear(host);
 
-    var mine = [];
-    try {
-      mine = Auth.events({ userId: session.user.id });
-    } catch (e) { mine = []; }
+    Promise.resolve()
+      .then(function () { return Auth.events({ userId: session.user.id }); })
+      .catch(function () { return []; })
+      .then(function (mine) { paintDashboard(host, mine || []); });
+  }
+
+  function paintDashboard(host, mine) {
 
     var scans = mine.filter(function (e) { return e.type === 'scan'; });
     var healths = mine.filter(function (e) { return e.type === 'health'; });
@@ -2702,8 +2726,12 @@
 
     /* The gate decides what is on screen; training runs either way, so the
        platform is warm by the time someone finishes signing in. */
-    var existing = Auth.currentUser();
-    if (existing) enterApp(existing); else showGate('signin');
+    Promise.resolve()
+      .then(function () { return Auth.currentUser(); })
+      .catch(function () { return null; })
+      .then(function (existing) {
+        if (existing) enterApp(existing); else showGate('signin');
+      });
 
     setStatus('Fitting fraud models…', true);
     renderScanControls();
