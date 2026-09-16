@@ -12,35 +12,36 @@
 </head>
 <body>
 
-<header class="masthead">
-  <div class="masthead-inner">
-    <div class="brand">
-      <div class="brand-mark">
-        <svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-          <path d="M10 1.8 3.2 4.6v5.1c0 4 2.9 7.4 6.8 8.5 3.9-1.1 6.8-4.5 6.8-8.5V4.6L10 1.8Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
-          <path d="M6.9 10.1l2.1 2.2 4.1-4.6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <div>
-        <div class="brand-name">Sentinel Risk Desk</div>
-        <div class="brand-sub">Risk &amp; Intelligence Platform</div>
-      </div>
+<div class="layout">
+
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M10 1.8 3.2 4.6v5.1c0 4 2.9 7.4 6.8 8.5 3.9-1.1 6.8-4.5 6.8-8.5V4.6L10 1.8Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M6.9 10.1l2.1 2.2 4.1-4.6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </div>
+    <div class="brand-text">
+      <div class="brand-name">Sentinel Risk Desk</div>
+      <div class="brand-sub">Risk &amp; Intelligence</div>
+    </div>
+  </div>
 
-    <nav class="tabs" role="tablist" aria-label="Platform sections">
-      <button class="tab" id="tab-scanner" role="tab" aria-selected="true" aria-controls="panel-scanner" type="button">
-        <span class="tab-num">01</span> Fraud scanner
-      </button>
-      <button class="tab" id="tab-health" role="tab" aria-selected="false" aria-controls="panel-health" type="button">
-        <span class="tab-num">02</span> Health score
-      </button>
-      <button class="tab" id="tab-method" role="tab" aria-selected="false" aria-controls="panel-method" type="button">
-        <span class="tab-num">03</span> Methodology
-      </button>
-    </nav>
+  <nav class="nav" role="tablist" aria-label="Platform sections">
+    <button class="nav-item" id="tab-scanner" role="tab" aria-selected="true" aria-controls="panel-scanner" type="button">
+      <span class="nav-num">01</span><span class="nav-label">Fraud scanner</span>
+    </button>
+    <button class="nav-item" id="tab-health" role="tab" aria-selected="false" aria-controls="panel-health" type="button">
+      <span class="nav-num">02</span><span class="nav-label">Health score</span>
+    </button>
+    <button class="nav-item" id="tab-method" role="tab" aria-selected="false" aria-controls="panel-method" type="button">
+      <span class="nav-num">03</span><span class="nav-label">Methodology</span>
+    </button>
+  </nav>
 
-    <span class="hint mono" id="boot-status" style="display:flex;align-items:center;gap:7px"></span>
-
+  <div class="sidebar-foot">
+    <span class="hint mono" id="boot-status"></span>
     <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to dark theme">
       <svg id="theme-icon-dark" width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true">
         <path d="M16.5 12.3A7 7 0 0 1 7.7 3.5a7 7 0 1 0 8.8 8.8Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
@@ -51,9 +52,9 @@
       </svg>
     </button>
   </div>
-</header>
+</aside>
 
-<main class="page">
+<main class="main"><div class="page">
 
   <!-- ===================== 01 · FRAUD SCANNER ===================== -->
   <section id="panel-scanner" role="tabpanel" aria-labelledby="tab-scanner">
@@ -115,7 +116,8 @@
     in-page from documented processes, so nothing you load leaves the browser.
   </p>
 
-</main>
+</div></main>
+</div>
 
 <script src="assets/ml.js"></script>
 <script src="assets/data.js"></script>

@@ -168,28 +168,33 @@ a { color: var(--accent); }
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 
-/* ---------------------------------------------------------------- header */
+/* The publish skeleton supplies this, a plain file does not - and without it
+   an SVG carrying the hidden attribute still paints, because the UA rule for
+   [hidden] does not reach the SVG namespace in every engine. */
+[hidden] { display: none !important; }
 
-.masthead {
+/* --------------------------------------------------------------- sidebar */
+
+.layout { display: flex; align-items: flex-start; min-height: 100%; }
+
+.sidebar {
   position: sticky;
   top: env(safe-area-inset-top, 0px);
   z-index: 40;
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line);
-}
-
-.masthead-inner {
-  max-width: 1360px;
-  margin: 0 auto;
-  padding: 10px 20px;
+  width: 236px;
+  flex: none;
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 18px;
-  flex-wrap: wrap;
+  padding: 16px 0;
+  background: var(--surface);
+  border-right: 1px solid var(--line);
 }
 
-.brand { display: flex; align-items: center; gap: 10px; margin-right: auto; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 0 16px; }
 
 .brand-mark {
   width: 30px; height: 30px; flex: none;
@@ -214,48 +219,75 @@ a { color: var(--accent); }
   color: var(--muted);
 }
 
-.tabs {
-  display: flex;
-  gap: 2px;
-  background: var(--surface-3);
-  padding: 3px;
-  border-radius: var(--r-md);
-}
+.nav { display: flex; flex-direction: column; gap: 1px; padding: 0 10px; }
 
-.tab {
+.nav-item {
+  position: relative;
   appearance: none;
   border: 0;
   background: transparent;
   color: var(--ink-2);
   font-family: var(--font-body);
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 500;
-  padding: 7px 13px;
-  border-radius: 6px;
+  text-align: left;
+  padding: 9px 12px;
+  border-radius: var(--r-md);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 11px;
   white-space: nowrap;
   transition: background .14s, color .14s;
 }
-.tab:hover { color: var(--ink); }
-.tab[aria-selected="true"] {
-  background: var(--surface);
-  color: var(--ink);
-  box-shadow: var(--shadow-sm);
+.nav-item:hover { background: var(--surface-2); color: var(--ink); }
+.nav-item[aria-selected="true"] {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-weight: 600;
 }
-.tab-num {
+/* The rail marks the active section without spending another colour on it. */
+.nav-item[aria-selected="true"]::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 7px;
+  bottom: 7px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--accent);
+}
+.nav-num {
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  font-size: 10px;
   color: var(--muted);
   letter-spacing: .06em;
+  flex: none;
 }
-.tab[aria-selected="true"] .tab-num { color: var(--accent); }
+.nav-item[aria-selected="true"] .nav-num { color: var(--accent); }
+
+.sidebar-foot {
+  margin-top: auto;
+  padding: 14px 16px 0;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+#boot-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: 1 1 auto;
+  min-width: 0;
+  line-height: 1.35;
+}
 
 .icon-btn {
   appearance: none;
   width: 32px; height: 32px;
+  flex: none;
   display: grid; place-items: center;
   border: 1px solid var(--line);
   background: var(--surface);
@@ -266,9 +298,47 @@ a { color: var(--accent); }
 }
 .icon-btn:hover { border-color: var(--line-strong); color: var(--ink); }
 
+/* Below this width the rail would eat the working area, so it lies down into
+   a scrollable strip across the top and the labels drop away first. */
+@media (max-width: 900px) {
+  .layout { flex-direction: column; align-items: stretch; }
+  .sidebar {
+    width: auto;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+    overflow-y: visible;
+  }
+  .brand { padding: 0; flex: none; }
+  .brand-text { display: none; }
+  .nav { flex-direction: row; padding: 0; gap: 2px; }
+  .nav-item { padding: 7px 11px; }
+  .nav-item[aria-selected="true"]::before { display: none; }
+  .sidebar-foot {
+    margin-top: 0;
+    margin-left: auto;
+    padding: 0;
+    border-top: 0;
+    flex: none;
+  }
+  #boot-status { display: none; }
+}
+@media (max-width: 560px) {
+  .nav-label { display: none; }
+  .nav-item { gap: 0; }
+  .nav-num { font-size: 11px; }
+}
+
 /* ------------------------------------------------------------------ shell */
 
-.page { max-width: 1360px; margin: 0 auto; padding: 22px 20px 72px; }
+.main { flex: 1 1 auto; min-width: 0; }
+
+.page { max-width: 1240px; margin: 0 auto; padding: 24px 22px 72px; }
 
 .section-head { margin-bottom: 18px; }
 .section-head h1 { font-size: clamp(21px, 3.2vw, 27px); margin-top: 4px; }
@@ -285,7 +355,9 @@ a { color: var(--accent); }
   gap: 18px;
   align-items: start;
 }
-@media (max-width: 1000px) { .workbench { grid-template-columns: 1fr; } }
+/* The rail already takes 236px, so the two-column workbench has to give up
+   earlier than the viewport width alone would suggest. */
+@media (max-width: 1160px) { .workbench { grid-template-columns: 1fr; } }
 
 .stack { display: flex; flex-direction: column; gap: 14px; }
 
