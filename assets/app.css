@@ -1,10 +1,15 @@
 /* ============================================================================
    app.css - Sentinel Risk Desk design system
 
-   Single-theme by design: a cream paper ground with a deep blue accent, the
-   palette of a printed credit file. There is no dark variant and no toggle,
-   so every colour is declared once here and every surface is painted
-   explicitly - the page holds its own look on any host background.
+   A cream paper ground with a deep blue accent - the palette of a printed
+   credit file. The dark variant is restepped from the same family rather than
+   inverted: a warm near-black, not a blue-black, so the two themes read as one
+   identity seen under different light.
+
+   The complete palette lives on bare :root. The dark blocks redefine only the
+   tokens, once under the OS media query (guarded so an explicit light choice
+   still wins) and once under the [data-theme] stamp (so the toggle wins in
+   both directions). No component styles live inside a theme block.
    ========================================================================== */
 
 :root {
@@ -54,6 +59,64 @@
   --font-display: "Archivo", "Segoe UI", system-ui, sans-serif;
   --font-body:    "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   --font-mono:    "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper:        #14110c;
+    --surface:      #1e1a14;
+    --surface-2:    #26211a;
+    --surface-3:    #332c22;
+    --ink:          #f5f1e8;
+    --ink-2:        #b5ad9c;
+    --muted:        #8a8376;
+    --line:         #322c22;
+    --line-strong:  #4a4234;
+    --accent:       #93a4f0;
+    --accent-hover: #aab8f5;
+    --accent-soft:  #232742;
+    --accent-ink:   #c4cdfa;
+    --good-soft:    #13260f;
+    --warning-soft: #2e2510;
+    --serious-soft: #2e1d14;
+    --critical-soft:#2d1614;
+    --s1:           #3987e5;
+    --s2:           #d95926;
+    --s3:           #199e70;
+    --grid:         #2a2419;
+    --axis:         #4a4234;
+    --shadow-sm:    0 1px 2px rgba(0, 0, 0, .45);
+    --shadow-md:    0 6px 22px -6px rgba(0, 0, 0, .65);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper:        #14110c;
+  --surface:      #1e1a14;
+  --surface-2:    #26211a;
+  --surface-3:    #332c22;
+  --ink:          #f5f1e8;
+  --ink-2:        #b5ad9c;
+  --muted:        #8a8376;
+  --line:         #322c22;
+  --line-strong:  #4a4234;
+  --accent:       #93a4f0;
+  --accent-hover: #aab8f5;
+  --accent-soft:  #232742;
+  --accent-ink:   #c4cdfa;
+  --good-soft:    #13260f;
+  --warning-soft: #2e2510;
+  --serious-soft: #2e1d14;
+  --critical-soft:#2d1614;
+  --s1:           #3987e5;
+  --s2:           #d95926;
+  --s3:           #199e70;
+  --grid:         #2a2419;
+  --axis:         #4a4234;
+  --shadow-sm:    0 1px 2px rgba(0, 0, 0, .45);
+  --shadow-md:    0 6px 22px -6px rgba(0, 0, 0, .65);
 }
 
 /* ------------------------------------------------------------------ base */
@@ -315,6 +378,17 @@ a { color: var(--accent); }
 .chip-good     { color: var(--good);     background: var(--good-soft);     border-color: color-mix(in srgb, var(--good) 26%, transparent); }
 .chip-neutral  { color: var(--ink-2);    background: var(--surface-3);     border-color: var(--line); }
 
+:root[data-theme="dark"] .chip-critical,
+:root[data-theme="dark"] .chip-warning,
+:root[data-theme="dark"] .chip-serious,
+:root[data-theme="dark"] .chip-good { filter: brightness(1.2); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .chip-critical,
+  :root:not([data-theme="light"]) .chip-warning,
+  :root:not([data-theme="light"]) .chip-serious,
+  :root:not([data-theme="light"]) .chip-good { filter: brightness(1.2); }
+}
+
 .stripe { width: 3px; border-radius: 2px; align-self: stretch; flex: none; min-height: 18px; }
 .stripe-critical { background: var(--critical); }
 .stripe-serious  { background: var(--serious); }
@@ -417,6 +491,10 @@ input[type="range"]::-moz-range-thumb {
   font-weight: 600;
 }
 .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+:root[data-theme="dark"] .btn-primary { color: #14110c; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .btn-primary { color: #14110c; }
+}
 .btn-sm { padding: 5px 10px; font-size: 11.5px; }
 .btn-block { width: 100%; }
 
@@ -734,7 +812,7 @@ table.data .dim { color: var(--muted); }
 .modal-back {
   position: fixed;
   inset: 0;
-  background: rgba(40, 32, 20, .45);
+  background: rgba(20, 15, 8, .58);
   backdrop-filter: blur(3px);
   z-index: 100;
   display: grid;

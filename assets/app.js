@@ -2382,6 +2382,56 @@
     window.scrollTo(0, 0);
   }
 
+  /* --------------------------------------------------------------- theme */
+  /* Three states, not two: an explicit choice stamps the root element, and the
+     default "system" setting stamps nothing and follows prefers-color-scheme.
+     The stored preference is a per-viewer convenience, so every access is
+     wrapped - it throws in a private window and comes back empty after a
+     cleared cache, and the page has to render correctly either way. */
+
+  function currentlyDark() {
+    var stamp = document.documentElement.getAttribute('data-theme');
+    if (stamp) return stamp === 'dark';
+    return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  }
+
+  function syncThemeButton() {
+    var btn = $('theme-toggle');
+    if (!btn) return;
+    var dark = currentlyDark();
+    var moon = $('theme-icon-dark'), sun = $('theme-icon-light');
+    if (moon) moon.hidden = dark;
+    if (sun) sun.hidden = !dark;
+    btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+  }
+
+  function initTheme() {
+    var btn = $('theme-toggle');
+    if (!btn) return;
+
+    var stored = null;
+    try { stored = localStorage.getItem('sentinel-theme'); } catch (e) { /* private mode */ }
+    if (stored === 'dark' || stored === 'light') document.documentElement.setAttribute('data-theme', stored);
+    syncThemeButton();
+
+    btn.addEventListener('click', function () {
+      var next = currentlyDark() ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('sentinel-theme', next); } catch (e) { /* ignore */ }
+      syncThemeButton();
+    });
+
+    /* Follow the OS while the viewer has not chosen for themselves. */
+    if (window.matchMedia) {
+      var mq = window.matchMedia('(prefers-color-scheme: dark)');
+      var onChange = function () {
+        if (!document.documentElement.getAttribute('data-theme')) syncThemeButton();
+      };
+      if (mq.addEventListener) mq.addEventListener('change', onChange);
+      else if (mq.addListener) mq.addListener(onChange);
+    }
+  }
+
   /* ================================= boot ================================ */
 
   function setStatus(text, busy) {
@@ -2393,6 +2443,7 @@
   }
 
   function boot() {
+    initTheme();
     ['scanner', 'health', 'method'].forEach(function (t) {
       var b = $('tab-' + t);
       if (b) b.addEventListener('click', function () { setTab(t); });
