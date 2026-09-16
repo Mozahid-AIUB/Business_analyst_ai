@@ -28,8 +28,12 @@
   'use strict';
 
   var PROVIDER = 'demo';          /* 'demo' | 'supabase' */
-  var STORAGE_KEY = 'sentinel-auth-v1';
-  var SESSION_KEY = 'sentinel-session-v1';
+  /* Bump these when the stored shape changes. Renaming the customer role left
+     v1 browsers holding accounts whose role still read "owner", which the
+     console then displayed - a rename in the source does not reach data that
+     is already saved. A new key starts clean rather than half-migrated. */
+  var STORAGE_KEY = 'sentinel-auth-v2';
+  var SESSION_KEY = 'sentinel-session-v2';
   var PBKDF_ROUNDS = 600;
 
   /* ---------------------------------------------------------------- sha256 */

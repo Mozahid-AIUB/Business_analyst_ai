@@ -244,7 +244,7 @@
 
       var rd = el('td');
       rd.appendChild(el('span', 'chip ' + (u.role === 'admin' ? 'chip-good' : 'chip-neutral'),
-        u.role === 'admin' ? 'admin' : 'owner'));
+        u.role === 'admin' ? 'staff' : 'customer'));
       if (u.seeded) rd.appendChild(el('span', 'chip chip-neutral', 'sample'));
       row.appendChild(rd);
 
