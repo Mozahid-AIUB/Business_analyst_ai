@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status, Response
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -52,10 +52,43 @@ def _record_event(db: Session, user: User, event_type: str, meta: dict | None = 
     db.add(UsageEvent(user_id=user.id, type=event_type, meta=meta or {}))
 
 
-def _auth_response(user: User) -> AuthResponse:
+REFRESH_COOKIE = "sentinel_refresh"
+
+
+def _set_refresh_cookie(response: Response, token: str) -> None:
+    """The refresh token goes in an HttpOnly cookie, not the response body.
+
+    The application renders user-supplied text (merchant names, memos, company
+    names), so script injection is a real risk rather than a theoretical one.
+    A refresh token readable by JavaScript is a permanent account takeover if
+    that ever happens; one the browser holds but scripts cannot read is not.
+
+    SameSite=lax still sends it on the top-level navigation that follows a
+    sign-in, while keeping it off cross-site form posts. Secure is set outside
+    development because a cookie sent over plain HTTP is a cookie in transit
+    for anyone on the network.
+    """
+    response.set_cookie(
+        key=REFRESH_COOKIE,
+        value=token,
+        httponly=True,
+        secure=settings.environment != "development",
+        samesite="lax",
+        max_age=settings.refresh_token_expire_days * 24 * 3600,
+        path="/auth",
+    )
+
+
+def _clear_refresh_cookie(response: Response) -> None:
+    response.delete_cookie(REFRESH_COOKIE, path="/auth")
+
+
+def _auth_response(user: User, response: Response) -> AuthResponse:
+    """Mints both tokens, but only the access token reaches the caller; the
+    refresh token is written straight into the HttpOnly cookie."""
+    _set_refresh_cookie(response, create_refresh_token(user))
     return AuthResponse(
         access_token=create_access_token(user),
-        refresh_token=create_refresh_token(user),
         expires_in=settings.access_token_expire_minutes * 60,
         user=UserPublic.model_validate(user),
     )
@@ -67,7 +100,7 @@ def _auth_response(user: User) -> AuthResponse:
     status_code=status.HTTP_201_CREATED,
     summary="Create an account and sign in",
 )
-def register(payload: RegisterRequest, db: Session = Depends(get_db)) -> AuthResponse:
+def register(payload: RegisterRequest, response: Response, db: Session = Depends(get_db)) -> AuthResponse:
     """Password rules and their messages live in schemas.RegisterRequest, copied
     from auth.js so the frontend renders the same text it always has.
 
@@ -106,11 +139,11 @@ def register(payload: RegisterRequest, db: Session = Depends(get_db)) -> AuthRes
     _record_event(db, user, "signup")
     _record_event(db, user, "login")
     db.flush()
-    return _auth_response(user)
+    return _auth_response(user, response)
 
 
 @router.post("/login", response_model=AuthResponse, summary="Exchange credentials for tokens")
-def login(payload: LoginRequest, request: Request, db: Session = Depends(get_db)) -> AuthResponse:
+def login(payload: LoginRequest, request: Request, response: Response, db: Session = Depends(get_db)) -> AuthResponse:
     """Unknown email and wrong password return the identical 401 body, and both
     perform a bcrypt verification, so neither the message nor the response time
     reveals whether an account exists.
@@ -139,18 +172,32 @@ def login(payload: LoginRequest, request: Request, db: Session = Depends(get_db)
     user.login_count = (user.login_count or 0) + 1
     _record_event(db, user, "login")
     db.flush()
-    return _auth_response(user)
+    return _auth_response(user, response)
 
 
 @router.post("/refresh", response_model=AuthResponse, summary="Exchange a refresh token for a new pair")
-def refresh(payload: RefreshRequest, db: Session = Depends(get_db)) -> AuthResponse:
+def refresh(
+    request: Request,
+    response: Response,
+    db: Session = Depends(get_db),
+) -> AuthResponse:
     """Both tokens are reissued, so a client that refreshes regularly never
     reaches the refresh token's own expiry.
+
+    The token is read from the HttpOnly cookie rather than a request body: the
+    browser attaches it automatically and page scripts never see it.
 
     Without a server-side deny-list a leaked refresh token stays valid until it
     expires; see the "not yet implemented" list in backend/README.md.
     """
-    token_payload = decode_token(payload.refresh_token, TOKEN_TYPE_REFRESH)
+    raw = request.cookies.get(REFRESH_COOKIE)
+    if not raw:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    token_payload = decode_token(raw, TOKEN_TYPE_REFRESH)
 
     import uuid as _uuid
 
@@ -173,12 +220,14 @@ def refresh(payload: RefreshRequest, db: Session = Depends(get_db)) -> AuthRespo
     if not user.active:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=MSG_DISABLED)
 
-    return _auth_response(user)
+    return _auth_response(user, response)
 
 
 @router.post("/logout", response_model=MessageResponse, summary="Record a sign-out")
 def logout(
-    current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
+    response: Response,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ) -> MessageResponse:
     """Records the event; the client discards its tokens.
 
@@ -188,6 +237,8 @@ def logout(
     """
     _record_event(db, current_user, "logout")
     db.flush()
+    # Drop the cookie too, or the next visit silently refreshes back in.
+    _clear_refresh_cookie(response)
     return MessageResponse(detail="Signed out.")
 
 

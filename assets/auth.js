@@ -458,7 +458,7 @@
     return fetch(API_BASE + path, {
       method: options.method || 'GET',
       headers: headers,
-      credentials: 'include',      /* refresh token rides in an httpOnly cookie */
+      credentials: 'include',      /* carries the HttpOnly refresh cookie */
       body: options.body ? JSON.stringify(options.body) : undefined
     }).then(function (res) {
       if (res.status === 204) return null;
@@ -515,8 +515,10 @@
 
       currentUser: function () {
         if (!accessToken) {
-          /* A page reload loses the in-memory token; the refresh cookie is
-             what restores the session. */
+          /* A page reload loses the in-memory token. The refresh cookie is
+             HttpOnly, so the browser sends it and this code never sees it -
+             which is the point: a script that got onto the page cannot steal
+             a credential it has no way to read. */
           return apiCall('/auth/refresh', { method: 'POST' })
             .then(function (data) {
               accessToken = data.access_token;

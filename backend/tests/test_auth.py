@@ -21,6 +21,15 @@ from app.schemas import (
 GOOD_PASSWORD = "tr0ubador-stapler"
 
 
+REFRESH_COOKIE = "sentinel_refresh"
+
+
+def refresh_cookie(response) -> str:
+    """The refresh token is an HttpOnly cookie now, not a body field, so tests
+    read it the way a browser would."""
+    return response.cookies.get(REFRESH_COOKIE, "")
+
+
 def register(client: TestClient, email: str = "ana@northgate.com", password: str = GOOD_PASSWORD, **kw):
     body = {"email": email, "password": password}
     body.update(kw)
@@ -43,7 +52,8 @@ def test_register_returns_tokens_and_profile(client: TestClient) -> None:
     body = r.json()
 
     assert body["token_type"] == "bearer"
-    assert body["access_token"] and body["refresh_token"]
+    assert body["access_token"]
+    assert REFRESH_COOKIE in r.cookies
     assert body["expires_in"] == 30 * 60
 
     user = body["user"]
@@ -165,7 +175,8 @@ def test_login_success(client: TestClient) -> None:
     r = login(client)
     assert r.status_code == 200, r.text
     body = r.json()
-    assert body["access_token"] and body["refresh_token"]
+    assert body["access_token"]
+    assert REFRESH_COOKIE in r.cookies
     assert body["user"]["email"] == "ana@northgate.com"
     # 1 from the auto sign-in at registration, 1 from this login.
     assert body["user"]["login_count"] == 2
@@ -267,7 +278,7 @@ def test_me_with_malformed_token(client: TestClient) -> None:
 def test_me_rejects_a_refresh_token(client: TestClient) -> None:
     """Both tokens carry the same signature; only the `type` claim separates
     them. A refresh token used as an access token must be refused."""
-    refresh_token = register(client).json()["refresh_token"]
+    refresh_token = refresh_cookie(register(client))
     r = client.get("/auth/me", headers=bearer(refresh_token))
     assert r.status_code == 401
 
@@ -286,27 +297,32 @@ def test_token_signed_with_another_key_rejected(client: TestClient) -> None:
 # ------------------------------------------------------------ refresh/logout
 
 def test_refresh_returns_a_new_pair(client: TestClient) -> None:
-    refresh_token = register(client).json()["refresh_token"]
-    r = client.post("/auth/refresh", json={"refresh_token": refresh_token})
+    refresh_token = refresh_cookie(register(client))
+    r = client.post("/auth/refresh")
     assert r.status_code == 200
     body = r.json()
-    assert body["access_token"] and body["refresh_token"]
+    assert body["access_token"]
+    assert REFRESH_COOKIE in r.cookies
     assert client.get("/auth/me", headers=bearer(body["access_token"])).status_code == 200
 
 
 def test_refresh_rejects_an_access_token(client: TestClient) -> None:
     access_token = register(client).json()["access_token"]
-    r = client.post("/auth/refresh", json={"refresh_token": access_token})
+    # Registering set a valid refresh cookie; drop it, or the endpoint simply
+    # uses that and the substitution is never actually tested.
+    client.cookies.clear()
+    client.cookies.set(REFRESH_COOKIE, access_token)
+    r = client.post("/auth/refresh")
     assert r.status_code == 401
 
 
 def test_refresh_rejects_a_disabled_account(client: TestClient, db_session) -> None:
-    refresh_token = register(client).json()["refresh_token"]
+    refresh_token = refresh_cookie(register(client))
     user = db_session.execute(select(User).where(User.email == "ana@northgate.com")).scalar_one()
     user.active = False
     db_session.commit()
 
-    r = client.post("/auth/refresh", json={"refresh_token": refresh_token})
+    r = client.post("/auth/refresh")
     assert r.status_code == 403
 
 

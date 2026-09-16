@@ -118,8 +118,11 @@ class LoginRequest(BaseModel):
 
 
 class RefreshRequest(BaseModel):
+    """Empty by design. The refresh token arrives in an HttpOnly cookie that
+    JavaScript cannot read, so there is nothing for a client to put in a body.
+    Kept as a model so the endpoint still rejects unexpected fields."""
+
     model_config = ConfigDict(extra="forbid")
-    refresh_token: str
 
 
 class UserPublic(BaseModel):
@@ -140,8 +143,14 @@ class UserPublic(BaseModel):
 
 
 class TokenPair(BaseModel):
+    """Only the access token is returned to the caller.
+
+    The refresh token is deliberately absent: it is set as an HttpOnly cookie
+    instead, so a script injected into the page cannot read it. Returning it
+    here would make any XSS a permanent account takeover rather than a
+    session-length one."""
+
     access_token: str
-    refresh_token: str
     token_type: Literal["bearer"] = "bearer"
     expires_in: int = Field(description="Access token lifetime in seconds.")
 
