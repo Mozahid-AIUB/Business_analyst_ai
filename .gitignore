@@ -11,3 +11,6 @@ Thumbs.db
 .vscode/
 .idea/
 *.log
+
+# Scratch left by extraction work
+assets/*.tmp
