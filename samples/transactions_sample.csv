@@ -1,0 +1,901 @@
+Txn Ref,Posted On,Cust No,Txn Amount (USD),Entry Mode,Payee Name,MCC Group,Payee Age (d),Txn Country,Billing Country,New Device?,Trans Count 24H,Avg Txn 30D,Days Since Open,Particulars,Confirmed Fraud
+TX-100000,2026-08-18 16:45:17,AC-4688,59.68,wallet,Halcyon Trading,travel,167,US,US,N,11,35.68,40,grocery basket,0
+TX-100001,2026-09-06 13:52:57,AC-4177,8.79,atm,Kestrel Retail,apparel,2,DE,US,N,10,8.43,15,payroll credit,0
+TX-100002,2026-09-16 23:26:03,AC-4439,22.88,card_not_present,Hollow Mart,restaurant,831,US,US,N,1,22.22,7,payroll credit,0
+TX-100003,2026-08-23 06:33:03,AC-4745,50.63,card_present,Corvid Retail,money_transfer,50,US,US,Y,1,34.08,42,grocery basket,0
+TX-100004,2026-09-08 02:46:36,AC-4284,11.19,card_present,Corvid Labs,utilities,57,GB,GB,N,5,18.67,77,recurring subscription renewal,0
+TX-100005,2026-08-24 07:16:10,AC-4592,32.85,atm,Larkspur Group,pharmacy,172,US,US,N,1,5,44,fuel top up,0
+TX-100006,2026-09-04 12:11:52,AC-4837,0.96,card_present,Corvid Group,gift_cards,42,BD,BD,N,1,28.58,47,grocery basket,0
+TX-100007,2026-09-06 08:22:55,AC-4539,18.36,atm,Nexa Digital,fuel,55,US,US,N,1,13.79,18,regular vendor payment,0
+TX-100008,2026-09-06 12:27:37,AC-4450,12.03,card_present,Larkspur Group,crypto_exchange,4,US,US,N,12,10.07,7,payroll credit,0
+TX-100009,2026-08-22 00:45:39,AC-4208,2.08,card_not_present,Mistral Digital,pharmacy,763,BD,BD,N,7,80.29,27,account credential update then purchase,1
+TX-100010,2026-08-20 16:26:44,AC-4432,18.97,card_present,Nexa Digital,grocery,263,BD,BD,N,3,33.78,26,monthly utility bill,0
+TX-100011,2026-08-17 08:19:19,AC-4658,29.76,card_present,Pallas Digital,fuel,9,BD,BD,Y,11,29.67,25,regular vendor payment,0
+TX-100012,2026-09-12 21:09:18,AC-4824,26.8,wire_transfer,Aster Supply,fuel,1070,MY,BD,N,10,25.03,100,grocery basket,0
+TX-100013,2026-08-24 23:41:10,AC-4828,22.19,atm,Aster Digital,restaurant,1533,BD,BD,N,5,16.67,1184,monthly utility bill,0
+TX-100014,2026-09-12 02:59:49,AC-4481,11.17,atm,Hollow Exchange,money_transfer,146,IN,BD,Y,1,13.73,124,regular vendor payment,0
+TX-100015,2026-08-23 17:16:11,AC-4505,22.79,card_not_present,Mistral Trading,pharmacy,3,US,US,N,6,26,64,fuel top up,0
+TX-100016,2026-09-05 13:23:07,AC-4756,62.04,atm,Hollow Retail,restaurant,5,US,US,N,6,52.64,89,grocery basket,0
+TX-100017,2026-08-26 23:50:19,AC-4809,18.06,atm,Nexa Supply,pharmacy,3,GB,GB,Y,1,10.95,161,recurring subscription renewal,0
+TX-100018,2026-09-11 23:07:53,AC-4396,82.22,card_not_present,Aster Labs,money_transfer,7,US,US,N,13,7.18,8,in store purchase,0
+TX-100019,2026-08-20 21:48:14,AC-4009,27.4,card_not_present,Halcyon Digital,gift_cards,366,BD,BD,N,2,38.13,894,payroll credit,0
+TX-100020,2026-08-25 18:08:00,AC-4541,0.95,card_present,Pallas Labs,money_transfer,32,GB,GB,N,13,13.92,632,fuel top up,0
+TX-100021,2026-08-20 20:07:10,AC-4170,12.31,wallet,Hollow Group,gift_cards,2,US,US,N,4,8.35,10,recurring subscription renewal,0
+TX-100022,2026-08-19 10:55:03,AC-4148,21.33,wire_transfer,Corvid Retail,restaurant,95,US,US,N,2,15.08,14,in store purchase,0
+TX-100023,2026-09-02 23:00:16,AC-4630,84.96,wallet,Quarry Supply,grocery,5,GB,GB,N,2,76.62,23,grocery basket,0
+TX-100024,2026-09-05 22:05:29,AC-4715,14.99,atm,Pallas Labs,telecom_topup,1026,US,US,Y,3,9.61,220,in store purchase,0
+TX-100025,2026-08-29 10:25:46,AC-4165,24.03,card_present,Halcyon Trading,gift_cards,26,GB,GB,Y,14,21.23,1153,regular vendor payment,0
+TX-100026,2026-09-08 00:05:54,AC-4074,76.91,wallet,Hollow Supply,grocery,322,BD,BD,N,1,45.4,189,payroll credit,0
+TX-100027,2026-09-01 01:07:12,AC-4729,5.87,wallet,Tindal Trading,restaurant,1524,GB,GB,N,1,8.01,9,in store purchase,0
+TX-100028,2026-09-12 09:13:13,AC-4008,48.71,wire_transfer,Nexa Exchange,utilities,1,BD,BD,Y,6,43.01,17,in store purchase,0
+TX-100029,2026-08-20 14:05:26,AC-4494,220.78,atm,Pallas Exchange,utilities,109,GB,US,N,4,45.28,12,recurring subscription renewal,0
+TX-100030,2026-08-23 11:23:29,AC-4627,24.57,card_not_present,Mistral Mart,fuel,208,US,US,N,10,24.01,378,regular vendor payment,0
+TX-100031,2026-09-03 21:19:00,AC-4186,99.18,atm,Verdant Labs,money_transfer,2,AE,BD,N,10,79.83,14,in store purchase,0
+TX-100032,2026-09-06 14:54:51,AC-4484,65.26,wallet,Corvid Group,utilities,105,US,US,N,10,41.54,966,monthly utility bill,0
+TX-100033,2026-09-14 05:01:13,AC-4783,24.08,card_not_present,Quarry Group,restaurant,2,US,US,N,12,22.5,8,regular vendor payment,0
+TX-100034,2026-09-02 21:19:09,AC-4384,22.33,wallet,Verdant Labs,money_transfer,103,BD,BD,N,11,24.76,153,gift card bulk order,1
+TX-100035,2026-09-14 17:22:55,AC-4864,17.66,atm,Mistral Supply,pharmacy,1266,GB,GB,N,2,16.91,99,monthly utility bill,0
+TX-100036,2026-08-20 16:20:36,AC-4161,35.57,card_not_present,Kestrel Exchange,crypto_exchange,164,BD,BD,N,5,26.64,725,regular vendor payment,0
+TX-100037,2026-09-15 17:22:41,AC-4868,11.41,wire_transfer,Verdant Retail,utilities,718,BD,BD,N,8,12.72,181,in store purchase,0
+TX-100038,2026-08-19 13:48:10,AC-4454,13.49,card_present,Quarry Labs,telecom_topup,69,GB,GB,N,4,12.76,29,recurring subscription renewal,0
+TX-100039,2026-08-23 21:10:30,AC-4833,19.1,wallet,Halcyon Supply,pharmacy,47,US,US,Y,1,15.08,391,in store purchase,0
+TX-100040,2026-08-22 15:59:27,AC-4602,29.6,card_present,Kestrel Retail,electronics,14,GB,GB,N,2,30.59,30,regular vendor payment,0
+TX-100041,2026-09-04 12:31:45,AC-4205,8.34,atm,Vireo Group,money_transfer,49,US,US,N,6,9.47,490,monthly utility bill,0
+TX-100042,2026-08-24 18:44:28,AC-4759,74.43,card_not_present,Verdant Mart,travel,18,US,GB,N,4,49.69,380,recurring subscription renewal,0
+TX-100043,2026-08-18 12:07:53,AC-4830,20.01,card_not_present,Corvid Retail,gift_cards,43,SG,GB,N,1,22.74,28,in store purchase,0
+TX-100044,2026-08-20 12:31:11,AC-4403,94.21,wire_transfer,Hollow Labs,utilities,44,GB,GB,N,1,29.12,310,payroll credit,0
+TX-100045,2026-08-30 13:19:02,AC-4662,30.51,card_present,Nexa Trading,fuel,22,MY,BD,N,3,24.64,7,payroll credit,0
+TX-100046,2026-09-15 21:35:39,AC-4096,3.16,wire_transfer,Pallas Mart,pharmacy,846,GB,GB,N,1,12.68,33,grocery basket,0
+TX-100047,2026-08-28 04:04:13,AC-4402,9.56,wire_transfer,Mistral Group,grocery,8,NG,GB,N,9,15,46,recurring subscription renewal,0
+TX-100048,2026-08-21 07:04:06,AC-4591,7.3,card_present,Corvid Trading,pharmacy,1,GB,GB,N,10,12.25,318,grocery basket,0
+TX-100049,2026-09-10 10:10:02,AC-4818,173.48,atm,Mistral Supply,fuel,34,US,US,N,2,178.55,10,grocery basket,0
+TX-100050,2026-09-11 09:05:30,AC-4669,28.37,atm,Pallas Supply,pharmacy,40,US,US,N,14,29.57,22,fuel top up,0
+TX-100051,2026-08-25 07:41:38,AC-4669,5.33,atm,Corvid Group,gift_cards,151,GB,BD,N,4,5,100,in store purchase,0
+TX-100052,2026-09-05 03:18:24,AC-4348,30.82,card_present,Aster Digital,travel,1452,US,US,N,8,32.31,492,regular vendor payment,0
+TX-100053,2026-09-15 23:10:54,AC-4424,315.04,wallet,Halcyon Digital,utilities,41,BD,BD,Y,14,14.98,40,monthly utility bill,0
+TX-100054,2026-08-25 23:58:55,AC-4367,136.73,wallet,Aster Group,apparel,4,GB,GB,Y,4,110.29,30,in store purchase,0
+TX-100055,2026-09-01 11:40:21,AC-4229,22.04,card_not_present,Pallas Trading,restaurant,322,US,US,N,2,25.8,375,grocery basket,0
+TX-100056,2026-09-01 23:16:46,AC-4486,5.11,card_not_present,Quarry Supply,pharmacy,1350,IN,GB,N,14,5.67,396,payroll credit,0
+TX-100057,2026-08-19 14:43:08,AC-4208,13.61,wire_transfer,Kestrel Mart,utilities,2,GB,GB,Y,4,10.38,10,regular vendor payment,0
+TX-100058,2026-08-27 19:50:02,AC-4442,19.39,card_present,Mistral Digital,gift_cards,274,BD,BD,N,15,34.33,637,payroll credit,0
+TX-100059,2026-09-11 18:06:43,AC-4584,11.93,wallet,Meridian Labs,crypto_exchange,842,GB,GB,N,14,8.02,128,recurring subscription renewal,0
+TX-100060,2026-09-02 15:19:24,AC-4268,10.59,wallet,Tindal Digital,crypto_exchange,20,BD,BD,N,15,11.79,1172,in store purchase,0
+TX-100061,2026-08-18 02:37:54,AC-4274,1.76,wire_transfer,Orbit Mart,utilities,116,US,US,N,6,5,12,payroll credit,0
+TX-100062,2026-09-02 06:26:59,AC-4350,3.96,wire_transfer,Meridian Exchange,gift_cards,8,US,US,N,14,5,249,fuel top up,0
+TX-100063,2026-09-16 10:43:32,AC-4333,3.33,atm,Mistral Group,gift_cards,6,BD,BD,N,5,29.76,622,payroll credit,0
+TX-100064,2026-08-31 12:50:05,AC-4600,20.3,card_not_present,Quarry Exchange,apparel,1152,US,US,N,1,28.02,233,payroll credit,0
+TX-100065,2026-09-10 14:34:38,AC-4879,7.4,wallet,Meridian Supply,gift_cards,1449,SG,US,N,2,6.07,54,grocery basket,0
+TX-100066,2026-08-17 06:39:18,AC-4543,1.19,card_present,Pallas Exchange,utilities,14,BD,BD,N,1,37.59,108,payroll credit,0
+TX-100067,2026-09-06 18:03:22,AC-4743,80.09,card_not_present,Halcyon Trading,fuel,2,MY,GB,N,10,45.32,43,recurring subscription renewal,0
+TX-100068,2026-09-14 08:49:27,AC-4702,604.72,wallet,Halcyon Retail,money_transfer,15,IN,GB,N,1,43.59,193,urgent transfer request,1
+TX-100069,2026-08-21 12:25:10,AC-4808,29.77,card_not_present,Meridian Group,apparel,44,GB,GB,N,1,21.14,12,fuel top up,0
+TX-100070,2026-09-04 13:10:28,AC-4314,9.45,wallet,Halcyon Exchange,telecom_topup,3,GB,GB,N,7,7.97,6,monthly utility bill,0
+TX-100071,2026-09-03 17:01:43,AC-4116,65.46,wire_transfer,Meridian Labs,grocery,5,US,US,N,3,44.89,51,fuel top up,0
+TX-100072,2026-08-25 02:07:12,AC-4605,109.73,atm,Nexa Retail,pharmacy,61,US,US,N,3,14.85,33,payroll credit,0
+TX-100073,2026-08-18 18:40:49,AC-4389,204.27,card_not_present,Corvid Group,crypto_exchange,590,GB,GB,N,8,22.34,704,monthly utility bill,0
+TX-100074,2026-08-23 15:45:45,AC-4487,9.45,wallet,Meridian Group,gift_cards,1169,GB,GB,N,7,14.68,408,monthly utility bill,0
+TX-100075,2026-08-31 23:57:08,AC-4646,87.72,wire_transfer,Orbit Retail,gift_cards,2,BD,BD,N,7,67.9,10,monthly utility bill,0
+TX-100076,2026-08-25 11:35:14,AC-4595,22.66,atm,Halcyon Group,fuel,1609,GB,GB,N,10,17.05,518,in store purchase,0
+TX-100077,2026-09-05 11:27:14,AC-4406,1.65,wallet,Verdant Digital,restaurant,7,US,US,N,12,5,747,grocery basket,0
+TX-100078,2026-08-31 18:51:11,AC-4294,4.4,card_not_present,Meridian Retail,gift_cards,40,IN,BD,Y,1,5,713,payroll credit,0
+TX-100079,2026-09-06 19:40:46,AC-4046,15.78,wire_transfer,Aster Mart,grocery,34,BD,BD,N,3,16.47,1157,in store purchase,0
+TX-100080,2026-08-31 06:23:11,AC-4142,20.21,atm,Kestrel Retail,apparel,8,BD,BD,N,13,16.77,530,fuel top up,0
+TX-100081,2026-09-13 03:03:00,AC-4466,49.14,card_present,Pallas Supply,utilities,148,US,US,N,1,82.54,52,monthly utility bill,0
+TX-100082,2026-09-08 21:24:37,AC-4523,7.12,atm,Pallas Retail,gift_cards,36,BD,BD,Y,14,10.64,30,fuel top up,0
+TX-100083,2026-09-13 10:47:32,AC-4788,22.28,wire_transfer,Mistral Retail,grocery,7,BD,BD,Y,2,19.07,484,grocery basket,0
+TX-100084,2026-09-06 09:08:51,AC-4650,12.31,wire_transfer,Halcyon Labs,telecom_topup,361,GB,GB,N,1,14.56,25,fuel top up,0
+TX-100085,2026-09-13 13:54:55,AC-4005,21.11,atm,Hollow Exchange,utilities,992,US,US,Y,1,20.42,25,payroll credit,0
+TX-100086,2026-09-13 06:52:40,AC-4558,5.54,card_present,Meridian Group,grocery,5,BD,BD,N,8,9.1,5,recurring subscription renewal,0
+TX-100087,2026-09-15 04:28:42,AC-4572,7.3,card_not_present,Halcyon Exchange,restaurant,40,US,US,N,3,12.07,11,gift card bulk order,1
+TX-100088,2026-09-01 16:29:58,AC-4287,8.31,card_not_present,Vireo Supply,apparel,311,BD,BD,N,6,7.81,12,in store purchase,0
+TX-100089,2026-08-23 07:14:05,AC-4229,11.26,card_present,Tindal Mart,grocery,358,GB,GB,N,2,9.93,98,in store purchase,0
+TX-100090,2026-08-25 16:53:35,AC-4116,148.18,card_not_present,Nexa Digital,utilities,18,GB,GB,N,1,11.05,15,monthly utility bill,0
+TX-100091,2026-09-10 17:40:38,AC-4656,61.18,card_present,Nexa Exchange,money_transfer,1,BD,BD,N,5,52.92,16,in store purchase,0
+TX-100092,2026-09-06 23:38:52,AC-4216,52.68,atm,Orbit Retail,apparel,15,GB,GB,Y,4,38.35,116,recurring subscription renewal,0
+TX-100093,2026-08-24 02:30:19,AC-4397,5.34,card_present,Vireo Trading,fuel,2,GB,GB,Y,15,7.86,42,monthly utility bill,0
+TX-100094,2026-09-09 17:43:34,AC-4074,5.01,wallet,Larkspur Labs,fuel,810,GB,GB,N,4,7.04,197,regular vendor payment,0
+TX-100095,2026-08-18 13:17:29,AC-4141,20.07,card_present,Verdant Group,pharmacy,5,US,US,N,1,15.78,811,grocery basket,0
+TX-100096,2026-08-23 14:39:46,AC-4299,14.4,atm,Larkspur Retail,pharmacy,33,BD,GB,N,4,18.64,260,regular vendor payment,0
+TX-100097,2026-09-12 15:06:39,AC-4839,17.6,wallet,Corvid Labs,electronics,36,MY,US,Y,11,15.24,29,monthly utility bill,0
+TX-100098,2026-08-29 21:31:57,AC-4799,336.8,atm,Mistral Exchange,electronics,2,GB,GB,N,7,16.94,639,monthly utility bill,0
+TX-100099,2026-08-19 19:34:25,AC-4665,14.25,card_not_present,Quarry Trading,pharmacy,1,GB,GB,Y,2,19.99,528,in store purchase,0
+TX-100100,2026-09-02 05:33:03,AC-4020,4.98,card_present,Vireo Exchange,grocery,769,GB,GB,N,1,6.93,21,payroll credit,0
+TX-100101,2026-08-30 17:15:45,AC-4816,33.04,wire_transfer,Tindal Digital,restaurant,16,US,US,N,15,38.6,1327,recurring subscription renewal,0
+TX-100102,2026-09-04 19:27:09,AC-4339,9.92,wire_transfer,Halcyon Group,restaurant,16,SG,BD,N,2,14.31,443,regular vendor payment,0
+TX-100103,2026-09-06 02:33:59,AC-4532,45.61,card_present,Aster Digital,crypto_exchange,2,BD,BD,N,3,51.28,264,payroll credit,0
+TX-100104,2026-08-23 02:23:31,AC-4551,18.83,card_not_present,Verdant Labs,fuel,7,GB,GB,N,2,20.83,5,fuel top up,0
+TX-100105,2026-09-13 06:55:46,AC-4574,7.94,atm,Halcyon Digital,fuel,150,US,GB,N,2,14.48,700,recurring subscription renewal,0
+TX-100106,2026-08-22 09:44:04,AC-4346,285.04,wallet,Orbit Trading,pharmacy,612,US,US,N,10,23.22,1118,recurring subscription renewal,0
+TX-100107,2026-09-15 22:45:30,AC-4776,1.52,card_present,Orbit Supply,restaurant,1,GB,GB,N,9,25.79,1157,grocery basket,0
+TX-100108,2026-09-03 05:19:33,AC-4823,965.05,card_not_present,Halcyon Labs,money_transfer,2,BD,BD,N,1,43.13,277,fuel top up,0
+TX-100109,2026-09-08 20:45:43,AC-4832,4.4,card_present,Verdant Mart,pharmacy,1213,BD,BD,N,2,8.34,693,grocery basket,0
+TX-100110,2026-08-21 17:12:13,AC-4383,6.28,atm,Kestrel Group,crypto_exchange,1271,US,US,N,6,8.77,536,fuel top up,0
+TX-100111,2026-09-12 23:11:41,AC-4037,12.98,card_present,Verdant Trading,fuel,188,US,BD,Y,15,10.71,344,regular vendor payment,0
+TX-100112,2026-09-12 23:53:25,AC-4043,61.33,card_present,Halcyon Labs,apparel,60,GB,GB,N,1,42.61,72,grocery basket,0
+TX-100113,2026-08-18 00:39:33,AC-4240,7.68,card_present,Corvid Trading,money_transfer,1,NG,GB,N,10,14.19,23,in store purchase,0
+TX-100114,2026-09-09 01:14:20,AC-4876,13.05,atm,Corvid Exchange,crypto_exchange,13,GB,GB,N,10,10.83,8,payroll credit,0
+TX-100115,2026-08-28 13:07:57,AC-4502,25.71,atm,Aster Digital,pharmacy,273,NG,GB,N,2,20.55,6,fuel top up,0
+TX-100116,2026-09-10 21:42:13,AC-4894,17.16,card_present,Meridian Group,telecom_topup,1449,BD,BD,Y,1,15.79,98,in store purchase,0
+TX-100117,2026-09-15 19:42:14,AC-4606,33.81,wallet,Halcyon Supply,grocery,131,US,US,N,10,30.09,86,regular vendor payment,0
+TX-100118,2026-08-31 18:15:07,AC-4411,13.87,wire_transfer,Tindal Mart,travel,10,US,US,N,2,11.86,838,recurring subscription renewal,0
+TX-100119,2026-09-13 23:35:38,AC-4371,127.24,wallet,Pallas Trading,pharmacy,39,BD,BD,Y,14,87.47,18,regular vendor payment,0
+TX-100120,2026-09-11 20:35:38,AC-4592,7.29,wire_transfer,Hollow Mart,apparel,3,GB,GB,N,4,13.44,10,regular vendor payment,0
+TX-100121,2026-09-08 11:55:45,AC-4289,27.89,card_present,Quarry Retail,money_transfer,1003,GB,GB,N,6,36.04,10,monthly utility bill,0
+TX-100122,2026-09-10 14:55:06,AC-4779,32.44,card_not_present,Meridian Mart,restaurant,66,US,US,Y,1,41.84,317,payroll credit,0
+TX-100123,2026-09-13 07:41:28,AC-4411,34.5,wire_transfer,Pallas Exchange,utilities,124,US,US,N,1,35.16,30,recurring subscription renewal,0
+TX-100124,2026-09-07 21:08:33,AC-4411,84.35,wire_transfer,Nexa Trading,gift_cards,2,GB,GB,N,14,68.61,37,fuel top up,0
+TX-100125,2026-08-27 17:53:23,AC-4133,33.01,wallet,Hollow Group,utilities,32,BD,BD,N,2,36.16,94,fuel top up,0
+TX-100126,2026-09-06 04:01:41,AC-4805,0.99,card_not_present,Tindal Labs,apparel,1,GB,GB,Y,4,141.65,1171,fuel top up,0
+TX-100127,2026-08-20 09:33:49,AC-4509,56.85,card_present,Larkspur Labs,pharmacy,189,US,US,N,6,79.66,412,grocery basket,0
+TX-100128,2026-09-16 10:50:17,AC-4890,10.28,atm,Vireo Digital,crypto_exchange,274,US,BD,N,9,12.33,155,monthly utility bill,0
+TX-100129,2026-08-31 19:03:51,AC-4324,20.4,card_not_present,Aster Mart,fuel,185,GB,GB,N,1,36.11,310,recurring subscription renewal,0
+TX-100130,2026-09-01 18:33:33,AC-4679,27.59,card_not_present,Quarry Mart,telecom_topup,1,US,US,Y,3,28.64,505,monthly utility bill,0
+TX-100131,2026-08-20 21:56:16,AC-4127,9.15,wire_transfer,Meridian Digital,travel,1,BD,BD,N,4,5.78,26,fuel top up,0
+TX-100132,2026-08-17 14:03:43,AC-4418,2.98,wire_transfer,Orbit Group,money_transfer,2,IN,US,N,3,10.92,849,in store purchase,0
+TX-100133,2026-09-08 03:16:41,AC-4364,644.41,wire_transfer,Verdant Exchange,crypto_exchange,302,US,US,Y,3,41.77,220,regular vendor payment,0
+TX-100134,2026-08-24 13:51:23,AC-4452,3.44,card_present,Vireo Group,telecom_topup,225,BD,BD,Y,1,35.99,40,regular vendor payment,0
+TX-100135,2026-09-14 19:51:49,AC-4778,74.99,card_not_present,Hollow Labs,pharmacy,215,GB,GB,Y,2,59.27,52,in store purchase,0
+TX-100136,2026-09-09 19:51:44,AC-4625,48.04,atm,Aster Retail,apparel,15,GB,GB,N,2,13.7,80,recurring subscription renewal,0
+TX-100137,2026-08-18 22:34:21,AC-4309,22.74,wire_transfer,Pallas Supply,restaurant,115,GB,GB,N,2,16.31,32,recurring subscription renewal,0
+TX-100138,2026-08-23 08:24:16,AC-4559,41.94,wire_transfer,Halcyon Mart,crypto_exchange,638,GB,GB,N,1,11.83,8,gift card bulk order,1
+TX-100139,2026-09-01 20:30:09,AC-4883,72.47,atm,Hollow Group,utilities,1,GB,US,Y,2,51.15,51,fuel top up,0
+TX-100140,2026-08-26 04:35:37,AC-4843,5.07,wire_transfer,Nexa Trading,fuel,293,US,US,Y,3,7.24,8,in store purchase,0
+TX-100141,2026-09-04 08:44:41,AC-4205,12.13,card_not_present,Verdant Group,travel,56,BD,BD,Y,7,12.72,651,payroll credit,0
+TX-100142,2026-08-21 05:33:07,AC-4110,485.04,card_present,Orbit Retail,travel,620,BD,BD,N,11,30.66,431,payroll credit,0
+TX-100143,2026-08-28 14:17:01,AC-4347,29.22,card_not_present,Meridian Labs,utilities,78,US,US,N,4,18.42,125,grocery basket,0
+TX-100144,2026-09-12 10:33:44,AC-4436,18.8,atm,Quarry Trading,electronics,24,BD,BD,N,3,16.01,7,in store purchase,0
+TX-100145,2026-08-17 09:09:10,AC-4164,17.81,card_not_present,Verdant Labs,pharmacy,20,US,US,N,13,17.55,13,regular vendor payment,0
+TX-100146,2026-08-19 19:48:01,AC-4268,19.5,card_not_present,Halcyon Exchange,electronics,1,GB,GB,N,10,27.53,100,recurring subscription renewal,0
+TX-100147,2026-08-19 06:23:02,AC-4524,14.26,wire_transfer,Meridian Exchange,travel,333,GB,GB,N,4,16.87,59,recurring subscription renewal,0
+TX-100148,2026-08-18 17:06:25,AC-4640,16.6,card_not_present,Aster Exchange,fuel,105,BD,BD,N,5,25.34,5,fuel top up,0
+TX-100149,2026-09-08 13:53:21,AC-4292,310.25,card_present,Hollow Retail,restaurant,1,MY,US,N,2,85.61,45,grocery basket,0
+TX-100150,2026-08-20 06:04:28,AC-4864,1.35,atm,Mistral Mart,grocery,5,BD,BD,N,8,100.5,14,regular vendor payment,0
+TX-100151,2026-08-21 08:17:17,AC-4718,9.49,card_present,Aster Digital,money_transfer,7,DE,US,N,9,7.34,18,payroll credit,0
+TX-100152,2026-09-08 13:58:19,AC-4645,41.31,wire_transfer,Hollow Group,travel,422,GB,GB,N,1,41.59,5,recurring subscription renewal,0
+TX-100153,2026-09-14 13:25:25,AC-4700,60.23,wallet,Mistral Group,electronics,10,BD,BD,N,3,44.47,24,grocery basket,0
+TX-100154,2026-09-04 22:26:12,AC-4406,37.63,card_present,Larkspur Exchange,gift_cards,6,BD,BD,Y,6,33.82,568,grocery basket,0
+TX-100155,2026-09-06 15:58:06,AC-4150,21.95,card_present,Meridian Group,grocery,8,BD,BD,N,5,19.44,8,in store purchase,0
+TX-100156,2026-09-07 17:03:56,AC-4050,68.29,wallet,Orbit Retail,pharmacy,74,SG,BD,N,7,63.95,1136,grocery basket,0
+TX-100157,2026-09-10 13:23:38,AC-4026,284.79,wallet,Nexa Mart,pharmacy,97,GB,US,N,1,16.43,8,monthly utility bill,0
+TX-100158,2026-08-22 21:13:22,AC-4499,3.02,wire_transfer,Hollow Labs,electronics,604,NG,US,N,1,27.46,17,fuel top up,0
+TX-100159,2026-08-27 22:26:08,AC-4458,56.02,atm,Vireo Group,crypto_exchange,1,US,US,Y,11,43.83,110,regular vendor payment,0
+TX-100160,2026-09-13 22:45:42,AC-4547,10.45,wallet,Aster Trading,restaurant,222,US,US,Y,13,8.66,207,fuel top up,0
+TX-100161,2026-08-24 14:23:11,AC-4702,24.2,card_not_present,Vireo Group,pharmacy,6,GB,GB,N,1,19.35,1101,fuel top up,0
+TX-100162,2026-09-09 08:37:58,AC-4081,99.84,wallet,Halcyon Retail,gift_cards,48,US,GB,N,1,66.66,740,payroll credit,0
+TX-100163,2026-09-09 23:29:14,AC-4654,10.98,atm,Meridian Digital,utilities,1,BD,BD,N,2,15.71,1111,regular vendor payment,0
+TX-100164,2026-08-26 12:00:20,AC-4187,19,card_not_present,Halcyon Trading,travel,7,GB,GB,Y,2,36.9,22,payroll credit,1
+TX-100165,2026-09-16 21:50:45,AC-4625,128.64,card_present,Quarry Trading,pharmacy,15,US,US,N,1,17.3,10,fuel top up,0
+TX-100166,2026-09-12 09:47:19,AC-4193,7.81,card_present,Vireo Group,apparel,18,GB,GB,N,10,9.96,17,grocery basket,0
+TX-100167,2026-09-13 20:40:24,AC-4541,23.26,card_not_present,Orbit Exchange,fuel,15,GB,GB,N,8,23.21,37,fuel top up,0
+TX-100168,2026-08-27 18:07:21,AC-4824,11.41,atm,Quarry Labs,grocery,17,US,US,Y,1,18.46,39,regular vendor payment,0
+TX-100169,2026-09-07 02:26:07,AC-4324,0.75,card_present,Verdant Exchange,apparel,1117,US,US,N,14,49.05,9,in store purchase,0
+TX-100170,2026-09-05 18:53:08,AC-4847,241.45,card_not_present,Halcyon Group,crypto_exchange,1,GB,GB,Y,3,16.33,239,grocery basket,0
+TX-100171,2026-08-30 17:38:51,AC-4188,13.25,card_not_present,Meridian Exchange,electronics,221,RU,US,N,1,16.18,132,fuel top up,0
+TX-100172,2026-08-21 08:13:17,AC-4578,527.86,wallet,Verdant Retail,money_transfer,1,BD,BD,N,3,25.67,215,in store purchase,0
+TX-100173,2026-08-17 14:27:57,AC-4806,0.74,card_present,Larkspur Mart,crypto_exchange,46,BD,BD,N,11,7.46,40,recurring subscription renewal,0
+TX-100174,2026-08-22 16:49:13,AC-4579,14.33,card_present,Quarry Group,pharmacy,2,IN,US,N,9,8.8,151,monthly utility bill,0
+TX-100175,2026-09-04 12:16:01,AC-4368,49.35,wire_transfer,Orbit Digital,grocery,4,GB,GB,N,6,40.56,90,recurring subscription renewal,0
+TX-100176,2026-09-07 05:29:27,AC-4880,13.96,wire_transfer,Nexa Retail,crypto_exchange,995,BD,GB,N,1,26.37,21,recurring subscription renewal,0
+TX-100177,2026-08-20 06:16:31,AC-4008,7.88,wallet,Orbit Labs,gift_cards,2,US,US,N,11,6.1,254,payroll credit,0
+TX-100178,2026-08-29 03:43:12,AC-4357,36.56,card_not_present,Meridian Labs,electronics,237,BD,BD,N,1,7.29,11,monthly utility bill,0
+TX-100179,2026-09-15 10:52:16,AC-4649,21.46,card_present,Mistral Digital,apparel,2,BD,BD,N,1,14.42,14,regular vendor payment,0
+TX-100180,2026-09-01 15:27:10,AC-4154,2.24,atm,Hollow Group,travel,51,BD,BD,Y,7,40.52,81,regular vendor payment,0
+TX-100181,2026-09-07 12:20:03,AC-4691,4.74,wallet,Corvid Trading,electronics,1202,NG,GB,N,11,5,7,monthly utility bill,0
+TX-100182,2026-08-21 13:08:35,AC-4667,3.84,card_present,Halcyon Retail,apparel,15,US,US,N,1,5,98,regular vendor payment,0
+TX-100183,2026-08-23 22:06:19,AC-4477,3.54,card_present,Nexa Exchange,restaurant,1535,US,US,Y,4,29.51,11,recurring subscription renewal,0
+TX-100184,2026-08-18 16:15:47,AC-4524,16.49,atm,Halcyon Supply,apparel,156,US,US,Y,1,12.85,875,recurring subscription renewal,0
+TX-100185,2026-09-08 17:11:35,AC-4100,0.55,wire_transfer,Meridian Retail,crypto_exchange,1046,BD,BD,Y,2,7.99,12,recurring subscription renewal,0
+TX-100186,2026-08-28 11:59:08,AC-4522,13.1,atm,Kestrel Trading,apparel,238,BD,BD,N,2,11.02,93,recurring subscription renewal,0
+TX-100187,2026-09-09 10:44:45,AC-4117,13.2,atm,Mistral Labs,crypto_exchange,1415,NG,US,N,13,17,326,fuel top up,0
+TX-100188,2026-08-23 14:21:27,AC-4570,13.64,wire_transfer,Quarry Group,fuel,78,GB,GB,Y,2,20.65,28,in store purchase,0
+TX-100189,2026-08-23 06:13:51,AC-4159,9.86,wallet,Hollow Digital,restaurant,9,BD,BD,N,1,15.48,56,regular vendor payment,0
+TX-100190,2026-09-01 12:13:31,AC-4381,1544.21,card_not_present,Mistral Mart,money_transfer,1,GB,GB,N,15,410.26,570,grocery basket,0
+TX-100191,2026-08-30 00:05:13,AC-4789,27.09,card_not_present,Quarry Group,travel,197,US,US,N,1,29.07,29,monthly utility bill,0
+TX-100192,2026-09-15 15:47:50,AC-4144,36.11,card_not_present,Kestrel Exchange,gift_cards,14,IN,US,N,1,39.5,10,in store purchase,0
+TX-100193,2026-08-29 09:11:39,AC-4490,5.93,card_not_present,Mistral Mart,utilities,5,GB,GB,Y,8,8.29,553,fuel top up,0
+TX-100194,2026-08-21 20:38:12,AC-4262,14.06,card_not_present,Corvid Group,fuel,40,GB,GB,Y,5,21.1,1306,payroll credit,0
+TX-100195,2026-08-25 10:28:23,AC-4812,1.17,card_present,Tindal Labs,pharmacy,69,GB,GB,N,6,39.52,632,card verification test,1
+TX-100196,2026-09-13 13:28:00,AC-4223,1994.68,card_present,Quarry Labs,electronics,577,BD,BD,N,5,131.66,5,regular vendor payment,0
+TX-100197,2026-09-02 11:47:00,AC-4029,29.91,wallet,Hollow Retail,grocery,90,US,US,N,14,19.23,27,regular vendor payment,0
+TX-100198,2026-08-20 19:28:15,AC-4546,106.11,wallet,Corvid Supply,gift_cards,22,BD,BD,Y,1,5.27,15,recurring subscription renewal,0
+TX-100199,2026-09-07 16:19:16,AC-4877,2.67,wire_transfer,Orbit Group,gift_cards,3,BD,BD,N,1,7.89,9,grocery basket,0
+TX-100200,2026-08-29 15:49:14,AC-4018,134.25,wallet,Larkspur Labs,travel,3,GB,GB,N,7,103.6,115,in store purchase,0
+TX-100201,2026-08-30 18:28:15,AC-4303,46.32,card_present,Orbit Supply,apparel,160,GB,GB,N,4,33.28,997,recurring subscription renewal,0
+TX-100202,2026-08-26 17:34:04,AC-4875,11.11,wallet,Mistral Group,crypto_exchange,361,US,US,N,6,11.44,390,fuel top up,0
+TX-100203,2026-09-01 17:12:20,AC-4639,16.28,atm,Halcyon Exchange,pharmacy,9,BD,BD,N,1,13.22,418,recurring subscription renewal,0
+TX-100204,2026-08-22 20:11:56,AC-4490,13.97,card_not_present,Tindal Labs,money_transfer,1556,US,US,N,3,12.25,27,in store purchase,0
+TX-100205,2026-09-01 20:34:58,AC-4491,155.85,card_present,Nexa Exchange,grocery,5,NG,US,N,8,107.36,259,recurring subscription renewal,0
+TX-100206,2026-08-23 23:16:24,AC-4582,4.52,card_not_present,Pallas Trading,restaurant,24,BD,BD,N,1,7.73,109,grocery basket,0
+TX-100207,2026-09-13 03:47:00,AC-4521,18.43,card_not_present,Pallas Group,utilities,658,GB,GB,N,11,15.7,13,grocery basket,0
+TX-100208,2026-09-12 23:04:45,AC-4556,13.59,wire_transfer,Halcyon Labs,fuel,3,BD,BD,N,1,12.76,68,in store purchase,0
+TX-100209,2026-08-31 18:01:48,AC-4200,73.3,card_present,Mistral Group,crypto_exchange,88,GB,GB,Y,1,5.87,5,regular vendor payment,0
+TX-100210,2026-08-18 23:19:17,AC-4706,14.46,wallet,Halcyon Supply,grocery,129,GB,GB,N,4,21.63,345,regular vendor payment,0
+TX-100211,2026-09-11 10:42:46,AC-4139,2.82,atm,Vireo Retail,grocery,1126,BD,BD,N,10,16.98,10,fuel top up,0
+TX-100212,2026-09-07 12:16:01,AC-4119,16.17,card_present,Vireo Retail,travel,1,GB,GB,N,1,23.15,584,fuel top up,0
+TX-100213,2026-08-22 21:50:40,AC-4064,241.57,card_not_present,Larkspur Mart,money_transfer,14,GB,GB,N,11,71.38,333,grocery basket,0
+TX-100214,2026-08-20 06:22:52,AC-4259,22.03,wire_transfer,Halcyon Trading,pharmacy,1027,GB,GB,N,6,28.9,279,fuel top up,0
+TX-100215,2026-08-31 05:55:43,AC-4473,40.96,atm,Mistral Labs,restaurant,77,NG,US,N,4,37.59,41,grocery basket,0
+TX-100216,2026-09-06 06:05:05,AC-4122,55.33,wallet,Halcyon Digital,telecom_topup,341,US,US,N,6,59.23,122,fuel top up,0
+TX-100217,2026-08-17 23:02:38,AC-4044,59.94,wire_transfer,Aster Labs,electronics,137,NG,GB,Y,3,40.03,637,grocery basket,0
+TX-100218,2026-08-24 22:11:11,AC-4774,56.85,wallet,Hollow Retail,fuel,28,US,US,N,15,72.48,14,payroll credit,0
+TX-100219,2026-08-28 14:19:45,AC-4672,92.34,atm,Quarry Supply,pharmacy,115,BD,BD,Y,10,85.78,43,payroll credit,0
+TX-100220,2026-09-14 19:33:21,AC-4475,405.8,card_present,Nexa Labs,crypto_exchange,248,BD,BD,N,15,31.92,721,grocery basket,0
+TX-100221,2026-09-09 22:21:07,AC-4195,69.47,card_present,Corvid Digital,crypto_exchange,338,US,US,N,4,56.72,122,recurring subscription renewal,0
+TX-100222,2026-09-15 06:31:35,AC-4352,7.26,card_present,Orbit Trading,crypto_exchange,642,BD,BD,Y,1,5,10,grocery basket,0
+TX-100223,2026-09-01 23:28:50,AC-4624,15.64,card_not_present,Halcyon Mart,grocery,1563,GB,GB,Y,10,14.21,596,payroll credit,0
+TX-100224,2026-09-09 19:42:25,AC-4405,28.17,wallet,Verdant Labs,fuel,31,GB,GB,N,7,35.42,510,grocery basket,0
+TX-100225,2026-08-18 21:10:05,AC-4482,8.55,atm,Corvid Labs,gift_cards,41,BD,BD,N,1,9.46,8,in store purchase,0
+TX-100226,2026-08-31 12:30:27,AC-4559,1.74,atm,Nexa Mart,travel,282,BD,BD,N,12,28.51,36,monthly utility bill,0
+TX-100227,2026-09-11 02:14:21,AC-4699,147.66,wallet,Nexa Trading,telecom_topup,2,US,US,N,14,28.33,262,recurring subscription renewal,0
+TX-100228,2026-08-17 16:49:04,AC-4242,27.1,wallet,Kestrel Mart,fuel,19,GB,GB,N,15,35.45,58,in store purchase,0
+TX-100229,2026-08-30 22:29:11,AC-4067,24.82,card_present,Verdant Exchange,fuel,65,SG,GB,N,7,34.41,24,payroll credit,0
+TX-100230,2026-09-08 18:40:33,AC-4676,17.68,wire_transfer,Larkspur Exchange,fuel,628,GB,GB,Y,1,12.85,39,grocery basket,0
+TX-100231,2026-08-24 16:58:51,AC-4863,79.44,card_present,Nexa Digital,pharmacy,108,GB,GB,N,1,14.75,626,payroll credit,0
+TX-100232,2026-09-01 08:18:42,AC-4715,2.7,card_present,Quarry Exchange,gift_cards,17,US,US,N,5,5,225,grocery basket,0
+TX-100233,2026-08-21 01:29:55,AC-4195,28.95,card_present,Quarry Labs,restaurant,16,GB,GB,N,11,27.86,985,payroll credit,0
+TX-100234,2026-09-02 13:19:35,AC-4562,16.47,atm,Vireo Group,pharmacy,37,BD,BD,N,3,12.31,8,recurring subscription renewal,0
+TX-100235,2026-08-29 14:05:25,AC-4580,183.64,card_not_present,Quarry Retail,restaurant,151,NG,GB,N,15,22.66,220,grocery basket,0
+TX-100236,2026-09-07 15:47:40,AC-4550,41.72,wire_transfer,Verdant Supply,restaurant,26,BD,BD,Y,9,40.54,1042,grocery basket,0
+TX-100237,2026-08-31 14:08:32,AC-4546,27.9,wallet,Mistral Labs,electronics,23,US,US,N,1,29.79,10,payroll credit,0
+TX-100238,2026-08-22 21:30:21,AC-4359,1.68,card_not_present,Halcyon Digital,restaurant,5,DE,GB,N,1,12.85,174,grocery basket,0
+TX-100239,2026-08-27 17:14:00,AC-4813,31.47,card_not_present,Kestrel Group,crypto_exchange,31,US,US,N,1,45.06,287,monthly utility bill,0
+TX-100240,2026-09-02 22:56:44,AC-4508,15.41,atm,Pallas Retail,restaurant,656,BD,BD,N,3,13.92,256,recurring subscription renewal,0
+TX-100241,2026-09-13 10:54:08,AC-4449,34.95,wallet,Pallas Labs,pharmacy,16,BD,BD,Y,9,66.51,91,recurring subscription renewal,0
+TX-100242,2026-09-05 20:07:29,AC-4239,21.98,wire_transfer,Verdant Trading,gift_cards,6,BD,BD,N,7,23.99,1036,regular vendor payment,0
+TX-100243,2026-09-14 18:48:19,AC-4059,13.43,atm,Kestrel Labs,fuel,79,GB,GB,N,7,18.24,76,monthly utility bill,0
+TX-100244,2026-09-09 08:53:11,AC-4392,33.26,atm,Pallas Retail,money_transfer,31,US,US,Y,4,28.28,58,monthly utility bill,0
+TX-100245,2026-08-22 14:40:20,AC-4119,3.86,wallet,Pallas Retail,money_transfer,4,NG,US,N,1,6.33,161,recurring subscription renewal,0
+TX-100246,2026-09-14 17:01:02,AC-4669,45.2,atm,Larkspur Digital,restaurant,496,BD,GB,Y,4,72.7,44,payroll credit,0
+TX-100247,2026-09-01 19:04:20,AC-4272,3.44,wallet,Hollow Supply,fuel,3,BD,BD,N,6,5,33,payroll credit,0
+TX-100248,2026-08-28 22:02:46,AC-4876,1.5,card_present,Vireo Group,apparel,1130,US,US,N,8,5,16,in store purchase,0
+TX-100249,2026-09-12 13:54:59,AC-4539,252,wallet,Halcyon Exchange,money_transfer,2,BD,BD,N,12,13.31,165,recurring subscription renewal,0
+TX-100250,2026-08-18 23:21:50,AC-4751,0.44,wallet,Orbit Exchange,utilities,606,GB,GB,N,11,39.67,195,new payee first transfer,1
+TX-100251,2026-08-21 21:48:19,AC-4331,92.21,card_present,Orbit Mart,telecom_topup,1467,GB,GB,N,7,14.45,8,payroll credit,0
+TX-100252,2026-08-19 06:59:17,AC-4316,5.24,card_present,Tindal Labs,restaurant,123,GB,GB,N,1,9.59,372,payroll credit,0
+TX-100253,2026-09-14 11:17:48,AC-4538,5.6,wire_transfer,Vireo Exchange,pharmacy,11,DE,BD,Y,10,7.55,88,regular vendor payment,0
+TX-100254,2026-09-04 07:07:08,AC-4871,9.13,card_not_present,Halcyon Labs,crypto_exchange,338,GB,GB,Y,6,13.6,12,in store purchase,0
+TX-100255,2026-08-22 11:44:02,AC-4696,10.35,card_present,Mistral Group,travel,11,IN,GB,N,15,6.49,88,in store purchase,0
+TX-100256,2026-08-22 16:18:04,AC-4088,52.98,atm,Mistral Supply,fuel,169,BD,BD,N,2,57.99,134,fuel top up,0
+TX-100257,2026-08-25 20:23:01,AC-4771,10.14,atm,Mistral Exchange,crypto_exchange,78,RU,GB,N,1,15.96,42,in store purchase,0
+TX-100258,2026-09-04 00:36:15,AC-4566,22.88,atm,Aster Supply,crypto_exchange,2,DE,BD,N,8,26.34,48,payroll credit,0
+TX-100259,2026-09-09 11:38:11,AC-4534,1.34,wire_transfer,Hollow Trading,grocery,28,US,US,N,9,11.52,28,monthly utility bill,0
+TX-100260,2026-09-13 06:30:30,AC-4249,13.63,card_not_present,Vireo Retail,gift_cards,1,US,US,Y,12,23.09,36,grocery basket,0
+TX-100261,2026-09-03 14:11:31,AC-4346,37.8,card_present,Larkspur Labs,crypto_exchange,6,RU,BD,N,1,29.94,354,regular vendor payment,0
+TX-100262,2026-08-24 03:28:47,AC-4533,9,card_not_present,Meridian Digital,apparel,260,GB,GB,N,10,9.74,27,in store purchase,0
+TX-100263,2026-09-06 06:19:52,AC-4043,3.99,atm,Larkspur Exchange,telecom_topup,231,BD,BD,N,5,6.86,71,payroll credit,0
+TX-100264,2026-08-29 18:31:54,AC-4767,15.81,wire_transfer,Nexa Supply,utilities,43,US,US,N,1,20.13,10,recurring subscription renewal,0
+TX-100265,2026-09-13 20:19:39,AC-4888,27.68,card_present,Meridian Trading,telecom_topup,222,US,US,N,2,28.2,72,regular vendor payment,0
+TX-100266,2026-08-20 12:48:09,AC-4842,29.43,atm,Verdant Group,travel,19,SG,BD,N,7,23.39,346,monthly utility bill,0
+TX-100267,2026-09-06 10:43:33,AC-4338,26.43,card_present,Verdant Mart,money_transfer,26,GB,GB,N,9,19.25,10,regular vendor payment,0
+TX-100268,2026-08-24 12:56:44,AC-4837,42.33,wallet,Halcyon Digital,crypto_exchange,36,GB,GB,N,9,29.72,90,regular vendor payment,0
+TX-100269,2026-09-03 21:36:39,AC-4161,28.15,atm,Aster Supply,gift_cards,37,GB,GB,N,8,21.93,251,in store purchase,0
+TX-100270,2026-09-15 04:54:34,AC-4307,2.38,wallet,Pallas Digital,electronics,53,NG,GB,N,12,34.7,28,refund reversal retry,1
+TX-100271,2026-09-11 03:15:31,AC-4559,116.01,wallet,Mistral Mart,money_transfer,8,US,US,N,8,38.78,663,payroll credit,0
+TX-100272,2026-08-21 22:01:56,AC-4235,12.84,wire_transfer,Orbit Digital,travel,458,BD,BD,Y,13,15.56,60,recurring subscription renewal,0
+TX-100273,2026-08-20 13:34:17,AC-4556,11.47,wallet,Meridian Supply,gift_cards,1095,NG,GB,N,15,14.34,8,grocery basket,0
+TX-100274,2026-09-06 17:18:38,AC-4242,100.83,card_present,Pallas Retail,grocery,3,BD,BD,Y,1,32.17,932,payroll credit,0
+TX-100275,2026-09-03 18:27:07,AC-4891,45.84,card_present,Quarry Retail,utilities,13,AE,US,N,15,34.74,18,grocery basket,0
+TX-100276,2026-08-20 12:35:28,AC-4141,193.39,wire_transfer,Kestrel Exchange,pharmacy,148,US,US,N,1,165.78,37,monthly utility bill,0
+TX-100277,2026-09-10 22:48:57,AC-4622,24.04,atm,Aster Retail,grocery,892,MY,US,N,15,28.45,12,recurring subscription renewal,0
+TX-100278,2026-09-01 13:47:31,AC-4623,17.49,wallet,Corvid Group,apparel,2,DE,BD,N,1,25.29,34,in store purchase,0
+TX-100279,2026-09-01 17:26:54,AC-4406,18.86,card_not_present,Vireo Group,pharmacy,7,GB,GB,N,2,18.53,10,monthly utility bill,0
+TX-100280,2026-09-03 04:38:41,AC-4421,27.34,card_present,Meridian Mart,apparel,279,US,US,N,13,24.33,33,grocery basket,0
+TX-100281,2026-09-06 13:09:15,AC-4182,19.69,card_not_present,Corvid Exchange,grocery,3,GB,GB,N,10,29.66,309,fuel top up,0
+TX-100282,2026-09-12 11:16:19,AC-4175,192.62,wire_transfer,Kestrel Digital,utilities,16,US,US,N,8,12.7,846,monthly utility bill,0
+TX-100283,2026-09-10 06:21:31,AC-4801,35.75,wire_transfer,Quarry Digital,fuel,430,GB,GB,N,3,32.41,885,fuel top up,0
+TX-100284,2026-09-09 06:01:02,AC-4539,8.61,card_present,Larkspur Labs,utilities,3,US,US,N,7,7.15,76,recurring subscription renewal,0
+TX-100285,2026-09-12 11:41:20,AC-4565,675.43,atm,Corvid Exchange,grocery,819,GB,GB,N,1,52.65,1179,grocery basket,0
+TX-100286,2026-09-15 13:25:21,AC-4403,7.76,card_present,Halcyon Exchange,telecom_topup,4,US,US,N,10,8.5,7,payroll credit,0
+TX-100287,2026-09-02 15:46:11,AC-4577,18.16,wire_transfer,Vireo Mart,travel,727,NG,BD,N,1,21.33,9,recurring subscription renewal,0
+TX-100288,2026-08-31 06:18:39,AC-4562,8.5,atm,Mistral Digital,grocery,7,BD,BD,N,11,11.88,20,recurring subscription renewal,0
+TX-100289,2026-08-31 23:33:35,AC-4282,33.73,card_not_present,Verdant Group,pharmacy,294,BD,BD,N,1,32.7,325,in store purchase,0
+TX-100290,2026-09-15 04:30:28,AC-4742,11.87,card_present,Orbit Labs,telecom_topup,14,GB,GB,N,6,19.15,42,fuel top up,0
+TX-100291,2026-08-29 15:08:19,AC-4691,48.33,wire_transfer,Corvid Retail,restaurant,24,GB,GB,N,3,44.2,284,monthly utility bill,0
+TX-100292,2026-09-11 05:15:08,AC-4867,14.48,wallet,Corvid Retail,apparel,295,BD,BD,N,5,18.96,52,monthly utility bill,0
+TX-100293,2026-08-25 18:25:04,AC-4810,5.98,card_not_present,Kestrel Group,pharmacy,8,GB,GB,N,7,10.95,141,regular vendor payment,0
+TX-100294,2026-09-11 05:02:54,AC-4626,30.54,wallet,Kestrel Trading,pharmacy,118,US,US,N,5,19.76,6,recurring subscription renewal,0
+TX-100295,2026-09-02 08:21:20,AC-4685,41.79,atm,Meridian Retail,crypto_exchange,2,US,US,N,12,27.64,667,fuel top up,0
+TX-100296,2026-08-23 08:53:50,AC-4134,5.29,wallet,Orbit Retail,telecom_topup,201,IN,US,Y,6,6.52,126,recurring subscription renewal,0
+TX-100297,2026-09-12 01:00:24,AC-4576,19.38,atm,Meridian Mart,money_transfer,4,US,US,N,1,25.66,38,regular vendor payment,0
+TX-100298,2026-08-20 22:43:56,AC-4533,19.51,card_not_present,Larkspur Mart,utilities,2,BD,BD,N,2,35.65,702,recurring subscription renewal,0
+TX-100299,2026-09-04 10:03:49,AC-4606,30.02,card_not_present,Aster Digital,money_transfer,7,GB,GB,Y,7,29.02,1205,recurring subscription renewal,0
+TX-100300,2026-08-24 18:27:56,AC-4499,34.33,card_present,Larkspur Group,electronics,5,GB,GB,N,11,37.21,394,in store purchase,0
+TX-100301,2026-09-14 15:29:51,AC-4720,17.34,wallet,Hollow Supply,grocery,8,GB,GB,Y,1,24.55,8,monthly utility bill,0
+TX-100302,2026-09-02 19:51:00,AC-4329,33.73,wire_transfer,Pallas Mart,utilities,8,GB,GB,N,7,23.46,1164,in store purchase,0
+TX-100303,2026-09-03 13:42:37,AC-4516,34.19,wallet,Vireo Digital,restaurant,17,US,US,N,4,21.37,39,payroll credit,0
+TX-100304,2026-08-18 15:36:05,AC-4830,15.55,atm,Hollow Retail,utilities,8,BD,BD,N,2,17.64,17,regular vendor payment,0
+TX-100305,2026-08-30 17:19:11,AC-4337,8.48,card_not_present,Meridian Supply,restaurant,252,US,BD,N,11,17.61,32,grocery basket,0
+TX-100306,2026-08-24 20:51:54,AC-4431,113.87,card_present,Aster Trading,travel,4,GB,GB,N,6,87.35,102,regular vendor payment,0
+TX-100307,2026-09-02 14:53:44,AC-4667,65.53,wallet,Orbit Digital,gift_cards,16,US,US,Y,5,11.08,277,in store purchase,0
+TX-100308,2026-09-08 18:37:52,AC-4410,24.84,atm,Hollow Mart,fuel,1596,US,BD,Y,1,16.32,18,fuel top up,0
+TX-100309,2026-08-27 19:22:31,AC-4608,120.79,card_present,Vireo Retail,restaurant,3,US,US,N,15,13.11,367,grocery basket,0
+TX-100310,2026-08-19 02:20:07,AC-4601,71.73,card_not_present,Verdant Digital,utilities,128,GB,GB,N,14,50.69,571,in store purchase,0
+TX-100311,2026-08-25 06:00:53,AC-4046,85.9,atm,Nexa Exchange,utilities,417,GB,GB,N,15,50.61,950,payroll credit,0
+TX-100312,2026-09-03 22:44:29,AC-4723,0.83,card_present,Nexa Digital,grocery,26,US,US,N,7,14.54,993,recurring subscription renewal,0
+TX-100313,2026-09-10 02:27:26,AC-4362,11.87,card_present,Meridian Retail,grocery,97,GB,GB,N,9,14.24,8,recurring subscription renewal,0
+TX-100314,2026-08-17 22:10:06,AC-4863,4.76,wallet,Verdant Digital,money_transfer,1,US,US,Y,1,5,226,in store purchase,0
+TX-100315,2026-09-07 06:39:25,AC-4538,14.5,atm,Meridian Trading,restaurant,49,BD,BD,N,9,19.47,1143,in store purchase,0
+TX-100316,2026-08-25 21:08:23,AC-4487,5.22,atm,Hollow Group,crypto_exchange,411,US,US,N,3,8.14,7,payroll credit,0
+TX-100317,2026-08-17 22:40:18,AC-4108,56.94,card_not_present,Verdant Group,restaurant,3,NG,GB,Y,5,16.04,63,fuel top up,1
+TX-100318,2026-09-06 15:25:23,AC-4818,210.63,wallet,Nexa Exchange,fuel,73,BD,BD,N,14,34.96,587,recurring subscription renewal,0
+TX-100319,2026-08-25 02:31:45,AC-4164,32.65,card_present,Corvid Supply,fuel,2,GB,GB,N,4,25.63,76,in store purchase,0
+TX-100320,2026-09-08 15:31:35,AC-4228,12.98,card_not_present,Vireo Mart,pharmacy,1,DE,GB,N,1,24.68,681,payroll credit,0
+TX-100321,2026-09-12 16:18:37,AC-4622,53.62,atm,Mistral Retail,money_transfer,811,BD,BD,N,4,59.81,5,in store purchase,0
+TX-100322,2026-09-03 14:28:30,AC-4413,320.5,card_present,Quarry Group,crypto_exchange,2,US,US,N,2,35.96,1244,recurring subscription renewal,0
+TX-100323,2026-09-11 13:32:04,AC-4379,18.55,wallet,Halcyon Exchange,pharmacy,2,DE,GB,N,6,22.31,94,recurring subscription renewal,0
+TX-100324,2026-08-25 12:27:12,AC-4596,61.22,atm,Meridian Group,electronics,2,BD,BD,Y,7,72.47,131,regular vendor payment,0
+TX-100325,2026-09-09 22:11:54,AC-4606,14.03,atm,Tindal Group,electronics,162,US,BD,N,4,25.08,86,payroll credit,0
+TX-100326,2026-08-20 13:17:43,AC-4124,13.59,atm,Corvid Group,gift_cards,564,AE,US,N,9,12.61,6,payroll credit,0
+TX-100327,2026-09-02 22:52:19,AC-4760,15.31,card_present,Tindal Supply,telecom_topup,5,GB,GB,N,1,15.72,48,grocery basket,0
+TX-100328,2026-09-15 05:17:50,AC-4513,8.53,card_present,Hollow Trading,utilities,1,GB,GB,N,1,11.94,171,in store purchase,0
+TX-100329,2026-08-30 15:05:34,AC-4748,13.36,atm,Pallas Group,apparel,285,US,US,Y,10,10,48,payroll credit,0
+TX-100330,2026-09-10 19:22:25,AC-4733,5,atm,Tindal Trading,money_transfer,1468,US,US,Y,3,5,75,in store purchase,0
+TX-100331,2026-08-26 08:21:31,AC-4479,36.64,card_present,Corvid Digital,travel,934,RU,BD,N,1,26.26,1120,in store purchase,0
+TX-100332,2026-09-12 22:48:43,AC-4684,465.43,wallet,Vireo Labs,apparel,2,GB,GB,N,1,30.63,37,monthly utility bill,0
+TX-100333,2026-09-02 11:35:42,AC-4379,23.87,card_not_present,Meridian Trading,telecom_topup,370,GB,GB,N,1,21.73,54,recurring subscription renewal,0
+TX-100334,2026-09-07 22:45:14,AC-4310,10.36,card_present,Kestrel Retail,grocery,221,GB,BD,Y,5,9.44,26,regular vendor payment,0
+TX-100335,2026-08-21 15:40:42,AC-4577,10.86,card_present,Meridian Retail,crypto_exchange,368,GB,GB,N,10,14.15,651,payroll credit,0
+TX-100336,2026-09-11 18:59:09,AC-4187,4.08,wire_transfer,Kestrel Retail,utilities,90,US,US,N,2,5,134,in store purchase,0
+TX-100337,2026-08-23 03:16:02,AC-4725,18.91,wallet,Halcyon Group,restaurant,29,BD,BD,N,1,19.59,846,in store purchase,0
+TX-100338,2026-09-11 02:46:54,AC-4164,3.9,card_not_present,Orbit Mart,crypto_exchange,142,US,US,N,1,5,298,fuel top up,0
+TX-100339,2026-09-06 23:50:29,AC-4755,11.52,wallet,Corvid Exchange,fuel,9,GB,GB,N,7,7.17,20,in store purchase,0
+TX-100340,2026-09-13 17:51:38,AC-4003,13.06,card_present,Meridian Trading,electronics,10,GB,GB,N,13,19.01,950,in store purchase,0
+TX-100341,2026-09-14 19:06:46,AC-4861,22.29,card_not_present,Mistral Supply,utilities,49,US,US,Y,6,23.15,14,fuel top up,0
+TX-100342,2026-08-29 02:04:52,AC-4472,13.39,card_present,Aster Trading,telecom_topup,116,BD,BD,N,1,20.47,42,fuel top up,0
+TX-100343,2026-09-07 23:45:19,AC-4514,24.97,wire_transfer,Quarry Exchange,gift_cards,1,US,US,N,10,26.27,321,fuel top up,0
+TX-100344,2026-08-20 16:06:19,AC-4637,8.98,card_not_present,Hollow Labs,money_transfer,4,US,GB,N,1,6.15,369,grocery basket,0
+TX-100345,2026-08-25 05:22:12,AC-4608,37.61,wire_transfer,Tindal Digital,utilities,1,BD,BD,N,14,35.93,813,fuel top up,0
+TX-100346,2026-08-23 08:54:01,AC-4134,9.19,card_present,Hollow Group,apparel,169,BD,BD,N,1,14.07,142,monthly utility bill,0
+TX-100347,2026-09-04 13:03:22,AC-4384,25.17,wallet,Aster Supply,travel,951,US,US,N,1,20.39,390,grocery basket,0
+TX-100348,2026-08-20 14:48:56,AC-4184,11.47,wallet,Mistral Trading,utilities,44,BD,BD,N,3,15.26,108,monthly utility bill,0
+TX-100349,2026-09-16 03:57:57,AC-4516,201.32,wallet,Pallas Mart,utilities,39,US,US,N,1,19.99,13,regular vendor payment,0
+TX-100350,2026-09-08 08:45:23,AC-4354,74.37,atm,Nexa Supply,grocery,48,US,US,N,8,81.89,1115,in store purchase,0
+TX-100351,2026-08-21 13:52:44,AC-4025,69.5,atm,Quarry Trading,fuel,581,BD,BD,Y,2,64.34,45,recurring subscription renewal,0
+TX-100352,2026-08-24 17:47:04,AC-4256,13.74,wire_transfer,Nexa Mart,telecom_topup,184,AE,GB,N,10,11.94,438,fuel top up,0
+TX-100353,2026-09-09 22:40:04,AC-4435,331.96,card_not_present,Aster Labs,restaurant,141,AE,BD,Y,10,37.38,554,account credential update then purchase,1
+TX-100354,2026-08-31 17:32:09,AC-4522,18.36,wire_transfer,Corvid Trading,gift_cards,65,US,US,N,1,13.64,500,regular vendor payment,0
+TX-100355,2026-08-20 15:22:20,AC-4252,40.42,wallet,Quarry Mart,apparel,1,US,US,Y,5,28.4,31,regular vendor payment,0
+TX-100356,2026-09-03 21:14:30,AC-4418,7.84,card_present,Corvid Exchange,gift_cards,55,US,US,N,4,8.25,258,recurring subscription renewal,0
+TX-100357,2026-09-09 16:56:50,AC-4344,3.72,wire_transfer,Larkspur Group,electronics,43,US,US,Y,3,6.01,363,fuel top up,0
+TX-100358,2026-08-31 11:56:51,AC-4535,33.82,card_not_present,Orbit Trading,apparel,296,BD,BD,N,1,42.04,70,grocery basket,0
+TX-100359,2026-08-29 21:27:37,AC-4661,130.69,card_not_present,Mistral Exchange,electronics,1,MY,BD,N,1,8.94,90,fuel top up,1
+TX-100360,2026-09-02 06:52:59,AC-4135,1,atm,Halcyon Digital,apparel,988,BD,BD,Y,6,146.45,293,recurring subscription renewal,0
+TX-100361,2026-08-30 15:36:44,AC-4144,13.9,card_present,Hollow Retail,telecom_topup,1116,US,US,N,8,15.4,88,grocery basket,0
+TX-100362,2026-09-15 14:24:48,AC-4667,44.43,card_not_present,Halcyon Retail,apparel,1,GB,GB,Y,5,41.88,164,recurring subscription renewal,0
+TX-100363,2026-08-17 23:33:34,AC-4061,38.32,card_not_present,Meridian Labs,electronics,361,US,US,N,1,41.19,334,in store purchase,0
+TX-100364,2026-09-14 07:03:46,AC-4289,6.78,card_present,Corvid Labs,electronics,736,US,US,N,13,6.75,16,grocery basket,0
+TX-100365,2026-08-26 12:33:21,AC-4794,69.12,card_not_present,Aster Labs,pharmacy,38,US,US,N,1,53.84,186,fuel top up,0
+TX-100366,2026-09-03 23:29:34,AC-4645,21.36,wallet,Meridian Labs,restaurant,9,BD,BD,N,4,41.9,21,monthly utility bill,0
+TX-100367,2026-09-08 21:12:56,AC-4649,23.04,atm,Aster Mart,grocery,111,GB,GB,N,6,5,123,payroll credit,0
+TX-100368,2026-08-19 21:55:54,AC-4423,11.21,atm,Pallas Group,utilities,1,US,US,Y,6,16.65,13,payroll credit,0
+TX-100369,2026-08-22 01:13:41,AC-4184,19.55,wire_transfer,Verdant Exchange,apparel,415,BD,BD,N,5,17.42,70,fuel top up,0
+TX-100370,2026-08-21 14:45:35,AC-4365,24.83,wallet,Kestrel Trading,utilities,2,BD,BD,N,1,16.11,11,monthly utility bill,0
+TX-100371,2026-08-31 07:52:20,AC-4294,16.45,wallet,Corvid Digital,grocery,15,GB,GB,Y,12,18.76,7,in store purchase,0
+TX-100372,2026-09-09 11:43:50,AC-4195,4.99,card_not_present,Orbit Mart,pharmacy,113,US,US,N,1,7.55,850,regular vendor payment,0
+TX-100373,2026-08-22 11:59:03,AC-4355,72.35,card_not_present,Meridian Group,utilities,9,BD,BD,N,9,56.74,84,payroll credit,0
+TX-100374,2026-09-03 11:10:32,AC-4163,16.88,card_not_present,Larkspur Labs,utilities,8,BD,BD,N,1,17.56,147,in store purchase,0
+TX-100375,2026-08-27 03:06:02,AC-4060,131.39,wire_transfer,Mistral Group,electronics,188,BD,BD,N,1,95.03,369,regular vendor payment,0
+TX-100376,2026-08-24 01:16:47,AC-4808,43.27,wire_transfer,Vireo Group,fuel,13,US,US,Y,3,34.49,127,grocery basket,0
+TX-100377,2026-09-08 03:38:59,AC-4741,39.48,card_present,Tindal Digital,grocery,1,IN,BD,N,1,27.77,7,grocery basket,0
+TX-100378,2026-09-01 17:53:28,AC-4374,1.94,wallet,Vireo Digital,telecom_topup,1064,GB,GB,N,10,5.13,77,fuel top up,0
+TX-100379,2026-09-06 04:54:33,AC-4601,21.73,atm,Corvid Trading,utilities,491,US,US,N,3,15.55,8,regular vendor payment,0
+TX-100380,2026-09-09 05:29:52,AC-4814,15.94,card_present,Verdant Group,pharmacy,27,GB,GB,N,7,12.07,506,monthly utility bill,0
+TX-100381,2026-09-15 11:29:20,AC-4269,47.57,card_present,Kestrel Mart,telecom_topup,32,BD,BD,N,10,32.85,11,grocery basket,0
+TX-100382,2026-08-23 23:06:57,AC-4887,37.84,wallet,Meridian Retail,electronics,728,BD,BD,N,12,8.58,95,payroll credit,0
+TX-100383,2026-09-02 07:30:32,AC-4543,6.6,wallet,Kestrel Digital,grocery,1,BD,BD,N,5,7.09,556,recurring subscription renewal,0
+TX-100384,2026-08-31 12:52:56,AC-4652,19.22,wallet,Larkspur Exchange,restaurant,3,US,US,N,1,21.73,552,fuel top up,0
+TX-100385,2026-08-21 08:40:16,AC-4794,58.75,card_present,Hollow Digital,crypto_exchange,13,GB,BD,N,6,57.06,102,grocery basket,0
+TX-100386,2026-09-11 02:27:57,AC-4691,31.76,wire_transfer,Larkspur Mart,travel,1557,US,US,N,3,20.38,553,recurring subscription renewal,0
+TX-100387,2026-08-23 20:41:30,AC-4493,10.51,atm,Larkspur Mart,grocery,15,BD,US,N,1,9.89,1011,regular vendor payment,0
+TX-100388,2026-08-28 18:47:25,AC-4373,19.21,wallet,Tindal Group,apparel,771,US,US,N,5,26.8,313,payroll credit,0
+TX-100389,2026-08-19 20:58:05,AC-4707,66.89,wire_transfer,Larkspur Supply,money_transfer,67,BD,BD,N,15,60.01,29,regular vendor payment,0
+TX-100390,2026-08-29 21:07:26,AC-4404,151.84,wire_transfer,Orbit Labs,fuel,7,BD,BD,Y,11,163.5,135,monthly utility bill,0
+TX-100391,2026-09-02 11:21:05,AC-4044,21.09,atm,Quarry Labs,apparel,14,SG,US,N,3,18.29,459,monthly utility bill,0
+TX-100392,2026-09-05 06:35:58,AC-4450,95.87,wallet,Nexa Exchange,crypto_exchange,46,BD,BD,N,1,5,586,in store purchase,0
+TX-100393,2026-09-08 06:10:40,AC-4241,10.93,card_present,Larkspur Exchange,utilities,173,BD,BD,Y,1,9.95,12,account credential update then purchase,1
+TX-100394,2026-09-10 13:18:41,AC-4872,16.5,wire_transfer,Corvid Group,telecom_topup,316,MY,US,N,1,15.88,1103,fuel top up,0
+TX-100395,2026-08-24 05:01:50,AC-4059,21.95,wallet,Meridian Exchange,grocery,1054,GB,GB,N,2,19.59,15,regular vendor payment,0
+TX-100396,2026-09-03 05:43:44,AC-4594,223.18,wire_transfer,Halcyon Mart,fuel,11,BD,BD,N,13,35.07,35,in store purchase,0
+TX-100397,2026-09-16 20:07:32,AC-4025,39.05,wallet,Tindal Labs,telecom_topup,73,GB,GB,N,1,30.18,8,grocery basket,0
+TX-100398,2026-08-21 01:15:38,AC-4763,25.41,atm,Vireo Supply,utilities,2,DE,BD,N,1,30.05,101,regular vendor payment,0
+TX-100399,2026-08-30 20:04:24,AC-4356,11.48,card_not_present,Mistral Digital,fuel,63,MY,US,Y,5,10.74,7,recurring subscription renewal,0
+TX-100400,2026-08-24 20:51:03,AC-4370,8.13,card_present,Quarry Labs,money_transfer,4,GB,GB,N,13,7.65,79,fuel top up,0
+TX-100401,2026-09-15 15:44:18,AC-4765,18.95,wire_transfer,Meridian Trading,telecom_topup,26,US,US,N,13,21.77,57,in store purchase,0
+TX-100402,2026-08-28 00:32:44,AC-4393,94.81,card_not_present,Meridian Supply,travel,131,BD,BD,Y,13,77.85,29,monthly utility bill,0
+TX-100403,2026-09-08 10:10:41,AC-4463,112.99,wallet,Mistral Digital,crypto_exchange,17,BD,BD,N,4,85.9,222,in store purchase,0
+TX-100404,2026-09-14 07:41:10,AC-4605,31.09,card_not_present,Quarry Group,telecom_topup,79,SG,US,N,1,37.3,677,in store purchase,0
+TX-100405,2026-08-21 16:03:30,AC-4699,186.95,card_present,Verdant Exchange,crypto_exchange,66,US,GB,Y,14,165.48,71,regular vendor payment,0
+TX-100406,2026-08-21 09:43:33,AC-4873,5.67,wire_transfer,Tindal Supply,money_transfer,1,US,GB,Y,7,5,38,payroll credit,0
+TX-100407,2026-08-28 09:37:56,AC-4100,84.25,wallet,Mistral Exchange,electronics,22,GB,GB,N,10,89.16,8,in store purchase,0
+TX-100408,2026-09-10 06:29:20,AC-4203,10.96,wire_transfer,Halcyon Exchange,gift_cards,10,US,US,N,4,17.58,1232,monthly utility bill,1
+TX-100409,2026-09-12 09:03:31,AC-4149,0.88,card_not_present,Kestrel Mart,grocery,37,GB,GB,N,7,35.45,5,fuel top up,0
+TX-100410,2026-08-20 14:27:59,AC-4704,3.06,card_present,Halcyon Supply,gift_cards,566,US,BD,N,14,12.47,113,fuel top up,0
+TX-100411,2026-09-07 06:18:58,AC-4091,781.78,wallet,Nexa Digital,restaurant,140,SG,US,N,6,128.05,195,fuel top up,0
+TX-100412,2026-08-20 16:53:35,AC-4274,14.73,card_present,Aster Exchange,grocery,21,US,US,Y,3,14.93,203,monthly utility bill,0
+TX-100413,2026-08-31 22:03:35,AC-4845,6.04,atm,Nexa Supply,telecom_topup,2,GB,BD,N,7,5.97,1220,monthly utility bill,0
+TX-100414,2026-09-02 08:22:01,AC-4470,482,atm,Hollow Trading,electronics,1041,BD,US,N,1,50.18,6,regular vendor payment,0
+TX-100415,2026-09-07 17:26:11,AC-4323,0.61,wallet,Nexa Labs,electronics,34,GB,GB,N,9,13.88,632,in store purchase,1
+TX-100416,2026-09-07 03:34:42,AC-4101,16.97,card_present,Nexa Retail,travel,171,BD,BD,N,5,10.21,44,monthly utility bill,0
+TX-100417,2026-08-31 10:42:12,AC-4689,10.48,wallet,Tindal Digital,restaurant,9,US,US,N,3,9.24,6,recurring subscription renewal,0
+TX-100418,2026-08-22 11:50:29,AC-4457,224.05,card_not_present,Kestrel Retail,money_transfer,2,GB,GB,N,10,12.44,30,in store purchase,0
+TX-100419,2026-09-13 03:37:28,AC-4493,10.08,atm,Aster Supply,electronics,195,US,US,Y,1,14.64,8,recurring subscription renewal,0
+TX-100420,2026-08-31 17:47:51,AC-4804,37.43,atm,Aster Supply,crypto_exchange,118,DE,BD,Y,9,60.83,27,monthly utility bill,0
+TX-100421,2026-09-15 21:56:36,AC-4783,32.48,wallet,Verdant Supply,travel,34,US,US,N,10,24.46,118,grocery basket,0
+TX-100422,2026-09-04 04:55:28,AC-4505,40.13,card_present,Mistral Group,apparel,45,BD,BD,Y,1,47.26,57,monthly utility bill,0
+TX-100423,2026-08-22 21:41:42,AC-4192,12.15,wire_transfer,Tindal Trading,apparel,119,GB,US,N,1,22.97,106,regular vendor payment,0
+TX-100424,2026-09-13 22:25:35,AC-4241,9.16,wire_transfer,Mistral Mart,utilities,229,BD,BD,N,12,12.49,280,monthly utility bill,0
+TX-100425,2026-08-20 12:16:28,AC-4547,17.23,wire_transfer,Meridian Exchange,electronics,2,GB,GB,N,1,21.78,1191,in store purchase,0
+TX-100426,2026-08-29 10:53:44,AC-4371,262.27,card_not_present,Hollow Supply,apparel,1012,US,US,N,9,55.58,909,recurring subscription renewal,0
+TX-100427,2026-08-29 14:22:24,AC-4725,12.66,atm,Pallas Exchange,fuel,18,GB,GB,N,13,14.02,46,in store purchase,0
+TX-100428,2026-09-08 04:57:34,AC-4585,1.5,card_present,Larkspur Retail,apparel,11,US,US,N,4,5,8,fuel top up,0
+TX-100429,2026-08-19 19:07:49,AC-4501,37.67,atm,Hollow Digital,grocery,1,GB,GB,N,13,43.34,1124,fuel top up,0
+TX-100430,2026-09-05 16:12:27,AC-4674,22.92,wire_transfer,Hollow Trading,gift_cards,2,US,US,N,10,36.28,167,payroll credit,0
+TX-100431,2026-08-23 09:30:27,AC-4240,55.79,card_not_present,Orbit Supply,gift_cards,2,US,US,N,6,42.59,104,regular vendor payment,0
+TX-100432,2026-09-08 11:27:07,AC-4695,38.11,card_not_present,Kestrel Supply,restaurant,55,BD,BD,N,12,40.49,60,in store purchase,0
+TX-100433,2026-09-14 19:51:00,AC-4591,18.3,wallet,Hollow Labs,apparel,3,BD,GB,N,5,31.93,50,monthly utility bill,1
+TX-100434,2026-09-03 06:38:15,AC-4607,23.15,card_not_present,Orbit Labs,money_transfer,22,US,US,Y,8,24.35,437,payroll credit,0
+TX-100435,2026-08-21 22:53:44,AC-4137,4034.11,wallet,Verdant Trading,utilities,2,BD,BD,N,8,162.49,53,in store purchase,1
+TX-100436,2026-09-09 11:32:47,AC-4382,24.41,card_present,Tindal Digital,apparel,191,GB,GB,N,4,19.29,626,recurring subscription renewal,0
+TX-100437,2026-08-28 21:02:31,AC-4311,1.01,wallet,Verdant Group,apparel,260,AE,US,N,3,27.01,39,payroll credit,0
+TX-100438,2026-08-28 10:39:24,AC-4151,3.91,wallet,Larkspur Exchange,crypto_exchange,1,DE,US,Y,11,24.32,10,regular vendor payment,0
+TX-100439,2026-09-01 02:32:21,AC-4471,18.89,card_present,Aster Mart,travel,1131,GB,GB,N,5,36.17,813,recurring subscription renewal,1
+TX-100440,2026-09-01 02:29:42,AC-4429,13.87,wire_transfer,Corvid Trading,electronics,97,US,US,N,7,13.95,157,recurring subscription renewal,0
+TX-100441,2026-09-12 23:56:42,AC-4013,20.31,card_not_present,Quarry Supply,utilities,92,DE,GB,Y,4,18.75,601,grocery basket,0
+TX-100442,2026-09-13 23:41:43,AC-4344,136.5,card_not_present,Quarry Retail,money_transfer,1335,DE,GB,N,6,10.16,98,monthly utility bill,0
+TX-100443,2026-09-04 12:58:58,AC-4070,12.54,wire_transfer,Vireo Labs,utilities,3,RU,BD,N,1,11.83,54,grocery basket,0
+TX-100444,2026-08-28 22:28:27,AC-4614,5.44,card_present,Mistral Retail,pharmacy,7,US,US,Y,14,8.47,27,fuel top up,0
+TX-100445,2026-09-12 13:57:01,AC-4760,34.02,card_not_present,Hollow Labs,grocery,2,US,US,N,6,30.24,1318,monthly utility bill,0
+TX-100446,2026-09-09 07:05:26,AC-4096,330.57,card_not_present,Quarry Exchange,utilities,16,BD,BD,Y,1,17.71,36,regular vendor payment,0
+TX-100447,2026-09-03 16:42:20,AC-4128,77.12,wallet,Larkspur Exchange,utilities,1,BD,BD,Y,1,59.68,301,recurring subscription renewal,0
+TX-100448,2026-09-11 17:11:51,AC-4229,10.5,atm,Nexa Labs,restaurant,2,US,US,Y,15,7.6,35,grocery basket,0
+TX-100449,2026-08-28 12:36:08,AC-4282,17.45,wallet,Vireo Supply,restaurant,5,GB,GB,N,7,27.51,357,payroll credit,0
+TX-100450,2026-09-12 06:18:30,AC-4700,8.98,card_not_present,Halcyon Group,utilities,46,US,US,N,7,9.84,517,monthly utility bill,0
+TX-100451,2026-08-30 04:05:08,AC-4012,13.64,wallet,Tindal Retail,gift_cards,198,BD,BD,N,9,9.23,822,fuel top up,0
+TX-100452,2026-08-20 23:53:46,AC-4595,29.01,wallet,Tindal Digital,gift_cards,148,NG,US,N,2,26.51,45,regular vendor payment,0
+TX-100453,2026-09-12 23:49:39,AC-4324,43.1,card_present,Hollow Trading,telecom_topup,18,DE,GB,N,2,30.43,69,gift card bulk order,1
+TX-100454,2026-09-08 13:14:12,AC-4333,38.55,atm,Corvid Digital,apparel,124,DE,US,N,3,21.57,357,payroll credit,0
+TX-100455,2026-09-16 21:34:24,AC-4003,1.5,atm,Vireo Retail,travel,125,BD,BD,N,8,5,8,recurring subscription renewal,0
+TX-100456,2026-09-09 17:03:26,AC-4425,14.69,card_present,Aster Mart,fuel,4,US,US,N,9,30.58,44,grocery basket,0
+TX-100457,2026-08-26 13:30:02,AC-4859,0.46,card_not_present,Tindal Exchange,gift_cards,64,MY,GB,N,5,61.96,30,urgent transfer request,1
+TX-100458,2026-08-22 23:55:24,AC-4638,633.91,card_not_present,Orbit Group,travel,47,GB,GB,N,11,55.39,561,payroll credit,0
+TX-100459,2026-08-28 10:58:44,AC-4182,45.73,wallet,Meridian Exchange,money_transfer,5,US,US,N,3,56.53,61,recurring subscription renewal,0
+TX-100460,2026-08-18 08:17:59,AC-4405,10.16,atm,Quarry Labs,grocery,17,GB,GB,N,1,19.03,348,grocery basket,0
+TX-100461,2026-08-19 17:33:07,AC-4219,2.55,wire_transfer,Pallas Labs,crypto_exchange,2,GB,US,N,14,31.27,13,payroll credit,0
+TX-100462,2026-08-28 15:32:41,AC-4444,22.12,card_present,Kestrel Group,crypto_exchange,140,MY,US,N,4,16.01,9,grocery basket,0
+TX-100463,2026-08-26 20:29:09,AC-4596,1.21,wallet,Aster Mart,gift_cards,1,GB,GB,N,15,27.79,1022,in store purchase,0
+TX-100464,2026-09-09 21:59:40,AC-4897,876.67,wallet,Vireo Supply,money_transfer,364,GB,GB,N,3,65.39,1186,regular vendor payment,0
+TX-100465,2026-08-19 18:29:46,AC-4420,21.08,card_not_present,Pallas Retail,money_transfer,14,US,US,N,2,25.74,46,in store purchase,0
+TX-100466,2026-08-27 08:13:41,AC-4194,10.32,wallet,Meridian Group,telecom_topup,18,BD,BD,N,6,8.29,358,fuel top up,0
+TX-100467,2026-08-21 11:18:23,AC-4845,40.8,card_present,Pallas Supply,crypto_exchange,1595,US,US,N,1,35.56,246,fuel top up,0
+TX-100468,2026-08-27 10:44:07,AC-4253,17.92,card_present,Verdant Labs,gift_cards,735,US,US,N,11,13.2,24,grocery basket,0
+TX-100469,2026-08-24 06:32:38,AC-4348,19.77,card_not_present,Hollow Supply,utilities,155,GB,GB,Y,8,42.7,239,monthly utility bill,0
+TX-100470,2026-09-03 19:53:19,AC-4253,19.14,wire_transfer,Meridian Exchange,travel,2,GB,GB,N,11,21.46,105,monthly utility bill,0
+TX-100471,2026-09-03 02:32:40,AC-4689,7.21,wire_transfer,Meridian Group,money_transfer,83,RU,GB,Y,4,7.03,20,in store purchase,0
+TX-100472,2026-08-22 08:11:28,AC-4146,5.22,wire_transfer,Hollow Retail,travel,20,BD,BD,N,1,5,49,fuel top up,0
+TX-100473,2026-08-22 23:29:55,AC-4139,36.86,card_present,Corvid Retail,restaurant,8,IN,US,Y,8,21.13,727,in store purchase,0
+TX-100474,2026-08-22 18:23:16,AC-4578,92.65,atm,Pallas Digital,money_transfer,99,US,US,N,1,16.7,1058,grocery basket,0
+TX-100475,2026-08-19 21:10:26,AC-4655,68.43,card_present,Verdant Exchange,pharmacy,3,GB,GB,N,4,47.69,39,in store purchase,0
+TX-100476,2026-09-02 01:10:00,AC-4331,7.5,wire_transfer,Meridian Exchange,travel,4,BD,BD,Y,7,5,7,grocery basket,0
+TX-100477,2026-09-14 13:19:27,AC-4175,76.53,wallet,Nexa Digital,money_transfer,54,GB,GB,N,4,107.16,195,monthly utility bill,0
+TX-100478,2026-08-25 14:04:04,AC-4171,1.12,card_not_present,Aster Mart,crypto_exchange,358,US,US,N,1,9.86,104,fuel top up,0
+TX-100479,2026-08-19 17:18:48,AC-4176,1.07,card_not_present,Kestrel Trading,money_transfer,102,US,US,N,1,8.21,30,payroll credit,0
+TX-100480,2026-08-18 09:24:39,AC-4186,4.44,wallet,Tindal Mart,electronics,251,NG,US,N,8,7.32,382,monthly utility bill,0
+TX-100481,2026-09-08 15:22:19,AC-4753,18.34,card_present,Hollow Supply,grocery,2,US,US,N,8,25.27,6,grocery basket,0
+TX-100482,2026-09-12 05:32:46,AC-4696,7.52,atm,Meridian Labs,gift_cards,13,US,US,N,12,12.12,1182,recurring subscription renewal,0
+TX-100483,2026-09-16 22:06:08,AC-4105,27.94,card_present,Corvid Trading,money_transfer,12,BD,BD,N,1,19.23,77,monthly utility bill,0
+TX-100484,2026-09-13 17:26:15,AC-4812,12.46,card_not_present,Halcyon Group,telecom_topup,646,US,US,N,1,13.27,867,regular vendor payment,0
+TX-100485,2026-09-14 12:27:51,AC-4324,6.46,card_present,Pallas Trading,fuel,2,GB,GB,Y,1,9.78,1194,payroll credit,0
+TX-100486,2026-08-20 21:51:27,AC-4031,48.71,card_not_present,Orbit Trading,gift_cards,19,IN,GB,N,15,36.45,1009,grocery basket,0
+TX-100487,2026-08-26 18:47:45,AC-4589,18.63,card_not_present,Quarry Mart,fuel,4,GB,GB,N,14,25.27,179,regular vendor payment,0
+TX-100488,2026-08-31 12:20:03,AC-4759,28.27,wallet,Tindal Group,money_transfer,2,GB,BD,N,6,41,74,in store purchase,0
+TX-100489,2026-09-05 17:07:25,AC-4885,15.43,card_not_present,Larkspur Trading,apparel,64,GB,GB,Y,3,16.1,32,payroll credit,0
+TX-100490,2026-08-20 22:27:21,AC-4223,20.83,card_present,Aster Trading,apparel,1046,BD,BD,N,15,13.92,640,payroll credit,0
+TX-100491,2026-08-21 02:29:55,AC-4237,5.2,card_not_present,Orbit Exchange,money_transfer,294,BD,BD,N,6,7.95,464,regular vendor payment,0
+TX-100492,2026-08-31 21:51:40,AC-4558,54.26,card_not_present,Kestrel Digital,telecom_topup,2,BD,BD,N,9,56.7,28,payroll credit,0
+TX-100493,2026-09-13 18:23:51,AC-4681,21.01,wire_transfer,Tindal Digital,restaurant,157,GB,GB,N,2,16.8,32,payroll credit,0
+TX-100494,2026-09-13 04:29:25,AC-4324,49.13,wallet,Hollow Labs,utilities,3,AE,GB,N,10,31.58,42,recurring subscription renewal,0
+TX-100495,2026-08-31 09:48:28,AC-4867,8.47,wallet,Kestrel Supply,money_transfer,26,BD,BD,N,1,9.31,1217,payroll credit,0
+TX-100496,2026-09-04 19:18:01,AC-4846,10.56,wire_transfer,Aster Supply,money_transfer,88,DE,GB,N,10,10.11,72,monthly utility bill,1
+TX-100497,2026-09-12 19:28:09,AC-4790,2.19,wallet,Pallas Mart,pharmacy,5,BD,BD,N,2,114.05,711,recurring subscription renewal,0
+TX-100498,2026-08-23 10:12:14,AC-4811,2.3,card_not_present,Tindal Digital,pharmacy,68,GB,GB,Y,1,33.19,23,in store purchase,0
+TX-100499,2026-08-20 05:27:11,AC-4166,28.12,wire_transfer,Nexa Mart,utilities,3,AE,GB,N,6,25.38,113,in store purchase,0
+TX-100500,2026-08-29 22:44:24,AC-4492,5.38,card_present,Meridian Group,fuel,4,US,US,N,8,9.24,5,regular vendor payment,0
+TX-100501,2026-09-08 20:32:04,AC-4650,15.55,card_present,Tindal Supply,restaurant,1254,MY,BD,N,4,15.35,14,in store purchase,0
+TX-100502,2026-08-28 16:27:20,AC-4315,3.03,atm,Vireo Supply,travel,48,GB,GB,N,12,28.94,36,payroll credit,0
+TX-100503,2026-09-15 14:13:27,AC-4462,20.84,wire_transfer,Mistral Supply,restaurant,34,BD,BD,N,2,18.45,17,fuel top up,0
+TX-100504,2026-09-05 19:41:54,AC-4867,42.35,card_present,Halcyon Labs,telecom_topup,19,BD,BD,N,8,42.3,45,payroll credit,0
+TX-100505,2026-09-02 21:00:17,AC-4138,30.03,wire_transfer,Verdant Mart,money_transfer,188,GB,GB,N,11,43.07,125,grocery basket,0
+TX-100506,2026-08-29 19:26:56,AC-4004,41.76,card_not_present,Hollow Labs,electronics,1,BD,BD,N,11,28.39,1063,gift card bulk order,1
+TX-100507,2026-08-24 02:22:52,AC-4177,48.96,atm,Pallas Digital,money_transfer,3,BD,BD,N,2,42.46,78,payroll credit,0
+TX-100508,2026-09-14 16:33:31,AC-4690,14.79,wallet,Mistral Retail,travel,322,BD,BD,N,11,15.46,23,payroll credit,0
+TX-100509,2026-09-05 02:02:24,AC-4175,32.22,wallet,Vireo Supply,travel,3,AE,GB,N,4,32.56,283,monthly utility bill,0
+TX-100510,2026-09-01 16:29:20,AC-4631,8.5,card_present,Hollow Supply,apparel,406,US,US,N,1,9.6,831,regular vendor payment,0
+TX-100511,2026-08-21 16:03:34,AC-4258,22.78,card_present,Orbit Group,fuel,3,US,US,N,8,25.92,15,in store purchase,0
+TX-100512,2026-09-01 11:50:02,AC-4063,10.02,atm,Pallas Group,utilities,13,US,US,N,9,17.87,708,recurring subscription renewal,0
+TX-100513,2026-08-25 08:17:12,AC-4310,23.36,atm,Quarry Supply,money_transfer,84,US,US,N,1,20.18,239,payroll credit,0
+TX-100514,2026-08-26 18:10:27,AC-4327,63.55,wallet,Mistral Supply,telecom_topup,43,BD,BD,N,5,50.52,12,grocery basket,0
+TX-100515,2026-08-24 04:11:27,AC-4252,13.35,atm,Larkspur Retail,pharmacy,678,IN,US,N,2,13.73,209,recurring subscription renewal,0
+TX-100516,2026-09-05 16:20:25,AC-4515,133.85,wire_transfer,Corvid Trading,electronics,56,IN,BD,Y,2,83.32,62,account credential update then purchase,1
+TX-100517,2026-09-05 20:03:42,AC-4076,6.82,card_present,Orbit Digital,telecom_topup,1,GB,GB,N,3,6.74,200,payroll credit,0
+TX-100518,2026-09-10 07:28:48,AC-4215,3.53,wire_transfer,Kestrel Digital,gift_cards,190,BD,BD,N,1,63.58,89,grocery basket,0
+TX-100519,2026-09-15 22:59:55,AC-4031,14.49,card_present,Tindal Digital,fuel,91,GB,GB,N,10,20.42,637,grocery basket,0
+TX-100520,2026-09-07 07:45:06,AC-4693,0.59,card_present,Vireo Group,restaurant,511,US,US,Y,14,11.14,16,recurring subscription renewal,0
+TX-100521,2026-09-01 20:51:59,AC-4321,25.64,card_not_present,Hollow Supply,apparel,1442,SG,US,N,5,36.02,49,monthly utility bill,0
+TX-100522,2026-08-25 02:39:11,AC-4801,7.25,card_not_present,Tindal Trading,pharmacy,340,GB,GB,Y,6,6.52,36,recurring subscription renewal,0
+TX-100523,2026-09-05 23:10:23,AC-4853,14.56,wire_transfer,Orbit Labs,pharmacy,589,US,US,N,11,9.02,25,grocery basket,0
+TX-100524,2026-08-24 12:12:47,AC-4398,108.03,card_not_present,Vireo Mart,crypto_exchange,401,GB,GB,N,5,77.88,147,regular vendor payment,0
+TX-100525,2026-09-01 13:04:56,AC-4405,8.99,atm,Pallas Digital,gift_cards,1,BD,BD,N,7,13.28,7,in store purchase,0
+TX-100526,2026-09-09 21:35:49,AC-4122,16.03,atm,Vireo Exchange,utilities,38,US,US,N,12,22.94,136,fuel top up,0
+TX-100527,2026-09-13 20:00:03,AC-4557,29.2,card_not_present,Orbit Labs,fuel,48,BD,BD,N,10,23.23,19,monthly utility bill,0
+TX-100528,2026-08-17 17:33:26,AC-4004,20.02,atm,Halcyon Retail,crypto_exchange,239,GB,GB,N,4,31.61,24,payroll credit,0
+TX-100529,2026-09-04 17:51:35,AC-4859,43.11,card_present,Verdant Retail,grocery,1,US,US,N,5,51.49,9,payroll credit,0
+TX-100530,2026-08-28 11:38:05,AC-4652,170.93,wallet,Larkspur Retail,electronics,20,GB,GB,N,1,21.83,900,monthly utility bill,0
+TX-100531,2026-09-03 18:56:23,AC-4481,26.65,card_not_present,Orbit Digital,travel,4,BD,BD,Y,1,26.59,58,in store purchase,0
+TX-100532,2026-09-01 22:38:05,AC-4125,98.23,wallet,Orbit Trading,money_transfer,5,GB,GB,N,7,108.74,6,monthly utility bill,0
+TX-100533,2026-09-01 22:05:46,AC-4323,30.53,atm,Kestrel Digital,telecom_topup,14,GB,GB,Y,13,33.64,8,in store purchase,0
+TX-100534,2026-08-27 17:08:31,AC-4408,23.35,card_not_present,Larkspur Labs,electronics,120,NG,BD,N,1,34.71,72,monthly utility bill,0
+TX-100535,2026-08-18 23:21:31,AC-4780,76.01,card_present,Meridian Digital,electronics,81,BD,GB,N,6,61.27,40,recurring subscription renewal,0
+TX-100536,2026-09-04 01:38:13,AC-4649,222.33,atm,Verdant Mart,apparel,1146,GB,GB,Y,9,32.28,27,grocery basket,0
+TX-100537,2026-08-19 19:56:58,AC-4364,101.01,card_present,Corvid Mart,electronics,206,MY,US,N,2,67.89,384,payroll credit,0
+TX-100538,2026-09-05 11:17:22,AC-4257,48.83,atm,Orbit Trading,utilities,1,AE,BD,N,1,47.43,863,in store purchase,0
+TX-100539,2026-09-09 10:48:03,AC-4816,17.74,wallet,Meridian Mart,utilities,15,BD,BD,N,2,13.36,158,recurring subscription renewal,0
+TX-100540,2026-08-19 11:55:40,AC-4835,17.52,wallet,Vireo Mart,travel,74,US,US,N,11,22.46,9,regular vendor payment,0
+TX-100541,2026-08-23 08:03:15,AC-4318,19.81,wire_transfer,Verdant Trading,money_transfer,95,GB,GB,Y,6,29.64,166,monthly utility bill,0
+TX-100542,2026-09-12 05:13:41,AC-4717,45.19,atm,Corvid Trading,money_transfer,118,GB,GB,N,3,59.41,262,grocery basket,0
+TX-100543,2026-09-02 14:26:36,AC-4532,14.22,wire_transfer,Larkspur Supply,money_transfer,11,GB,GB,Y,4,16.47,753,recurring subscription renewal,0
+TX-100544,2026-09-13 16:55:25,AC-4761,6.15,card_present,Hollow Retail,telecom_topup,29,GB,GB,Y,1,5,5,grocery basket,0
+TX-100545,2026-09-01 08:00:55,AC-4411,4.11,atm,Tindal Mart,restaurant,1,BD,BD,Y,10,5,502,in store purchase,0
+TX-100546,2026-08-19 18:57:13,AC-4528,3.82,wire_transfer,Vireo Trading,travel,2,GB,GB,Y,10,5.53,1300,fuel top up,0
+TX-100547,2026-09-14 07:49:28,AC-4348,136.6,wire_transfer,Meridian Group,gift_cards,353,NG,BD,N,5,31.81,64,fuel top up,0
+TX-100548,2026-09-01 19:51:35,AC-4148,27.29,card_present,Larkspur Retail,grocery,1137,DE,US,Y,6,17.78,29,grocery basket,0
+TX-100549,2026-09-09 16:44:08,AC-4382,3.93,atm,Aster Exchange,money_transfer,300,BD,BD,Y,14,42.78,6,fuel top up,0
+TX-100550,2026-09-05 10:53:36,AC-4259,47.88,wallet,Orbit Digital,apparel,511,BD,BD,N,11,36.24,270,regular vendor payment,0
+TX-100551,2026-08-18 18:55:58,AC-4075,6.51,card_not_present,Aster Trading,travel,6,RU,US,N,14,8.67,801,fuel top up,0
+TX-100552,2026-08-19 15:19:59,AC-4586,1.79,wire_transfer,Kestrel Supply,grocery,4,BD,BD,N,3,16.64,171,payroll credit,0
+TX-100553,2026-08-31 22:52:23,AC-4488,55.24,atm,Quarry Trading,restaurant,78,BD,BD,N,11,11.9,418,grocery basket,0
+TX-100554,2026-08-18 23:20:52,AC-4248,146,card_present,Tindal Labs,telecom_topup,158,NG,BD,N,3,97.94,8,grocery basket,0
+TX-100555,2026-08-23 18:36:26,AC-4607,77.44,card_present,Quarry Trading,pharmacy,4,BD,BD,Y,1,49.79,151,payroll credit,0
+TX-100556,2026-08-18 19:22:51,AC-4894,43.48,card_present,Vireo Labs,travel,113,US,US,N,3,40.91,547,recurring subscription renewal,0
+TX-100557,2026-08-26 01:33:08,AC-4643,3.69,wire_transfer,Vireo Digital,telecom_topup,15,US,US,N,1,60.92,50,payroll credit,0
+TX-100558,2026-09-05 20:08:41,AC-4356,51.37,card_present,Verdant Digital,telecom_topup,14,AE,GB,Y,14,54.08,273,monthly utility bill,0
+TX-100559,2026-09-08 14:43:26,AC-4649,11.15,card_not_present,Verdant Retail,fuel,51,GB,GB,Y,2,16.45,685,regular vendor payment,0
+TX-100560,2026-09-02 15:31:39,AC-4753,17.68,card_present,Halcyon Mart,restaurant,65,GB,GB,Y,4,14.34,19,fuel top up,0
+TX-100561,2026-09-13 22:08:03,AC-4052,26.65,wallet,Hollow Mart,gift_cards,14,BD,BD,Y,4,34.73,90,monthly utility bill,0
+TX-100562,2026-08-26 12:50:48,AC-4289,7.48,wire_transfer,Pallas Trading,crypto_exchange,7,US,US,N,2,7.96,150,regular vendor payment,0
+TX-100563,2026-08-21 15:57:25,AC-4470,41.42,card_not_present,Larkspur Digital,apparel,12,BD,BD,Y,2,41.77,8,in store purchase,0
+TX-100564,2026-09-14 08:07:52,AC-4700,3.37,card_present,Larkspur Digital,money_transfer,182,GB,GB,N,5,5.29,39,payroll credit,0
+TX-100565,2026-08-20 18:00:35,AC-4840,374.16,atm,Larkspur Group,grocery,123,GB,GB,N,10,25.88,395,fuel top up,0
+TX-100566,2026-09-06 16:08:12,AC-4817,58.99,card_not_present,Halcyon Trading,telecom_topup,75,US,US,Y,13,46.41,25,grocery basket,0
+TX-100567,2026-08-25 03:46:46,AC-4318,8.67,atm,Quarry Retail,electronics,937,BD,BD,N,1,9.05,92,regular vendor payment,0
+TX-100568,2026-09-09 02:07:39,AC-4039,9.81,atm,Aster Mart,utilities,228,GB,GB,N,2,12.37,522,in store purchase,0
+TX-100569,2026-08-24 06:54:51,AC-4583,11.99,atm,Nexa Retail,telecom_topup,116,GB,GB,N,7,14.01,21,recurring subscription renewal,0
+TX-100570,2026-08-20 15:04:16,AC-4795,16.51,card_not_present,Quarry Trading,fuel,1,BD,BD,N,1,16.09,59,in store purchase,0
+TX-100571,2026-09-05 12:13:46,AC-4436,2.21,wire_transfer,Vireo Supply,utilities,17,RU,BD,N,1,116.94,797,recurring subscription renewal,0
+TX-100572,2026-09-08 12:11:01,AC-4570,26.75,atm,Vireo Mart,fuel,2,US,US,N,1,19.41,106,recurring subscription renewal,0
+TX-100573,2026-08-19 14:30:12,AC-4185,3,wallet,Tindal Mart,apparel,199,GB,GB,N,1,19.71,67,grocery basket,0
+TX-100574,2026-08-22 21:24:27,AC-4687,33.15,wallet,Meridian Exchange,electronics,2,US,US,Y,12,39.38,113,in store purchase,0
+TX-100575,2026-09-14 21:30:26,AC-4305,1.22,wire_transfer,Kestrel Exchange,pharmacy,116,BD,BD,Y,4,20.59,186,payroll credit,0
+TX-100576,2026-09-04 23:37:28,AC-4379,113.05,wallet,Meridian Supply,gift_cards,72,GB,GB,N,5,92.72,9,fuel top up,0
+TX-100577,2026-09-08 08:43:34,AC-4084,10.89,wire_transfer,Tindal Mart,money_transfer,87,MY,BD,N,6,16.25,542,grocery basket,0
+TX-100578,2026-08-19 23:13:03,AC-4835,6.86,card_not_present,Corvid Labs,crypto_exchange,95,US,US,N,5,7.16,101,grocery basket,0
+TX-100579,2026-08-20 11:56:10,AC-4579,4.52,card_not_present,Nexa Retail,money_transfer,14,GB,GB,N,1,5.32,7,grocery basket,0
+TX-100580,2026-08-17 22:59:28,AC-4071,35.32,card_not_present,Verdant Group,grocery,416,BD,BD,Y,14,25.91,5,in store purchase,0
+TX-100581,2026-08-18 19:14:01,AC-4550,37.05,card_not_present,Kestrel Labs,gift_cards,14,BD,BD,N,3,34.7,71,fuel top up,0
+TX-100582,2026-08-19 11:51:59,AC-4208,7.66,atm,Nexa Trading,restaurant,2,BD,BD,Y,1,13.01,120,fuel top up,0
+TX-100583,2026-08-27 03:35:40,AC-4254,12.3,atm,Corvid Supply,apparel,2,GB,GB,Y,11,10.9,602,grocery basket,0
+TX-100584,2026-08-24 03:18:22,AC-4148,58.64,card_present,Larkspur Mart,gift_cards,435,US,US,N,12,19.42,154,grocery basket,0
+TX-100585,2026-09-08 01:15:07,AC-4176,38.48,atm,Meridian Trading,money_transfer,58,DE,US,Y,6,41.99,107,regular vendor payment,0
+TX-100586,2026-09-14 17:15:58,AC-4038,76.52,card_not_present,Corvid Exchange,travel,30,GB,GB,N,6,89.31,13,fuel top up,0
+TX-100587,2026-08-19 20:19:56,AC-4780,27.15,card_present,Tindal Group,money_transfer,70,US,US,Y,5,21.57,226,recurring subscription renewal,0
+TX-100588,2026-08-24 22:22:15,AC-4098,3.52,card_present,Meridian Supply,restaurant,3,US,US,N,5,5,152,grocery basket,0
+TX-100589,2026-09-11 21:06:52,AC-4078,12.81,atm,Quarry Group,telecom_topup,401,DE,BD,N,1,21.79,27,fuel top up,0
+TX-100590,2026-09-14 16:51:30,AC-4430,64.75,atm,Verdant Digital,utilities,432,BD,BD,N,1,47.53,1229,recurring subscription renewal,0
+TX-100591,2026-09-13 08:08:03,AC-4684,34.96,wallet,Mistral Group,utilities,32,NG,BD,N,1,56.03,311,in store purchase,0
+TX-100592,2026-09-08 13:08:17,AC-4233,368.82,card_present,Meridian Exchange,gift_cards,88,DE,BD,N,1,29.65,223,fuel top up,0
+TX-100593,2026-08-22 01:49:48,AC-4383,4.94,wire_transfer,Larkspur Retail,fuel,784,US,US,N,7,5.06,102,recurring subscription renewal,0
+TX-100594,2026-09-07 11:42:26,AC-4218,34.5,card_present,Nexa Exchange,crypto_exchange,3,GB,GB,N,1,22.39,218,monthly utility bill,1
+TX-100595,2026-09-02 10:48:13,AC-4652,70.55,card_not_present,Halcyon Group,telecom_topup,3,GB,GB,N,9,94.18,7,grocery basket,0
+TX-100596,2026-08-30 17:51:06,AC-4415,32.57,wallet,Pallas Digital,pharmacy,8,BD,BD,Y,14,22.39,204,grocery basket,0
+TX-100597,2026-08-23 01:25:12,AC-4238,66.24,card_present,Hollow Exchange,crypto_exchange,213,BD,BD,N,3,53.31,12,monthly utility bill,0
+TX-100598,2026-09-04 05:38:38,AC-4380,18.79,wire_transfer,Aster Trading,pharmacy,322,GB,GB,Y,8,21.56,175,monthly utility bill,0
+TX-100599,2026-09-11 06:44:53,AC-4403,26.03,card_not_present,Corvid Labs,money_transfer,30,GB,GB,N,2,24.62,153,payroll credit,0
+TX-100600,2026-09-11 13:36:29,AC-4075,34.35,card_present,Aster Supply,electronics,848,BD,BD,N,1,20.09,402,monthly utility bill,0
+TX-100601,2026-09-07 11:58:42,AC-4594,5.31,wallet,Verdant Mart,crypto_exchange,12,US,US,N,1,7.04,106,in store purchase,0
+TX-100602,2026-08-28 23:22:18,AC-4538,2.99,card_present,Larkspur Digital,utilities,779,US,US,N,2,21.67,258,in store purchase,0
+TX-100603,2026-09-14 18:57:46,AC-4847,30.45,atm,Nexa Digital,utilities,8,US,GB,Y,1,54.96,13,grocery basket,0
+TX-100604,2026-09-14 20:54:29,AC-4357,37.97,card_not_present,Larkspur Mart,telecom_topup,240,GB,GB,N,7,29.47,179,monthly utility bill,0
+TX-100605,2026-09-16 20:01:27,AC-4885,1.67,card_present,Verdant Trading,apparel,131,GB,GB,N,3,9.21,32,grocery basket,0
+TX-100606,2026-09-02 16:43:52,AC-4212,13.58,atm,Mistral Labs,crypto_exchange,6,BD,BD,N,3,13.33,1130,grocery basket,0
+TX-100607,2026-08-25 20:46:25,AC-4842,55.32,atm,Verdant Trading,electronics,1,GB,GB,N,11,5.28,9,recurring subscription renewal,0
+TX-100608,2026-09-10 09:13:05,AC-4750,4.31,wallet,Tindal Digital,fuel,1,BD,BD,N,3,5.21,1187,regular vendor payment,0
+TX-100609,2026-08-25 18:52:55,AC-4454,4.55,atm,Kestrel Group,travel,351,GB,GB,N,6,5,249,recurring subscription renewal,0
+TX-100610,2026-08-30 07:45:14,AC-4396,3.51,atm,Mistral Retail,restaurant,514,BD,BD,N,1,14.15,110,in store purchase,0
+TX-100611,2026-08-25 20:29:26,AC-4634,39.42,atm,Corvid Labs,restaurant,3,MY,US,N,3,31.85,312,payroll credit,0
+TX-100612,2026-08-28 19:39:02,AC-4240,385.34,card_present,Mistral Supply,money_transfer,1,NG,GB,N,14,24.93,785,monthly utility bill,0
+TX-100613,2026-08-21 09:51:47,AC-4178,21.73,wire_transfer,Vireo Digital,crypto_exchange,2,US,US,Y,1,17.5,6,monthly utility bill,0
+TX-100614,2026-08-24 23:50:08,AC-4457,46.37,card_not_present,Kestrel Labs,restaurant,13,GB,GB,N,8,13.35,5,fuel top up,0
+TX-100615,2026-08-17 06:00:46,AC-4180,11.47,wire_transfer,Nexa Mart,telecom_topup,4,MY,GB,N,1,7.76,1071,in store purchase,0
+TX-100616,2026-08-27 23:21:47,AC-4671,14.92,card_not_present,Hollow Supply,electronics,1401,GB,GB,N,10,25.42,426,fuel top up,0
+TX-100617,2026-09-10 19:39:40,AC-4250,3.41,card_not_present,Orbit Mart,money_transfer,1204,BD,BD,N,5,31.3,715,fuel top up,0
+TX-100618,2026-09-11 14:59:15,AC-4214,1.8,wire_transfer,Larkspur Trading,pharmacy,4,GB,GB,N,13,13.25,14,regular vendor payment,0
+TX-100619,2026-09-01 15:07:53,AC-4306,39.68,wallet,Nexa Retail,apparel,3,US,US,Y,6,71.84,226,recurring subscription renewal,0
+TX-100620,2026-09-03 15:40:38,AC-4642,1.52,wire_transfer,Pallas Exchange,grocery,2,US,US,N,15,18.67,37,monthly utility bill,0
+TX-100621,2026-08-29 14:38:00,AC-4723,26.13,atm,Tindal Retail,utilities,3,BD,BD,N,7,26.77,1264,monthly utility bill,0
+TX-100622,2026-08-27 15:12:04,AC-4203,299.43,wallet,Tindal Exchange,restaurant,205,US,US,N,6,24.53,49,grocery basket,0
+TX-100623,2026-09-15 18:19:25,AC-4449,434.21,wallet,Halcyon Group,electronics,3,BD,BD,N,1,28.26,1221,monthly utility bill,0
+TX-100624,2026-08-18 07:41:00,AC-4227,44.86,atm,Pallas Digital,restaurant,3,BD,BD,Y,1,38.14,12,grocery basket,0
+TX-100625,2026-08-17 20:46:01,AC-4699,22.63,card_not_present,Corvid Mart,crypto_exchange,27,GB,GB,N,11,19.23,735,monthly utility bill,0
+TX-100626,2026-08-30 03:42:36,AC-4103,50.99,wire_transfer,Larkspur Supply,fuel,13,US,US,N,5,41.05,50,in store purchase,0
+TX-100627,2026-09-08 06:15:11,AC-4813,18.29,wallet,Pallas Digital,apparel,341,US,BD,N,3,21.89,10,payroll credit,0
+TX-100628,2026-09-14 22:00:00,AC-4668,10.43,atm,Pallas Digital,telecom_topup,502,BD,BD,N,6,10.67,358,grocery basket,0
+TX-100629,2026-09-12 15:28:00,AC-4243,5.97,wallet,Pallas Supply,crypto_exchange,69,GB,GB,N,8,5,1177,payroll credit,0
+TX-100630,2026-09-04 11:58:03,AC-4882,14.73,card_present,Nexa Supply,electronics,621,DE,US,N,11,24.38,30,monthly utility bill,0
+TX-100631,2026-08-18 12:43:32,AC-4145,29.52,wire_transfer,Nexa Labs,apparel,1362,GB,GB,N,6,26.18,599,payroll credit,0
+TX-100632,2026-09-04 09:38:04,AC-4168,16.31,atm,Quarry Retail,restaurant,2,BD,BD,N,1,17.87,46,payroll credit,0
+TX-100633,2026-09-06 12:43:53,AC-4580,36.17,wire_transfer,Mistral Exchange,utilities,3,IN,BD,N,7,37.58,5,recurring subscription renewal,0
+TX-100634,2026-09-13 22:10:31,AC-4531,40.12,wire_transfer,Nexa Digital,grocery,33,BD,BD,N,10,29.97,9,regular vendor payment,0
+TX-100635,2026-09-11 15:17:00,AC-4781,9.39,wire_transfer,Tindal Supply,apparel,226,US,US,N,10,14.95,1094,fuel top up,0
+TX-100636,2026-08-31 22:08:17,AC-4670,57.88,card_not_present,Tindal Digital,telecom_topup,3,GB,GB,N,7,48.64,89,fuel top up,0
+TX-100637,2026-08-23 08:07:54,AC-4644,8.59,card_present,Quarry Mart,restaurant,1,US,US,Y,10,8.24,298,recurring subscription renewal,0
+TX-100638,2026-09-01 10:24:55,AC-4700,3.16,wire_transfer,Nexa Labs,crypto_exchange,19,US,US,Y,3,5,462,grocery basket,0
+TX-100639,2026-08-26 13:14:34,AC-4680,2.45,card_not_present,Halcyon Digital,fuel,1,SG,BD,N,1,5,38,fuel top up,0
+TX-100640,2026-09-10 11:12:27,AC-4334,34.72,card_present,Vireo Retail,utilities,118,MY,US,N,2,26.94,57,payroll credit,0
+TX-100641,2026-09-05 05:41:56,AC-4708,44.3,atm,Orbit Digital,travel,10,IN,BD,N,2,54.81,7,recurring subscription renewal,0
+TX-100642,2026-08-29 02:39:24,AC-4099,76.13,wire_transfer,Aster Supply,fuel,520,GB,GB,N,11,62.26,83,fuel top up,0
+TX-100643,2026-08-27 00:32:42,AC-4561,7.89,card_present,Hollow Labs,grocery,1,GB,BD,N,3,7.39,274,grocery basket,0
+TX-100644,2026-08-29 13:27:26,AC-4269,12.54,wallet,Nexa Labs,money_transfer,1,GB,GB,N,2,11.87,194,recurring subscription renewal,0
+TX-100645,2026-08-23 19:32:45,AC-4322,239.76,card_not_present,Quarry Supply,apparel,1255,GB,GB,N,2,40.81,938,recurring subscription renewal,0
+TX-100646,2026-09-05 13:07:01,AC-4216,15.18,wallet,Vireo Trading,pharmacy,20,GB,GB,N,14,15.65,62,grocery basket,0
+TX-100647,2026-09-05 14:31:12,AC-4150,81.84,wire_transfer,Orbit Labs,electronics,52,BD,BD,Y,1,56.36,185,monthly utility bill,0
+TX-100648,2026-09-09 23:48:39,AC-4572,6.05,card_present,Tindal Group,electronics,5,US,US,Y,6,9.34,6,recurring subscription renewal,0
+TX-100649,2026-09-03 12:33:14,AC-4334,256.61,card_not_present,Tindal Supply,utilities,137,GB,GB,N,4,15.67,47,recurring subscription renewal,0
+TX-100650,2026-08-24 08:31:04,AC-4094,0.72,card_present,Aster Supply,money_transfer,6,MY,GB,Y,3,38.25,759,in store purchase,0
+TX-100651,2026-09-09 14:50:38,AC-4618,32.81,wallet,Vireo Exchange,pharmacy,2,BD,BD,N,1,35.1,32,payroll credit,0
+TX-100652,2026-09-14 16:05:08,AC-4415,39.28,card_not_present,Hollow Group,travel,3,US,US,N,6,28.22,891,in store purchase,0
+TX-100653,2026-09-08 17:42:10,AC-4261,23.05,atm,Vireo Exchange,fuel,133,BD,BD,N,3,42.32,1181,payroll credit,0
+TX-100654,2026-09-01 23:12:43,AC-4452,3.06,card_present,Larkspur Mart,fuel,923,BD,BD,N,1,5,17,regular vendor payment,0
+TX-100655,2026-09-04 09:26:20,AC-4483,30.5,wallet,Vireo Digital,utilities,2,GB,GB,N,1,43.11,38,payroll credit,0
+TX-100656,2026-08-24 03:10:01,AC-4431,401.85,card_not_present,Corvid Supply,gift_cards,602,BD,BD,Y,4,18.76,119,grocery basket,0
+TX-100657,2026-09-05 15:14:16,AC-4286,97.75,card_not_present,Mistral Supply,travel,5,BD,BD,N,7,29.78,913,monthly utility bill,0
+TX-100658,2026-08-23 11:10:43,AC-4120,7.28,card_present,Mistral Labs,travel,85,BD,BD,N,3,5.48,78,recurring subscription renewal,0
+TX-100659,2026-09-13 04:53:55,AC-4602,51.18,card_not_present,Aster Labs,pharmacy,11,US,US,N,9,42.76,60,payroll credit,0
+TX-100660,2026-09-06 00:19:57,AC-4137,29.44,wallet,Larkspur Trading,grocery,88,BD,BD,N,5,35.45,7,regular vendor payment,0
+TX-100661,2026-09-15 18:43:33,AC-4325,19.26,atm,Aster Retail,apparel,5,NG,GB,N,1,12.95,103,payroll credit,0
+TX-100662,2026-09-08 19:47:40,AC-4649,79.28,card_present,Larkspur Trading,pharmacy,7,BD,BD,Y,1,44.92,198,monthly utility bill,0
+TX-100663,2026-09-07 08:09:15,AC-4608,27.07,wire_transfer,Orbit Digital,telecom_topup,50,GB,GB,Y,5,15.01,48,payroll credit,0
+TX-100664,2026-08-18 16:22:48,AC-4286,26.37,card_not_present,Larkspur Group,telecom_topup,23,BD,BD,Y,9,22.96,71,grocery basket,0
+TX-100665,2026-09-11 21:39:05,AC-4820,34.87,card_present,Nexa Retail,utilities,329,BD,BD,N,9,38.51,88,grocery basket,0
+TX-100666,2026-08-28 20:37:29,AC-4709,41.49,atm,Larkspur Trading,pharmacy,11,US,US,N,2,25.97,320,grocery basket,0
+TX-100667,2026-09-08 06:00:18,AC-4860,17.07,card_not_present,Verdant Trading,grocery,29,GB,GB,Y,15,15.1,14,regular vendor payment,0
+TX-100668,2026-09-15 19:40:15,AC-4110,20.86,wallet,Quarry Supply,restaurant,26,RU,US,N,2,27.2,119,grocery basket,0
+TX-100669,2026-09-14 19:19:24,AC-4170,12.96,atm,Aster Trading,grocery,734,GB,GB,Y,13,15.3,397,monthly utility bill,0
+TX-100670,2026-09-07 19:33:46,AC-4418,12.38,wallet,Larkspur Exchange,electronics,13,BD,BD,N,15,14.76,64,fuel top up,0
+TX-100671,2026-08-31 11:21:16,AC-4174,37.57,card_present,Pallas Supply,money_transfer,448,GB,GB,N,13,54.73,339,recurring subscription renewal,0
+TX-100672,2026-08-22 17:05:04,AC-4067,0.7,card_present,Orbit Mart,fuel,56,GB,GB,N,9,34.74,37,monthly utility bill,0
+TX-100673,2026-08-31 16:24:27,AC-4375,1.13,wallet,Orbit Supply,pharmacy,2,GB,GB,N,1,13.83,29,monthly utility bill,0
+TX-100674,2026-09-13 19:24:14,AC-4707,23.11,card_present,Kestrel Exchange,telecom_topup,80,GB,US,N,8,15.57,124,monthly utility bill,0
+TX-100675,2026-09-13 16:23:23,AC-4865,9.32,card_present,Mistral Group,grocery,50,US,US,N,3,12.59,20,payroll credit,0
+TX-100676,2026-08-21 11:07:03,AC-4752,23.2,wallet,Quarry Digital,utilities,33,GB,GB,Y,8,15.6,54,recurring subscription renewal,0
+TX-100677,2026-09-05 16:09:16,AC-4621,28.83,card_not_present,Corvid Labs,electronics,8,US,US,N,1,42.16,21,in store purchase,0
+TX-100678,2026-08-31 21:34:27,AC-4020,14.29,card_not_present,Quarry Supply,grocery,1087,US,US,Y,1,9.29,136,in store purchase,0
+TX-100679,2026-09-01 17:11:54,AC-4033,141.54,wallet,Orbit Exchange,restaurant,2,IN,BD,N,1,43.6,147,in store purchase,0
+TX-100680,2026-09-10 13:31:07,AC-4134,2.18,card_present,Quarry Group,crypto_exchange,41,DE,US,N,6,34.34,148,payroll credit,0
+TX-100681,2026-08-27 20:48:52,AC-4366,13.71,wire_transfer,Hollow Mart,grocery,69,US,US,N,2,15.72,20,regular vendor payment,0
+TX-100682,2026-09-11 07:04:01,AC-4038,17.82,wire_transfer,Orbit Digital,pharmacy,1128,BD,BD,N,13,29.34,14,grocery basket,0
+TX-100683,2026-08-29 08:01:52,AC-4738,10.66,card_not_present,Mistral Group,travel,69,BD,BD,Y,12,14.19,133,monthly utility bill,1
+TX-100684,2026-08-18 05:17:37,AC-4013,12.77,atm,Pallas Group,telecom_topup,520,BD,BD,N,3,13.7,677,in store purchase,0
+TX-100685,2026-09-12 14:27:00,AC-4620,14.81,wire_transfer,Aster Mart,electronics,21,GB,GB,Y,15,14.29,66,grocery basket,0
+TX-100686,2026-09-11 22:55:58,AC-4211,22.98,card_not_present,Larkspur Mart,utilities,22,BD,GB,N,3,37.25,384,in store purchase,0
+TX-100687,2026-08-31 03:09:44,AC-4356,14.85,card_not_present,Pallas Labs,gift_cards,1537,GB,GB,N,8,21.16,626,recurring subscription renewal,0
+TX-100688,2026-08-30 12:52:13,AC-4689,1.23,atm,Halcyon Digital,grocery,749,GB,GB,Y,2,13.45,7,recurring subscription renewal,0
+TX-100689,2026-09-02 10:18:33,AC-4334,19.22,card_present,Verdant Exchange,fuel,260,US,US,N,1,16.53,422,payroll credit,0
+TX-100690,2026-09-05 06:29:08,AC-4612,9.3,card_not_present,Tindal Group,pharmacy,1,GB,GB,N,11,10.49,14,recurring subscription renewal,0
+TX-100691,2026-09-12 08:41:41,AC-4168,26.89,card_present,Quarry Group,crypto_exchange,1,BD,BD,N,1,36.36,654,in store purchase,0
+TX-100692,2026-08-24 13:41:39,AC-4420,10.25,card_present,Pallas Labs,travel,163,BD,BD,N,2,8.72,96,regular vendor payment,0
+TX-100693,2026-08-24 12:39:22,AC-4605,20.03,card_present,Quarry Trading,money_transfer,30,GB,GB,N,8,14.5,602,payroll credit,0
+TX-100694,2026-08-24 06:45:40,AC-4375,5.96,card_present,Quarry Group,apparel,29,GB,GB,N,5,9.75,116,payroll credit,0
+TX-100695,2026-09-14 19:02:23,AC-4827,30.86,wire_transfer,Aster Digital,fuel,7,BD,BD,N,5,23.99,16,regular vendor payment,0
+TX-100696,2026-08-30 18:02:04,AC-4701,40.68,card_present,Larkspur Retail,gift_cards,21,US,US,Y,3,40.63,677,recurring subscription renewal,0
+TX-100697,2026-08-30 23:04:04,AC-4784,8.4,wire_transfer,Pallas Digital,gift_cards,4,US,US,Y,13,13.75,1048,regular vendor payment,0
+TX-100698,2026-09-14 19:53:24,AC-4434,63.07,card_present,Mistral Labs,utilities,2,BD,BD,N,1,60.82,54,regular vendor payment,0
+TX-100699,2026-09-15 22:29:45,AC-4521,16.85,card_not_present,Mistral Exchange,pharmacy,33,GB,GB,N,1,12.09,181,grocery basket,0
+TX-100700,2026-09-13 11:05:25,AC-4651,4.64,wallet,Pallas Digital,crypto_exchange,116,GB,GB,N,1,5,38,in store purchase,0
+TX-100701,2026-08-25 17:09:32,AC-4642,199.95,card_present,Orbit Exchange,money_transfer,927,US,US,N,12,30.91,265,fuel top up,0
+TX-100702,2026-08-21 06:59:01,AC-4797,12.95,wallet,Tindal Group,gift_cards,21,GB,GB,N,1,15.31,7,new payee first transfer,1
+TX-100703,2026-08-23 17:14:48,AC-4316,9.44,wallet,Larkspur Supply,pharmacy,3,US,US,N,2,14.55,70,recurring subscription renewal,0
+TX-100704,2026-09-06 18:46:16,AC-4387,53.81,wallet,Mistral Mart,crypto_exchange,2,SG,US,N,3,40.67,1179,monthly utility bill,0
+TX-100705,2026-08-30 08:37:24,AC-4503,1.55,atm,Pallas Mart,pharmacy,9,US,US,N,1,27.77,158,recurring subscription renewal,0
+TX-100706,2026-09-04 12:43:12,AC-4285,5.11,card_not_present,Verdant Exchange,fuel,135,BD,BD,Y,7,6.76,639,regular vendor payment,0
+TX-100707,2026-08-22 11:26:14,AC-4575,16.5,card_not_present,Orbit Digital,grocery,52,BD,BD,Y,7,14.46,37,monthly utility bill,0
+TX-100708,2026-09-07 23:42:25,AC-4340,25.34,atm,Halcyon Supply,grocery,162,BD,BD,N,1,5,6,regular vendor payment,0
+TX-100709,2026-08-26 17:30:15,AC-4146,26.19,wire_transfer,Hollow Labs,grocery,636,AE,US,N,10,17.69,51,in store purchase,0
+TX-100710,2026-09-03 11:54:42,AC-4808,38.74,wallet,Orbit Trading,travel,6,US,US,N,1,26.15,130,fuel top up,0
+TX-100711,2026-09-07 12:59:01,AC-4701,25.92,wire_transfer,Pallas Supply,electronics,902,IN,BD,N,4,28.62,871,in store purchase,0
+TX-100712,2026-09-15 09:15:14,AC-4666,26.76,wire_transfer,Tindal Supply,pharmacy,1,BD,BD,N,9,27.26,227,recurring subscription renewal,0
+TX-100713,2026-08-31 07:16:11,AC-4055,16.59,atm,Meridian Retail,money_transfer,6,BD,BD,N,5,15.35,917,monthly utility bill,0
+TX-100714,2026-08-26 04:37:54,AC-4594,7.98,atm,Hollow Supply,money_transfer,164,AE,US,N,6,10.33,454,payroll credit,0
+TX-100715,2026-08-23 10:58:49,AC-4734,15.17,card_not_present,Hollow Digital,crypto_exchange,57,US,US,N,3,11.4,632,in store purchase,0
+TX-100716,2026-09-04 10:12:45,AC-4344,49.74,card_present,Corvid Mart,apparel,1087,IN,BD,Y,14,38.82,104,recurring subscription renewal,0
+TX-100717,2026-08-29 16:32:49,AC-4360,7.17,wire_transfer,Meridian Trading,fuel,1623,BD,BD,N,3,5,9,monthly utility bill,0
+TX-100718,2026-08-25 21:30:59,AC-4854,44.72,card_present,Nexa Trading,travel,9,US,US,Y,4,57.5,6,in store purchase,0
+TX-100719,2026-09-14 13:07:24,AC-4157,4.85,wire_transfer,Larkspur Supply,crypto_exchange,31,BD,BD,Y,8,7.6,44,recurring subscription renewal,0
+TX-100720,2026-09-01 14:42:05,AC-4773,25.14,atm,Kestrel Trading,apparel,7,RU,GB,Y,8,23.73,9,regular vendor payment,0
+TX-100721,2026-09-03 14:07:25,AC-4835,44.24,card_not_present,Mistral Trading,restaurant,93,GB,GB,N,7,55.36,1248,fuel top up,0
+TX-100722,2026-08-23 07:30:49,AC-4780,19.85,wire_transfer,Mistral Exchange,apparel,294,BD,BD,N,8,22.95,266,grocery basket,0
+TX-100723,2026-08-28 22:43:35,AC-4702,12.91,card_present,Aster Retail,crypto_exchange,19,US,US,N,15,22.53,21,in store purchase,0
+TX-100724,2026-09-05 07:26:58,AC-4590,14.14,wallet,Hollow Retail,telecom_topup,112,BD,BD,Y,1,22.23,745,monthly utility bill,0
+TX-100725,2026-08-27 06:45:53,AC-4138,5.6,wallet,Hollow Labs,apparel,50,BD,BD,N,3,5,700,recurring subscription renewal,0
+TX-100726,2026-08-22 21:47:41,AC-4128,469.92,card_present,Quarry Exchange,pharmacy,15,US,US,N,3,52.61,9,fuel top up,0
+TX-100727,2026-08-20 14:30:49,AC-4002,451.85,atm,Aster Group,pharmacy,5,GB,GB,N,1,47.11,1093,recurring subscription renewal,0
+TX-100728,2026-08-19 04:46:11,AC-4204,6.95,wire_transfer,Hollow Group,telecom_topup,3,GB,GB,N,2,9.94,6,in store purchase,0
+TX-100729,2026-08-17 08:16:58,AC-4461,1.63,atm,Meridian Mart,crypto_exchange,2,BD,BD,N,7,15.49,48,fuel top up,0
+TX-100730,2026-09-15 13:54:59,AC-4196,8.16,wallet,Verdant Group,utilities,23,US,US,N,7,8.29,36,grocery basket,0
+TX-100731,2026-09-12 14:02:54,AC-4766,123.21,card_not_present,Orbit Digital,travel,18,US,US,Y,11,35.19,38,grocery basket,0
+TX-100732,2026-08-23 04:10:19,AC-4142,101.93,card_not_present,Verdant Retail,utilities,158,US,US,N,9,15.86,9,grocery basket,0
+TX-100733,2026-09-08 04:37:19,AC-4119,7.51,card_not_present,Quarry Group,grocery,1113,GB,BD,N,1,5,252,regular vendor payment,0
+TX-100734,2026-09-16 11:39:38,AC-4293,63.72,wallet,Larkspur Trading,travel,128,BD,BD,N,1,8.7,13,recurring subscription renewal,0
+TX-100735,2026-08-24 18:24:59,AC-4662,21.78,card_present,Vireo Group,gift_cards,89,RU,GB,Y,12,27.49,385,grocery basket,0
+TX-100736,2026-09-10 13:18:23,AC-4807,13.21,card_present,Corvid Retail,telecom_topup,16,US,US,N,1,15.13,721,in store purchase,0
+TX-100737,2026-09-02 16:50:13,AC-4248,31.67,card_present,Meridian Supply,fuel,1426,BD,BD,Y,11,25.72,7,grocery basket,0
+TX-100738,2026-09-01 15:55:12,AC-4481,55.04,wire_transfer,Pallas Supply,utilities,83,US,US,N,9,42.13,21,monthly utility bill,0
+TX-100739,2026-09-16 00:03:14,AC-4734,6.93,wire_transfer,Larkspur Digital,fuel,4,BD,BD,N,4,8.41,107,payroll credit,0
+TX-100740,2026-09-07 20:25:41,AC-4006,30.11,atm,Quarry Trading,restaurant,72,IN,BD,N,3,47.25,98,payroll credit,0
+TX-100741,2026-09-13 21:24:09,AC-4758,38.57,card_present,Verdant Retail,travel,1521,GB,US,Y,9,6.61,25,fuel top up,0
+TX-100742,2026-08-18 13:01:58,AC-4807,17.82,wire_transfer,Meridian Digital,fuel,807,US,US,N,1,27.39,25,in store purchase,0
+TX-100743,2026-09-03 08:00:05,AC-4090,5.83,wallet,Halcyon Retail,fuel,15,GB,BD,N,3,9.67,6,in store purchase,0
+TX-100744,2026-09-06 00:06:23,AC-4428,11.27,wire_transfer,Orbit Retail,utilities,17,MY,US,N,1,18.46,106,grocery basket,0
+TX-100745,2026-09-14 20:04:55,AC-4184,33.32,wire_transfer,Corvid Supply,telecom_topup,13,SG,GB,Y,10,19.91,970,monthly utility bill,0
+TX-100746,2026-08-28 04:06:40,AC-4234,21.4,card_present,Larkspur Trading,gift_cards,2,BD,BD,N,1,22.97,675,payroll credit,0
+TX-100747,2026-08-18 03:23:31,AC-4136,88.58,wire_transfer,Orbit Labs,telecom_topup,17,US,US,N,1,8.25,41,monthly utility bill,0
+TX-100748,2026-09-13 03:02:25,AC-4826,89.61,card_not_present,Corvid Supply,restaurant,5,US,US,Y,3,101.55,242,grocery basket,0
+TX-100749,2026-09-09 19:31:11,AC-4654,11.08,card_not_present,Tindal Group,fuel,352,BD,BD,N,1,6.9,27,grocery basket,0
+TX-100750,2026-08-21 02:16:05,AC-4153,15.33,card_not_present,Halcyon Group,grocery,24,BD,BD,N,1,28.35,292,new payee first transfer,1
+TX-100751,2026-08-20 18:28:59,AC-4748,11.17,card_present,Larkspur Exchange,telecom_topup,145,US,US,N,9,15.89,9,recurring subscription renewal,0
+TX-100752,2026-08-22 09:14:42,AC-4540,10.64,wallet,Vireo Mart,gift_cards,981,GB,GB,N,8,8.63,5,grocery basket,0
+TX-100753,2026-08-26 04:41:26,AC-4444,23.62,wallet,Corvid Retail,fuel,405,BD,BD,N,1,25.58,12,grocery basket,0
+TX-100754,2026-08-31 07:55:19,AC-4426,56.39,card_present,Meridian Mart,fuel,10,NG,GB,Y,3,19.19,33,grocery basket,0
+TX-100755,2026-08-23 20:19:16,AC-4070,15.43,card_not_present,Orbit Trading,restaurant,33,GB,GB,N,13,17.91,301,in store purchase,0
+TX-100756,2026-09-07 20:57:24,AC-4656,10.45,wallet,Pallas Group,utilities,271,US,US,N,1,8.83,178,recurring subscription renewal,0
+TX-100757,2026-08-19 04:54:55,AC-4850,11.74,card_not_present,Kestrel Supply,grocery,3,BD,BD,N,2,7.74,359,payroll credit,0
+TX-100758,2026-08-17 17:29:57,AC-4873,3.53,atm,Tindal Trading,grocery,12,BD,BD,N,6,7.5,116,payroll credit,0
+TX-100759,2026-09-12 05:08:24,AC-4422,0.56,card_not_present,Verdant Trading,electronics,24,RU,US,N,4,12.83,89,in store purchase,0
+TX-100760,2026-08-19 22:39:40,AC-4448,94.15,atm,Aster Digital,apparel,1,AE,GB,N,1,62.73,423,monthly utility bill,0
+TX-100761,2026-09-01 14:39:11,AC-4531,30.5,wire_transfer,Verdant Supply,travel,92,SG,BD,Y,1,26.53,396,regular vendor payment,0
+TX-100762,2026-09-03 23:16:11,AC-4284,46.67,wire_transfer,Hollow Trading,restaurant,3,BD,BD,N,5,38.27,13,monthly utility bill,0
+TX-100763,2026-08-18 06:39:44,AC-4357,89.8,wallet,Corvid Mart,utilities,2,GB,GB,N,12,54.33,315,regular vendor payment,0
+TX-100764,2026-08-28 21:48:16,AC-4699,8.52,card_present,Orbit Trading,electronics,42,GB,GB,N,1,8.04,112,grocery basket,0
+TX-100765,2026-08-29 06:43:37,AC-4682,9.06,wallet,Tindal Exchange,fuel,127,BD,BD,N,8,12.1,212,regular vendor payment,0
+TX-100766,2026-09-16 11:18:58,AC-4735,1.05,card_not_present,Corvid Retail,fuel,610,US,US,N,4,13.08,188,recurring subscription renewal,0
+TX-100767,2026-08-18 15:19:37,AC-4413,162.8,atm,Halcyon Group,fuel,8,US,US,N,1,15.72,197,recurring subscription renewal,0
+TX-100768,2026-09-15 20:09:14,AC-4042,13.21,card_not_present,Nexa Mart,telecom_topup,61,BD,BD,N,8,12.64,518,in store purchase,0
+TX-100769,2026-09-06 16:58:40,AC-4664,6.68,wallet,Quarry Trading,fuel,1,US,US,Y,1,11.51,505,grocery basket,0
+TX-100770,2026-09-15 07:27:50,AC-4289,17.83,card_not_present,Pallas Mart,grocery,28,BD,BD,N,5,23.69,7,grocery basket,0
+TX-100771,2026-08-23 20:36:01,AC-4223,12.85,wallet,Quarry Retail,crypto_exchange,5,GB,GB,Y,1,10.61,6,payroll credit,0
+TX-100772,2026-09-14 17:39:52,AC-4562,16.17,card_present,Mistral Trading,money_transfer,1,GB,GB,N,2,22.84,426,regular vendor payment,0
+TX-100773,2026-09-15 23:08:44,AC-4031,11.98,card_not_present,Larkspur Retail,apparel,2,BD,BD,Y,6,14.63,606,regular vendor payment,0
+TX-100774,2026-08-18 18:01:39,AC-4070,3.16,card_present,Pallas Supply,gift_cards,1,US,US,N,2,20.31,26,payroll credit,0
+TX-100775,2026-09-11 17:51:22,AC-4658,3.53,atm,Verdant Exchange,travel,3,AE,US,N,1,5,7,payroll credit,0
+TX-100776,2026-08-18 23:46:57,AC-4671,23.32,card_not_present,Orbit Trading,utilities,9,US,US,N,1,41.16,70,regular vendor payment,0
+TX-100777,2026-08-21 19:27:19,AC-4329,54.7,card_present,Larkspur Labs,pharmacy,38,US,US,N,7,40.88,568,regular vendor payment,0
+TX-100778,2026-08-27 09:03:47,AC-4218,465.88,card_not_present,Hollow Mart,electronics,364,US,US,N,5,35.5,15,recurring subscription renewal,0
+TX-100779,2026-09-05 14:55:06,AC-4488,144.61,card_not_present,Verdant Trading,fuel,28,BD,BD,N,4,79.82,238,monthly utility bill,0
+TX-100780,2026-08-30 18:51:09,AC-4514,37.36,wallet,Aster Group,restaurant,21,BD,BD,Y,1,59.19,189,regular vendor payment,0
+TX-100781,2026-09-08 10:51:55,AC-4443,10.13,atm,Nexa Mart,money_transfer,909,US,US,N,2,11.37,496,fuel top up,0
+TX-100782,2026-08-29 18:59:15,AC-4737,188.54,card_present,Halcyon Group,money_transfer,61,US,US,N,1,192.17,15,fuel top up,0
+TX-100783,2026-09-08 13:11:46,AC-4256,59.39,card_present,Pallas Retail,grocery,3,US,US,Y,2,59.19,70,regular vendor payment,0
+TX-100784,2026-08-24 14:36:38,AC-4032,9,wire_transfer,Nexa Mart,travel,597,BD,BD,N,3,5,28,payroll credit,0
+TX-100785,2026-09-15 01:29:53,AC-4120,74.28,wire_transfer,Hollow Digital,gift_cards,309,US,US,Y,2,7.02,34,monthly utility bill,0
+TX-100786,2026-09-02 10:49:14,AC-4270,13.06,wire_transfer,Pallas Trading,restaurant,783,GB,GB,N,1,9.22,39,payroll credit,0
+TX-100787,2026-09-14 02:48:47,AC-4893,27.06,atm,Nexa Retail,restaurant,1,BD,BD,Y,1,40,132,monthly utility bill,0
+TX-100788,2026-09-11 19:37:27,AC-4811,17.98,wire_transfer,Orbit Retail,restaurant,4,BD,BD,N,1,15.42,419,payroll credit,0
+TX-100789,2026-08-31 20:59:09,AC-4157,2.6,atm,Orbit Retail,apparel,63,US,US,Y,4,12.95,183,regular vendor payment,0
+TX-100790,2026-09-06 20:09:06,AC-4073,28.37,wallet,Halcyon Labs,gift_cards,371,BD,BD,N,1,27.8,643,in store purchase,0
+TX-100791,2026-09-12 05:30:38,AC-4713,37.07,wallet,Hollow Mart,crypto_exchange,3,US,US,Y,5,27.39,148,in store purchase,0
+TX-100792,2026-08-26 17:02:46,AC-4763,8.77,wallet,Nexa Labs,travel,582,DE,BD,Y,8,13.79,25,regular vendor payment,0
+TX-100793,2026-09-15 12:27:53,AC-4218,227.74,wallet,Quarry Labs,pharmacy,27,GB,GB,N,8,11.2,54,card verification test,1
+TX-100794,2026-08-26 21:30:23,AC-4463,9.73,wallet,Pallas Trading,crypto_exchange,7,GB,GB,Y,12,10.61,342,payroll credit,0
+TX-100795,2026-09-14 08:04:25,AC-4489,8.08,card_present,Hollow Labs,utilities,12,IN,GB,N,1,7.76,144,monthly utility bill,0
+TX-100796,2026-09-03 17:25:11,AC-4475,25.96,wire_transfer,Verdant Exchange,restaurant,6,US,US,N,1,23.75,968,payroll credit,0
+TX-100797,2026-08-22 21:31:15,AC-4235,44.81,wire_transfer,Hollow Digital,telecom_topup,9,BD,BD,Y,4,36.85,8,regular vendor payment,0
+TX-100798,2026-08-30 07:28:08,AC-4556,33.96,wire_transfer,Pallas Trading,travel,10,GB,GB,N,2,30.31,495,grocery basket,0
+TX-100799,2026-08-24 09:30:38,AC-4598,27.7,atm,Halcyon Digital,utilities,5,MY,BD,Y,1,24.17,140,recurring subscription renewal,0
+TX-100800,2026-08-26 20:23:01,AC-4873,17.73,card_present,Vireo Exchange,gift_cards,31,GB,GB,Y,2,32.56,1205,recurring subscription renewal,0
+TX-100801,2026-09-16 15:41:16,AC-4824,12.25,card_not_present,Hollow Exchange,apparel,7,US,US,N,3,10.81,116,in store purchase,0
+TX-100802,2026-09-07 13:17:43,AC-4507,47.92,wallet,Larkspur Supply,gift_cards,11,BD,BD,N,5,68.97,5,monthly utility bill,0
+TX-100803,2026-09-01 02:44:16,AC-4172,39.23,wallet,Vireo Exchange,telecom_topup,2,BD,BD,N,1,49.21,15,in store purchase,0
+TX-100804,2026-08-24 12:19:53,AC-4755,22.66,wallet,Meridian Retail,travel,1,GB,GB,N,6,15.1,529,in store purchase,0
+TX-100805,2026-09-04 21:39:51,AC-4743,4.18,card_not_present,Halcyon Exchange,travel,3,GB,GB,N,10,5,78,recurring subscription renewal,0
+TX-100806,2026-09-03 12:14:49,AC-4865,45.57,wire_transfer,Vireo Supply,fuel,63,GB,US,N,1,40.26,1221,payroll credit,0
+TX-100807,2026-08-20 17:13:29,AC-4615,45.92,card_present,Tindal Supply,travel,1,DE,GB,Y,1,40.55,238,in store purchase,0
+TX-100808,2026-09-03 08:07:30,AC-4784,22.88,card_present,Nexa Exchange,restaurant,1,BD,BD,Y,5,23,52,regular vendor payment,0
+TX-100809,2026-08-18 16:29:09,AC-4011,164.84,wallet,Meridian Exchange,utilities,55,GB,GB,N,1,37.76,33,fuel top up,0
+TX-100810,2026-09-07 14:04:37,AC-4699,61.43,atm,Verdant Exchange,crypto_exchange,48,GB,GB,N,3,55.14,11,fuel top up,0
+TX-100811,2026-09-14 23:36:37,AC-4428,89.48,wallet,Tindal Supply,pharmacy,16,GB,GB,Y,13,11.91,63,payroll credit,0
+TX-100812,2026-08-21 05:50:41,AC-4247,22.82,wallet,Pallas Exchange,money_transfer,5,RU,GB,N,1,30.12,7,in store purchase,1
+TX-100813,2026-09-09 18:25:02,AC-4112,50.58,atm,Mistral Trading,gift_cards,9,GB,GB,N,11,41.22,35,in store purchase,0
+TX-100814,2026-08-28 12:24:27,AC-4626,14.54,card_not_present,Tindal Labs,gift_cards,126,US,US,N,1,15.56,26,regular vendor payment,0
+TX-100815,2026-08-23 20:55:43,AC-4151,8.58,wallet,Halcyon Supply,electronics,3,GB,BD,Y,5,8.12,194,monthly utility bill,0
+TX-100816,2026-09-10 13:27:24,AC-4145,16.83,card_present,Corvid Digital,fuel,4,GB,GB,N,2,28.28,737,grocery basket,0
+TX-100817,2026-08-25 07:42:30,AC-4405,13.26,card_present,Kestrel Digital,gift_cards,8,DE,US,N,14,18.51,93,monthly utility bill,0
+TX-100818,2026-09-06 17:15:06,AC-4266,108.64,wire_transfer,Larkspur Supply,telecom_topup,1,AE,US,N,4,88.02,152,in store purchase,0
+TX-100819,2026-08-18 15:39:04,AC-4690,62.92,wallet,Pallas Exchange,electronics,2,GB,GB,N,1,48.01,681,monthly utility bill,0
+TX-100820,2026-09-10 22:56:40,AC-4573,27.67,atm,Vireo Exchange,utilities,13,BD,BD,N,8,21.14,49,in store purchase,0
+TX-100821,2026-08-20 19:47:26,AC-4566,110.14,card_present,Corvid Trading,crypto_exchange,72,US,US,N,4,65.9,151,regular vendor payment,0
+TX-100822,2026-09-08 20:06:50,AC-4512,8.2,atm,Nexa Labs,telecom_topup,4,BD,BD,N,6,6.98,14,in store purchase,0
+TX-100823,2026-09-13 02:48:11,AC-4884,8.7,wallet,Orbit Retail,gift_cards,1467,GB,GB,N,10,13.27,77,fuel top up,0
+TX-100824,2026-08-17 06:35:48,AC-4198,30.4,wallet,Nexa Labs,fuel,53,US,US,N,10,22.25,468,regular vendor payment,0
+TX-100825,2026-08-17 09:48:19,AC-4154,26.27,card_present,Corvid Group,grocery,15,GB,GB,N,1,16.01,233,grocery basket,0
+TX-100826,2026-09-14 18:11:10,AC-4144,57.01,card_present,Kestrel Mart,electronics,11,MY,BD,N,6,40.66,72,grocery basket,0
+TX-100827,2026-09-09 19:43:00,AC-4107,22.04,atm,Kestrel Labs,grocery,23,BD,BD,Y,1,29.89,7,regular vendor payment,0
+TX-100828,2026-09-08 13:29:17,AC-4312,393.33,card_not_present,Pallas Exchange,restaurant,2,BD,BD,N,15,43.59,1046,in store purchase,0
+TX-100829,2026-09-11 02:57:25,AC-4365,31.2,card_present,Hollow Mart,money_transfer,1096,US,US,N,3,34.74,9,recurring subscription renewal,0
+TX-100830,2026-08-26 13:53:04,AC-4596,22.51,atm,Aster Group,crypto_exchange,250,RU,US,N,4,19.54,18,regular vendor payment,0
+TX-100831,2026-09-14 16:40:03,AC-4281,14.76,card_not_present,Tindal Mart,travel,9,US,US,Y,2,10.64,13,grocery basket,0
+TX-100832,2026-08-24 19:25:11,AC-4446,11.98,wire_transfer,Vireo Labs,utilities,61,GB,GB,N,1,16.64,468,regular vendor payment,0
+TX-100833,2026-09-15 18:06:58,AC-4403,3.14,card_present,Halcyon Retail,money_transfer,1592,RU,GB,N,1,5.51,9,monthly utility bill,0
+TX-100834,2026-09-11 18:54:02,AC-4138,47.59,atm,Pallas Group,travel,14,BD,BD,Y,1,42.75,195,monthly utility bill,0
+TX-100835,2026-09-02 09:47:23,AC-4293,95.34,card_not_present,Mistral Digital,restaurant,167,BD,BD,N,6,139.55,105,payroll credit,0
+TX-100836,2026-08-20 01:57:51,AC-4328,29.67,card_not_present,Nexa Digital,utilities,3,US,US,N,2,36.63,1258,payroll credit,0
+TX-100837,2026-08-27 18:33:38,AC-4038,20.88,card_not_present,Pallas Exchange,money_transfer,14,GB,GB,N,10,20.14,49,recurring subscription renewal,0
+TX-100838,2026-09-14 15:28:47,AC-4165,35.81,wire_transfer,Nexa Mart,gift_cards,31,BD,BD,N,7,36.31,743,regular vendor payment,0
+TX-100839,2026-09-11 21:18:14,AC-4063,21.05,card_present,Vireo Exchange,apparel,833,GB,GB,N,1,15.85,769,fuel top up,0
+TX-100840,2026-08-25 12:48:00,AC-4109,1.89,atm,Vireo Labs,crypto_exchange,3,US,BD,N,15,22.1,509,regular vendor payment,0
+TX-100841,2026-09-08 05:02:26,AC-4149,491.56,wallet,Pallas Supply,utilities,1264,BD,BD,N,1,68.43,65,recurring subscription renewal,0
+TX-100842,2026-09-11 07:08:21,AC-4735,49.14,card_present,Meridian Retail,gift_cards,19,GB,GB,N,6,45.3,492,in store purchase,0
+TX-100843,2026-08-17 16:13:11,AC-4165,9.86,wallet,Tindal Mart,fuel,3,US,US,N,1,13.48,34,recurring subscription renewal,0
+TX-100844,2026-09-03 13:49:18,AC-4439,63.17,wallet,Larkspur Retail,telecom_topup,4,US,US,N,14,55.94,25,regular vendor payment,0
+TX-100845,2026-09-11 15:23:34,AC-4605,106.49,card_not_present,Verdant Mart,electronics,38,US,US,N,6,101.08,331,fuel top up,0
+TX-100846,2026-08-24 23:11:51,AC-4014,14.75,card_present,Orbit Trading,grocery,12,GB,GB,N,1,20.23,290,regular vendor payment,0
+TX-100847,2026-09-02 06:29:31,AC-4611,12.72,wire_transfer,Meridian Trading,grocery,318,US,US,N,3,9.66,1309,regular vendor payment,0
+TX-100848,2026-09-08 15:16:09,AC-4890,26.98,card_present,Orbit Trading,utilities,517,US,US,N,9,7.74,24,fuel top up,0
+TX-100849,2026-08-20 19:18:36,AC-4258,26.13,wire_transfer,Tindal Exchange,grocery,36,BD,BD,N,4,27.04,476,in store purchase,0
+TX-100850,2026-09-02 09:21:40,AC-4273,9.52,wallet,Mistral Labs,utilities,1,GB,US,Y,11,17.74,6,regular vendor payment,0
+TX-100851,2026-09-05 11:39:22,AC-4704,3.36,card_present,Pallas Trading,money_transfer,22,GB,GB,N,5,13.87,15,recurring subscription renewal,0
+TX-100852,2026-09-05 15:59:10,AC-4862,6.65,card_present,Tindal Labs,money_transfer,15,BD,BD,N,1,7.93,59,payroll credit,0
+TX-100853,2026-09-14 18:56:45,AC-4673,40.45,atm,Verdant Trading,electronics,17,BD,BD,N,1,29.52,7,fuel top up,0
+TX-100854,2026-08-25 23:03:58,AC-4377,87.13,wallet,Aster Group,electronics,1,IN,GB,N,12,68.95,180,fuel top up,0
+TX-100855,2026-09-09 09:27:30,AC-4684,6.51,card_present,Corvid Trading,grocery,76,US,US,N,4,7.45,55,recurring subscription renewal,0
+TX-100856,2026-09-15 16:09:42,AC-4415,3.4,atm,Tindal Supply,electronics,128,GB,GB,N,12,5,28,regular vendor payment,0
+TX-100857,2026-09-12 20:03:37,AC-4084,5.82,wallet,Quarry Group,restaurant,23,BD,BD,N,12,8.72,8,fuel top up,0
+TX-100858,2026-08-28 20:49:58,AC-4819,30.46,wire_transfer,Halcyon Mart,apparel,3,US,GB,Y,14,42.68,155,monthly utility bill,0
+TX-100859,2026-08-17 21:38:14,AC-4539,30.93,wallet,Larkspur Labs,utilities,3,BD,BD,N,11,18.41,6,regular vendor payment,0
+TX-100860,2026-09-14 13:44:36,AC-4557,63.82,card_not_present,Hollow Exchange,pharmacy,146,BD,BD,N,1,105.95,56,grocery basket,0
+TX-100861,2026-09-06 02:57:06,AC-4678,13.02,card_present,Mistral Trading,fuel,3,GB,GB,N,2,11.09,194,grocery basket,0
+TX-100862,2026-09-14 19:32:44,AC-4797,18.53,card_not_present,Aster Trading,utilities,43,BD,BD,N,5,24.6,259,regular vendor payment,0
+TX-100863,2026-09-14 23:58:27,AC-4250,30.75,card_present,Halcyon Trading,apparel,2,GB,GB,Y,1,27.06,21,regular vendor payment,0
+TX-100864,2026-09-14 10:25:48,AC-4382,35.56,atm,Verdant Mart,travel,116,BD,BD,Y,1,36.27,186,grocery basket,0
+TX-100865,2026-09-09 16:15:11,AC-4813,13.62,card_present,Nexa Retail,money_transfer,11,BD,BD,N,1,14.26,178,recurring subscription renewal,0
+TX-100866,2026-08-25 04:46:40,AC-4744,4.83,card_not_present,Quarry Digital,electronics,144,BD,BD,N,1,9.8,1191,in store purchase,0
+TX-100867,2026-09-09 09:05:04,AC-4773,19.04,card_not_present,Kestrel Digital,fuel,370,DE,GB,N,2,17.3,136,grocery basket,0
+TX-100868,2026-08-17 18:41:11,AC-4760,14.11,card_present,Nexa Group,fuel,1289,US,US,Y,1,27.51,35,in store purchase,0
+TX-100869,2026-08-23 09:31:41,AC-4020,17.61,card_not_present,Verdant Digital,crypto_exchange,15,BD,BD,N,12,14.06,342,recurring subscription renewal,0
+TX-100870,2026-08-27 03:26:47,AC-4500,147.04,atm,Meridian Trading,telecom_topup,5,BD,BD,N,9,23.4,338,grocery basket,0
+TX-100871,2026-09-16 18:35:18,AC-4702,46.62,card_not_present,Orbit Supply,apparel,8,NG,US,N,1,40.16,22,regular vendor payment,0
+TX-100872,2026-09-11 19:39:47,AC-4200,37.73,wallet,Vireo Labs,apparel,168,GB,GB,N,1,43.5,229,recurring subscription renewal,0
+TX-100873,2026-08-19 14:04:17,AC-4297,74.46,atm,Pallas Labs,money_transfer,990,GB,GB,Y,11,90.62,26,in store purchase,0
+TX-100874,2026-09-14 16:51:31,AC-4502,2.55,card_present,Pallas Trading,fuel,716,GB,GB,N,3,6.63,40,fuel top up,0
+TX-100875,2026-08-30 11:47:11,AC-4534,20.03,card_present,Halcyon Labs,restaurant,902,RU,BD,N,11,29.54,877,regular vendor payment,0
+TX-100876,2026-08-17 04:39:52,AC-4658,21.23,card_present,Vireo Retail,telecom_topup,40,US,US,N,2,16.51,50,payroll credit,0
+TX-100877,2026-09-09 22:25:31,AC-4222,22.18,card_present,Halcyon Trading,electronics,1183,GB,GB,N,13,16.35,761,fuel top up,0
+TX-100878,2026-08-22 23:35:34,AC-4523,8.36,card_present,Pallas Exchange,gift_cards,79,GB,GB,N,3,13.08,633,regular vendor payment,0
+TX-100879,2026-09-14 19:05:20,AC-4289,27.01,card_present,Nexa Trading,travel,31,GB,GB,N,10,37.54,59,recurring subscription renewal,0
+TX-100880,2026-08-19 13:43:29,AC-4111,125.09,wire_transfer,Corvid Retail,fuel,163,GB,GB,N,11,139.58,17,in store purchase,0
+TX-100881,2026-09-03 16:13:06,AC-4314,25.72,atm,Mistral Supply,crypto_exchange,7,BD,BD,N,1,25.07,21,recurring subscription renewal,0
+TX-100882,2026-09-05 06:13:10,AC-4504,4.58,wallet,Corvid Mart,apparel,4,BD,BD,N,2,5.12,6,payroll credit,0
+TX-100883,2026-09-15 10:32:09,AC-4589,20.05,wire_transfer,Nexa Supply,pharmacy,425,GB,GB,N,1,13.93,89,monthly utility bill,0
+TX-100884,2026-08-25 10:19:08,AC-4755,6.98,card_present,Kestrel Digital,telecom_topup,36,BD,BD,Y,11,6.3,149,grocery basket,0
+TX-100885,2026-09-14 18:33:20,AC-4115,27.4,card_not_present,Quarry Trading,utilities,396,GB,GB,Y,10,16.75,25,grocery basket,0
+TX-100886,2026-08-29 23:54:23,AC-4414,9.11,atm,Orbit Digital,restaurant,2,NG,BD,Y,11,8.47,40,recurring subscription renewal,0
+TX-100887,2026-08-26 17:43:32,AC-4305,13.65,wire_transfer,Aster Exchange,crypto_exchange,2,GB,GB,N,1,14.83,397,recurring subscription renewal,0
+TX-100888,2026-09-05 09:06:31,AC-4643,51.42,wire_transfer,Larkspur Trading,gift_cards,2,GB,GB,N,1,34.54,7,monthly utility bill,0
+TX-100889,2026-08-23 19:52:37,AC-4742,20.24,card_present,Meridian Mart,electronics,61,DE,BD,Y,6,14.22,7,in store purchase,0
+TX-100890,2026-09-04 14:33:56,AC-4416,14.64,atm,Quarry Exchange,utilities,86,MY,US,Y,15,20.32,33,grocery basket,0
+TX-100891,2026-09-02 08:57:09,AC-4556,7.6,card_not_present,Tindal Labs,grocery,1,RU,US,N,1,12.62,23,grocery basket,0
+TX-100892,2026-09-05 06:32:19,AC-4279,13.65,atm,Kestrel Retail,pharmacy,23,RU,BD,N,5,25.65,459,grocery basket,0
+TX-100893,2026-09-14 23:18:29,AC-4885,9.7,wallet,Kestrel Exchange,telecom_topup,727,GB,GB,N,6,6.88,23,grocery basket,0
+TX-100894,2026-09-13 12:57:38,AC-4158,13.06,card_not_present,Verdant Group,apparel,11,BD,BD,N,1,8.95,11,recurring subscription renewal,0
+TX-100895,2026-08-31 16:59:19,AC-4249,1.75,wallet,Larkspur Mart,grocery,53,BD,BD,N,1,5,31,payroll credit,0
+TX-100896,2026-09-12 15:08:43,AC-4725,35.32,wallet,Meridian Group,pharmacy,4,BD,GB,Y,1,48.63,9,grocery basket,0
+TX-100897,2026-08-29 05:24:16,AC-4474,17.2,card_present,Quarry Digital,electronics,14,GB,GB,Y,15,18.47,162,grocery basket,0
+TX-100898,2026-08-31 06:09:19,AC-4755,25.49,wallet,Aster Labs,restaurant,3,US,US,N,14,17.94,7,payroll credit,0
+TX-100899,2026-09-03 17:22:23,AC-4381,9.64,wallet,Kestrel Labs,restaurant,1457,GB,GB,N,11,14.19,320,fuel top up,0
