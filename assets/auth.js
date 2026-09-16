@@ -2,11 +2,13 @@
    auth.js - BRI.Auth
    Accounts, sessions and usage tracking.
 
+   Two providers implement the same interface. PROVIDER below selects one;
+   read that line rather than this comment to know which is live.
+
    ---------------------------------------------------------------------------
-   READ THIS BEFORE SHIPPING TO REAL USERS
+   THE 'demo' PROVIDER IS NOT SECURITY - READ THIS BEFORE SHIPPING
    ---------------------------------------------------------------------------
-   The active provider is DEMO. It keeps everything in this browser's
-   localStorage, which means:
+   It keeps everything in this browser's localStorage, which means:
 
      - It is NOT security. Every check runs on the client, so anyone can edit
        localStorage and grant themselves an admin role. There is no server to

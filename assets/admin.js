@@ -514,28 +514,37 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       err.hidden = true;
-      var user;
-      try {
-        user = Auth.signIn(emailIn.value, passIn.value);
-      } catch (ex) {
-        fail(ex.message);
-        return;
-      }
-      /* The credentials were right, but the console is not theirs. Tear the
-         session down before anything renders, so a customer who lands here
-         is not left holding a signed-in session against a staff URL. */
-      if (user.role !== 'admin') {
-        /* End the session before saying no, so a refusal cannot be retried
-           by simply reloading the page. */
-        Promise.resolve()
-          .then(function () { return Auth.signOut(); })
-          .catch(function () {})
-          .then(function () { fail(NOT_STAFF); });
-        return;
-      }
-      enterConsole(user);
+
+      /* Auth.signIn answers at once against the demo provider and never can
+         against the API, so both go through a promise. The earlier version of
+         this handler treated the return value as the user directly, which
+         against the API means `user` was the pending Promise itself -
+         user.role read undefined, and every admin was rejected as "not
+         staff" regardless of their real role. */
+      submit.disabled = true;
+      var label = submit.textContent;
+      submit.textContent = 'Signing in…';
+
+      Promise.resolve()
+        .then(function () { return Auth.signIn(emailIn.value, passIn.value); })
+        .then(function (user) {
+          /* The credentials were right, but the console is not theirs. Tear
+             the session down before anything renders, so a customer who
+             lands here is not left holding a signed-in session against a
+             staff URL. */
+          if (user.role !== 'admin') {
+            return Promise.resolve()
+              .then(function () { return Auth.signOut(); })
+              .catch(function () {})
+              .then(function () { fail(NOT_STAFF); });
+          }
+          enterConsole(user);
+        })
+        .catch(function (ex) { fail(ex.message); });
 
       function fail(msg) {
+        submit.disabled = false;
+        submit.textContent = label;
         err.textContent = msg;
         err.hidden = false;
         passIn.value = '';
@@ -595,18 +604,27 @@
     /* An existing session is not enough - it could be a customer who signed in
        on the application and then typed this URL. The role is checked again on
        every load, and a customer session is ended rather than merely refused,
-       so the next reload does not silently retry. */
-    var existing = null;
-    try { existing = Auth.currentUser(); } catch (e) { existing = null; }
+       so the next reload does not silently retry.
 
-    if (existing && existing.role === 'admin') enterConsole(existing);
-    else if (existing) {
-      Promise.resolve()
-        .then(function () { return Auth.signOut(); })
-        .catch(function () {})
-        .then(function () { showGate(NOT_STAFF); });
-    }
-    else showGate(null);
+       Auth.currentUser() answers at once against the demo provider and never
+       can against the API - the API implementation reads a refresh cookie
+       first - so this goes through a promise like every other call. Checking
+       `existing.role` on the un-awaited return value here previously read
+       undefined for every signed-in admin, which took the "not staff" branch
+       and signed them out on every page load. */
+    Promise.resolve()
+      .then(function () { return Auth.currentUser(); })
+      .catch(function () { return null; })
+      .then(function (existing) {
+        if (existing && existing.role === 'admin') { enterConsole(existing); return; }
+        if (existing) {
+          return Promise.resolve()
+            .then(function () { return Auth.signOut(); })
+            .catch(function () {})
+            .then(function () { showGate(NOT_STAFF); });
+        }
+        showGate(null);
+      });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

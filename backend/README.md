@@ -123,12 +123,81 @@ limit. Scale with more containers only after that change.
 | POST | `/auth/refresh` | — (refresh token in body) | New token pair |
 | POST | `/auth/logout` | Bearer | Record the sign-out |
 | GET | `/auth/me` | Bearer | The signed-in user's profile |
+| POST | `/events` | Bearer | Record one usage event for the caller |
+| GET | `/events` | Bearer | Usage events the caller may see |
+| GET | `/admin/users` | Bearer (admin) | Every account, with usage aggregates |
+| PATCH | `/admin/users/{id}` | Bearer (admin) | Enable or disable an account |
 
 `register`, `login` and `refresh` all return the same body: an access token, a
 refresh token, `expires_in`, and the user profile — so the client never needs a
 second round trip to render a signed-in header.
 
 Authenticated requests use `Authorization: Bearer <access_token>`.
+
+---
+
+## Usage tracking and the admin console
+
+`POST /events` records one event for **the account in the bearer token**. There
+is no `user_id` field in the body and an attempt to send one is a 422, not a
+silently ignored field — the demo provider's `userIdOverride` was harmless when
+every account lived in one browser and is a forgery primitive the moment
+accounts are shared.
+
+```jsonc
+POST /events        {"type": "scan", "meta": {"rows": 1200, "file": "march.csv"}}
+```
+
+- `type` must be one of `login`, `signup`, `logout`, `scan`, `health`,
+  `portfolio`, `export`, `retrain`, `admin_toggle_user`. The allowlist is
+  closed: it reaches an indexed column the console groups on, so an open field
+  would let any caller invent categories the console then renders.
+- `meta` is capped at **4 KiB of serialised JSON**, so usage tracking cannot be
+  used as free storage. Both limits live in `app/schemas.py`.
+
+`GET /events` takes `type`, `user_id`, `since` (ISO timestamp) and `limit`
+(default 500, max 2000), and returns newest first.
+
+> **A customer only ever receives their own events.** `user_id` from a customer
+> is a filter, never a grant — it is *overruled*, not merely ignored, and the
+> scope is pinned to the caller's own id before any parameter is read. An admin
+> may filter by `user_id` or omit it and see everyone. This is enforced in
+> `list_events` and asserted directly in `tests/test_events.py`.
+
+`GET /admin/users` returns every account with its aggregates — `scans`,
+`healths` and `rows` — computed by **one grouped SQL query with a LEFT JOIN**,
+not by shipping the event table to the browser. The console previously walked
+every event once per row it drew, which is fine for a seeded demo and quadratic
+against real history.
+
+`PATCH /admin/users/{id}` takes `{"active": bool}` and **refuses to disable an
+administrator** with 409 and `auth.js`'s own sentence, *"An administrator
+account cannot be disabled here."* That rule is not ceremony: no endpoint can
+grant the admin role back, so disabling the last admin would lock everyone out
+of the console with no in-product way to recover. Each toggle is itself
+recorded as an `admin_toggle_user` event.
+
+### Response field names — read this before changing either side
+
+The frontend reads **camelCase** (`u.createdAt`, `u.lastLoginAt`, `u.loginCount`,
+`u.seeded`, `e.ts`, `e.meta`, `e.userId`, `e.type`) and the Python side is
+snake_case. The bridge is **serialisation aliases on the response models**
+(`app/schemas.py`), so the wire format is exactly what `admin.js` already
+expects and no frontend change is required. The ORM, the queries and the tests
+stay idiomatic Python.
+
+Timestamps are serialised as **epoch milliseconds, as integers** — not ISO
+strings. `admin.js` does arithmetic on them (`now - u.lastLoginAt`,
+`(e.ts - first) / dayMs`, `(b.lastLoginAt || 0) - (a.lastLoginAt || 0)`), which
+only works on numbers. An ISO string would survive `new Date(...)` and then
+produce `NaN` in every one of those expressions — a silent wrong answer rather
+than a visible failure. `tests/test_events.py` asserts both the key names and
+the integer type, so this cannot regress unnoticed.
+
+`seeded` is always `false`. It marked the demo provider's generated sample
+accounts; nothing created through this API is sample data, but the field is
+still emitted because `admin.js` reads it unconditionally to render a "sample"
+chip.
 
 ---
 
@@ -143,6 +212,25 @@ Promotion is a deliberate out-of-band database operation:
 ```sql
 UPDATE users SET role = 'admin' WHERE email = 'you@example.com';
 ```
+
+The supported way to run it is the bundled script, which reads the same
+`DATABASE_URL` as the application — so it cannot promote an account in a local
+SQLite file while the app is talking to Postgres, which is the mistake raw SQL
+invites:
+
+```bash
+cd backend
+.venv/Scripts/python.exe scripts/promote_admin.py you@example.com   # Windows
+.venv/bin/python scripts/promote_admin.py you@example.com           # macOS/Linux
+
+# and to demote
+.venv/bin/python scripts/promote_admin.py them@example.com --role customer
+```
+
+It normalises the address the same way the API does, is idempotent, and exits
+non-zero if no such account exists.
+
+The equivalent by hand, if you would rather go straight to the database:
 
 ```bash
 # PostgreSQL
@@ -193,14 +281,17 @@ when passlib 1.7.5+ ships the fix.
 
 An explicit list, so none of this is mistaken for done:
 
-**Deferred to the usage-tracking / admin phase (schema is ready):**
-- `GET /usage/events` and `POST /usage/track` — the `usage_events` table and
-  its indexes exist, and `signup`/`login`/`logout` rows are already being
-  written, but nothing reads them back yet.
-- `GET /admin/users` — the `listUsers` equivalent.
-- `PATCH /admin/users/{id}/active` — the `setActive` equivalent, including
-  `auth.js`'s rule that an admin account cannot be disabled this way.
-- An admin endpoint for promotion, replacing the manual SQL above.
+**Usage tracking and the admin console are now implemented** — `POST /events`,
+`GET /events`, `GET /admin/users` and `PATCH /admin/users/{id}` are live and
+documented above. What remains from that phase:
+- **An admin endpoint for promotion.** Still deliberately absent; use
+  `scripts/promote_admin.py`. An endpoint that can grant the admin role is a
+  privilege-escalation surface, and nothing in the product currently needs one.
+- **Event retention.** Rows accumulate indefinitely. A real deployment needs a
+  retention window and a job to enforce it, which is also a GDPR question, not
+  only a disk one.
+- **Pagination beyond a limit.** `GET /events` caps at 2000 rows with no cursor,
+  which is sufficient for the console today and not for a full export.
 
 **Security work required before a real production launch:**
 - **Token revocation.** Tokens are stateless, so `logout` records the event but
@@ -242,10 +333,14 @@ backend/
 │   ├── schemas.py         Request/response models, password rules, messages
 │   ├── security.py        bcrypt, JWTs, rate limiter, auth dependencies
 │   └── routers/
-│       └── auth.py        register, login, refresh, logout, me
+│       ├── auth.py        register, login, refresh, logout, me
+│       └── events.py      POST/GET /events, /admin/users (list + set active)
+├── scripts/
+│   └── promote_admin.py   Out-of-band role change; no endpoint can set a role
 ├── tests/
 │   ├── conftest.py        Isolated in-memory DB per test
-│   └── test_auth.py
+│   ├── test_auth.py
+│   └── test_events.py
 ├── requirements.txt
 ├── .env.example
 ├── Dockerfile
@@ -260,5 +355,14 @@ provider that calls these endpoints, keeping `signUp`, `signIn`, `signOut` and
 `currentUser` with their existing signatures. Because the error messages here
 are identical to the demo provider's, the sign-in form needs no changes.
 
-`listUsers`, `setActive`, `track` and `events` have no endpoints yet; see
-"Not yet implemented".
+`listUsers`, `setActive`, `track` and `events` now have endpoints too, and the
+`apiProvider` at the bottom of `auth.js` already calls them at the paths and
+query parameters documented above. The response bodies use the camelCase keys
+and millisecond timestamps `admin.js` already reads, so switching `PROVIDER` to
+`'api'` and setting `API_BASE` is the whole change — no edit to `app.js` or
+`admin.js` is required.
+
+One behavioural difference worth knowing: the demo provider's `setActive` threw
+a plain `Error` for an admin account, while the API returns 409 with the same
+sentence in `detail`. `apiCall` turns that into an `Error` carrying that text,
+so the console renders it identically.

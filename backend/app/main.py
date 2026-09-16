@@ -14,7 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
 from .database import init_db
-from .routers import auth
+from .routers import auth, events
 
 
 @asynccontextmanager
@@ -49,6 +49,8 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
+app.include_router(events.router)
+app.include_router(events.admin_router)
 
 
 @app.get("/health", tags=["meta"], summary="Liveness probe")
