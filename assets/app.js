@@ -512,7 +512,7 @@
     br.style.marginTop = '10px';
     var sample = el('button', 'btn btn-sm', 'Load sample file');
     sample.type = 'button';
-    sample.addEventListener('click', loadSampleTransactions);
+    sample.addEventListener('click', function () { loadSampleTransactions(); });
     br.appendChild(sample);
     upCard.appendChild(br);
 
@@ -625,7 +625,7 @@
     reader.readAsText(file);
   }
 
-  function loadSampleTransactions() {
+  function loadSampleTransactions(auto) {
     var rows = D.generateTransactions(900, 5150).map(function (r) {
       /* Sample file uses deliberately awkward headers so the mapper has
          something real to solve. */
@@ -646,10 +646,11 @@
     state.scan.scored = null;
     state.scan.page = 0;
     renderScanControls();
-    runScan();
+    runScan({ silent: !!auto });
   }
 
-  function runScan() {
+  function runScan(opts) {
+    opts = opts || {};
     if (!state.fraud) return;
     var cov = scanMappingCoverage();
     if (cov.missingRequired.length) return;
@@ -686,6 +687,19 @@
         meanScore: ML.mean(scores)
       }
     });
+
+    /* The sample file loaded automatically at boot is not the account's own
+       work, so it stays out of the usage record. */
+    if (!opts.silent) {
+      track('scan', {
+        file: state.scan.source || 'upload',
+        rows: scored.length,
+        high: scored.filter(function (r) { return r.band.key === 'high'; }).length,
+        medium: scored.filter(function (r) { return r.band.key === 'medium'; }).length,
+        exposure: Math.round(scored.reduce(function (a, r) { return a + r.exposure; }, 0)),
+        meanScore: Math.round(ML.mean(scores) * 1000) / 1000
+      });
+    }
 
     state.scan.scored = { rows: scored, imputed: built.imputed, scoreMs: run.ms };
     state.scan.view = 'queue';
@@ -1386,6 +1400,11 @@
       }
     });
 
+    track('portfolio', {
+      rows: run.out.length,
+      meanScore: Math.round(ML.mean(run.out.map(function (r) { return r.score; })) * 10) / 10
+    });
+
     state.health.portfolio = { rows: run.out, ms: run.ms };
     renderHealthResults();
   }
@@ -1420,6 +1439,13 @@
       params: { shapPermutations: 80, limeSamples: 240, textEncoder: !!textResult },
       ms: run.ms,
       metrics: { healthScore: hs.total, failureProb: probs.ensemble }
+    });
+
+    track('health', {
+      company: 'manual entry',
+      score: Math.round(hs.total * 10) / 10,
+      grade: hs.grade.label,
+      failureProb: Math.round(probs.ensemble * 1000) / 1000
     });
 
     state.health.result = {
@@ -2065,7 +2091,14 @@
       rtBtn.appendChild(document.createTextNode('Fitting…'));
       setTimeout(function () {
         trainFraud();
-        if (state.scan.scored) runScan();
+        if (state.scan.scored) runScan({ silent: true });
+        track('retrain', {
+          trees: state.fraud.hyper.rf.nTrees,
+          depth: state.fraud.hyper.rf.maxDepth,
+          rounds: state.fraud.hyper.gbt.nRounds,
+          eta: state.fraud.hyper.gbt.eta,
+          auc: Math.round(state.fraud.evals.ensemble.auc * 1000) / 1000
+        });
         renderMethodology();
         renderScanControls();
       }, 30);
@@ -2334,6 +2367,7 @@
   }
 
   function openExport(filename, content, rowCount) {
+    track('export', { kind: filename.replace(/_\d+\.(csv|json)$/, ''), rows: rowCount });
     var body = el('div');
     var info = el('div', 'hint');
     info.textContent = fmtInt(rowCount) + ' records · ' + filename;
@@ -2372,12 +2406,13 @@
 
   function setTab(tab) {
     state.tab = tab;
-    ['scanner', 'health', 'method'].forEach(function (t) {
+    ['scanner', 'health', 'method', 'admin'].forEach(function (t) {
       var btn = $('tab-' + t), panel = $('panel-' + t);
       if (btn) btn.setAttribute('aria-selected', t === tab ? 'true' : 'false');
       if (panel) panel.hidden = t !== tab;
     });
     if (tab === 'method') renderMethodology();
+    if (tab === 'admin') renderAdmin();
     if (tab === 'health' && !state.health.result && state.health.mode === 'manual') computeHealth();
     window.scrollTo(0, 0);
   }
@@ -2432,6 +2467,622 @@
     }
   }
 
+  /* =============================== accounts ============================== */
+
+  var Auth = window.BRI.Auth;
+  var session = { user: null, mode: 'signin' };
+
+  function fmtTs(ts) {
+    if (!ts) return '—';
+    var d = new Date(ts);
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return d.getDate() + ' ' + months[d.getMonth()] + ' ' +
+           String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  }
+
+  function fmtAgo(ts) {
+    if (!ts) return 'never';
+    var s = (Date.now() - ts) / 1000;
+    if (s < 90) return 'just now';
+    if (s < 5400) return Math.round(s / 60) + ' min ago';
+    if (s < 172800) return Math.round(s / 3600) + ' h ago';
+    return Math.round(s / 86400) + ' days ago';
+  }
+
+  function initialsOf(user) {
+    var parts = String(user.name || user.email).trim().split(/\s+/);
+    if (parts.length > 1) return (parts[0][0] + parts[1][0]).toUpperCase();
+    return String(user.name || user.email).slice(0, 2).toUpperCase();
+  }
+
+  function track(type, meta) {
+    try { Auth.track(type, meta); } catch (e) { /* tracking must never break a scoring run */ }
+  }
+
+  /* -------------------------------- gate -------------------------------- */
+
+  var DEMO_ACCOUNTS = [
+    { email: 'admin@rebintech.com', password: 'admin1234', role: 'Administrator' },
+    { email: 'owner@demo.com', password: 'owner1234', role: 'Business owner' }
+  ];
+
+  function showGate(mode) {
+    session.mode = mode || 'signin';
+    var gate = $('auth-gate');
+    clear(gate);
+    gate.hidden = false;
+    $('app-layout').hidden = true;
+
+    var card = el('div', 'auth-card');
+
+    var brand = el('div', 'auth-brand');
+    var mark = el('div', 'brand-mark');
+    mark.innerHTML = '<svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true">' +
+      '<path d="M10 1.8 3.2 4.6v5.1c0 4 2.9 7.4 6.8 8.5 3.9-1.1 6.8-4.5 6.8-8.5V4.6L10 1.8Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>' +
+      '<path d="M6.9 10.1l2.1 2.2 4.1-4.6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    brand.appendChild(mark);
+    var bt = el('div');
+    bt.appendChild(el('div', 'brand-name', 'Sentinel Risk Desk'));
+    bt.appendChild(el('div', 'brand-sub', 'Risk & Intelligence'));
+    brand.appendChild(bt);
+    card.appendChild(brand);
+
+    var panel = el('div', 'auth-panel');
+
+    var sw = el('div', 'auth-switch');
+    [['signin', 'Sign in'], ['signup', 'Create account']].forEach(function (m) {
+      var b = el('button', null, m[1]);
+      b.type = 'button';
+      b.setAttribute('aria-selected', session.mode === m[0] ? 'true' : 'false');
+      b.addEventListener('click', function () { showGate(m[0]); });
+      sw.appendChild(b);
+    });
+    panel.appendChild(sw);
+
+    var head = el('div');
+    head.appendChild(el('h1', null, session.mode === 'signin' ? 'Welcome back' : 'Create your account'));
+    head.appendChild(el('p', 'lede', session.mode === 'signin'
+      ? 'Sign in to scan transactions and score financial health.'
+      : 'Business owners can open an account here. It takes a moment.'));
+    panel.appendChild(head);
+
+    var form = el('form', 'auth-form');
+    var err = el('div', 'auth-error');
+    err.hidden = true;
+    panel.appendChild(err);
+
+    function field(id, label, type, placeholder, autocomplete) {
+      var f = el('div', 'field');
+      var l = el('label');
+      l.setAttribute('for', id);
+      l.appendChild(document.createTextNode(label));
+      f.appendChild(l);
+      var i = el('input');
+      i.type = type;
+      i.id = id;
+      i.placeholder = placeholder || '';
+      if (autocomplete) i.autocomplete = autocomplete;
+      f.appendChild(i);
+      form.appendChild(f);
+      return i;
+    }
+
+    var nameIn = null, companyIn = null;
+    if (session.mode === 'signup') {
+      nameIn = field('auth-name', 'Your name', 'text', 'Maya Rahman', 'name');
+      companyIn = field('auth-company', 'Company', 'text', 'Northgate Trading', 'organization');
+    }
+    var emailIn = field('auth-email', 'Email', 'text', 'you@company.com', 'email');
+    var passIn = field('auth-password', 'Password', 'password',
+      session.mode === 'signup' ? 'At least 8 characters' : '',
+      session.mode === 'signup' ? 'new-password' : 'current-password');
+
+    var submit = el('button', 'btn btn-primary btn-block',
+      session.mode === 'signin' ? 'Sign in' : 'Create account and sign in');
+    submit.type = 'submit';
+    form.appendChild(submit);
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      err.hidden = true;
+      try {
+        var user = session.mode === 'signin'
+          ? Auth.signIn(emailIn.value, passIn.value)
+          : Auth.signUp(emailIn.value, passIn.value, nameIn ? nameIn.value : '', companyIn ? companyIn.value : '');
+        enterApp(user);
+      } catch (ex) {
+        err.textContent = ex.message;
+        err.hidden = false;
+        passIn.value = '';
+        passIn.focus();
+      }
+    });
+
+    panel.appendChild(form);
+
+    if (Auth.isDemo) {
+      var demo = el('div', 'auth-demo');
+      demo.appendChild(el('span', 'eyebrow', 'Demo mode — not a real login'));
+      demo.appendChild(el('div', 'hint',
+        'Accounts live in this browser only. They are not shared with other devices, ' +
+        'and anyone can edit them. Use either account below, or create your own to see the flow.'));
+      DEMO_ACCOUNTS.forEach(function (a) {
+        var row = el('div', 'demo-cred');
+        row.appendChild(el('span', null, a.email + ' · ' + a.password));
+        var use = el('button', 'btn btn-sm', a.role);
+        use.type = 'button';
+        use.addEventListener('click', function () {
+          emailIn.value = a.email;
+          passIn.value = a.password;
+          if (session.mode === 'signin') submit.click();
+          else showGate('signin');
+        });
+        row.appendChild(use);
+        demo.appendChild(row);
+      });
+      panel.appendChild(demo);
+    }
+
+    card.appendChild(panel);
+    gate.appendChild(card);
+    emailIn.focus();
+  }
+
+  function renderUserBlock() {
+    var block = $('user-block');
+    if (!block || !session.user) return;
+    clear(block);
+    block.hidden = false;
+
+    var av = el('div', 'avatar', initialsOf(session.user));
+    block.appendChild(av);
+
+    var meta = el('div', 'user-meta');
+    meta.appendChild(el('div', 'user-name', session.user.name));
+    meta.appendChild(el('div', 'user-role',
+      (session.user.role === 'admin' ? 'Administrator' : 'Business owner') +
+      (session.user.company && session.user.company !== '—' ? ' · ' + session.user.company : '')));
+    block.appendChild(meta);
+
+    var out = el('button', 'icon-btn');
+    out.type = 'button';
+    out.title = 'Sign out';
+    out.setAttribute('aria-label', 'Sign out');
+    out.innerHTML = '<svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true">' +
+      '<path d="M12.5 14.5v2h-9v-13h9v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<path d="M8 10h8.5m0 0-2.4-2.4M16.5 10l-2.4 2.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    out.addEventListener('click', function () {
+      Auth.signOut();
+      session.user = null;
+      showGate('signin');
+    });
+    block.appendChild(out);
+  }
+
+  function enterApp(user) {
+    session.user = user;
+    $('auth-gate').hidden = true;
+    $('app-layout').hidden = false;
+    renderUserBlock();
+
+    var adminTab = $('tab-admin');
+    if (adminTab) adminTab.hidden = user.role !== 'admin';
+    if (user.role !== 'admin' && state.tab === 'admin') setTab('scanner');
+    else setTab(state.tab);
+  }
+
+  /* ============================ admin console ============================ */
+
+  var ACTIVITY_SERIES = [
+    { key: 'scan', label: 'Scans', colour: 'var(--s1)' },
+    { key: 'health', label: 'Health scores', colour: 'var(--s2)' },
+    { key: 'login', label: 'Sign-ins', colour: 'var(--s3)' }
+  ];
+
+  function renderActivityChart(container, events, days) {
+    clear(container);
+    var dayMs = 86400000;
+    var midnight = new Date();
+    midnight.setHours(0, 0, 0, 0);
+    var first = midnight.getTime() - (days - 1) * dayMs;
+
+    var buckets = [];
+    for (var d = 0; d < days; d++) buckets.push({ t: first + d * dayMs, scan: 0, health: 0, login: 0 });
+
+    events.forEach(function (e) {
+      var i = Math.floor((e.ts - first) / dayMs);
+      if (i < 0 || i >= days) return;
+      if (e.type === 'scan') buckets[i].scan++;
+      else if (e.type === 'health' || e.type === 'portfolio') buckets[i].health++;
+      else if (e.type === 'login') buckets[i].login++;
+    });
+
+    var maxStack = 1;
+    buckets.forEach(function (b) { maxStack = Math.max(maxStack, b.scan + b.health + b.login); });
+
+    var W = 660, H = 170, padL = 34, padR = 8, padT = 10, padB = 26;
+    var plotW = W - padL - padR, plotH = H - padT - padB;
+    var s = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img' });
+    s.setAttribute('aria-label', 'Platform activity per day over the last ' + days + ' days');
+
+    [0, 0.5, 1].forEach(function (f) {
+      var y = padT + plotH - f * plotH;
+      s.appendChild(svg('line', { x1: padL, y1: y, x2: W - padR, y2: y, class: 'grid-line' }));
+      var t = svg('text', { x: padL - 6, y: y + 3, 'text-anchor': 'end' });
+      t.textContent = fmtInt(maxStack * f);
+      s.appendChild(t);
+    });
+
+    var slot = plotW / days, bw = Math.min(26, slot - 4);
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    buckets.forEach(function (b, i) {
+      var x = padL + i * slot + (slot - bw) / 2;
+      var yCursor = padT + plotH;
+      var total = b.scan + b.health + b.login;
+
+      ACTIVITY_SERIES.forEach(function (ser) {
+        var v = b[ser.key];
+        if (!v) return;
+        var h = (v / maxStack) * plotH;
+        yCursor -= h;
+        var rect = svg('rect', {
+          x: x, y: yCursor, width: bw, height: Math.max(h, 1.5), rx: 2,
+          fill: ser.colour, stroke: 'var(--surface)', 'stroke-width': 1
+        });
+        s.appendChild(rect);
+      });
+
+      /* One hit area per day, taller than the bars, so the tooltip is easy to
+         reach even on a quiet day. */
+      var hit = svg('rect', {
+        x: padL + i * slot, y: padT, width: slot, height: plotH, fill: 'transparent'
+      });
+      var dd = new Date(b.t);
+      attachTip(hit, function () {
+        return '<div class="t-title">' + dd.getDate() + ' ' + months[dd.getMonth()] + '</div>' +
+          ACTIVITY_SERIES.map(function (ser) {
+            return '<div class="t-row"><span>' + ser.label + '</span><b>' + fmtInt(b[ser.key]) + '</b></div>';
+          }).join('') +
+          '<div class="t-row"><span>Total</span><b>' + fmtInt(total) + '</b></div>';
+      });
+      s.appendChild(hit);
+
+      if (i % Math.ceil(days / 7) === 0 || i === days - 1) {
+        var lab = svg('text', { x: padL + i * slot + slot / 2, y: H - 8, 'text-anchor': 'middle' });
+        lab.textContent = dd.getDate() + ' ' + months[dd.getMonth()];
+        s.appendChild(lab);
+      }
+    });
+
+    s.appendChild(svg('line', { x1: padL, y1: padT + plotH, x2: W - padR, y2: padT + plotH, class: 'axis-line' }));
+    container.appendChild(s);
+
+    var legend = el('div', 'spark-legend');
+    ACTIVITY_SERIES.forEach(function (ser) {
+      var sp = el('span');
+      var i2 = el('i');
+      i2.style.background = ser.colour;
+      sp.appendChild(i2);
+      sp.appendChild(document.createTextNode(ser.label));
+      legend.appendChild(sp);
+    });
+    container.appendChild(legend);
+  }
+
+  function renderAdmin() {
+    var host = $('admin-body');
+    if (!host) return;
+    clear(host);
+    if (!session.user || session.user.role !== 'admin') {
+      host.appendChild(el('div', 'card')).appendChild(
+        el('div', 'empty', 'This section is available to administrators only.'));
+      return;
+    }
+
+    var users = Auth.listUsers();
+    var events = Auth.events();
+    var byId = {};
+    users.forEach(function (u) { byId[u.id] = u; });
+
+    var dayMs = 86400000, now = Date.now();
+    var scans = events.filter(function (e) { return e.type === 'scan'; });
+    var healths = events.filter(function (e) { return e.type === 'health'; });
+    var exports_ = events.filter(function (e) { return e.type === 'export'; });
+    var active7 = users.filter(function (u) { return u.lastLoginAt && now - u.lastLoginAt < 7 * dayMs; });
+    var rowsProcessed = scans.reduce(function (a, e) { return a + (e.meta.rows || 0); }, 0);
+    var exposure = scans.reduce(function (a, e) { return a + (e.meta.exposure || 0); }, 0);
+    var flagged = scans.reduce(function (a, e) { return a + (e.meta.high || 0) + (e.meta.medium || 0); }, 0);
+
+    if (Auth.isDemo) {
+      var diag = Auth.diagnostics();
+      var banner = el('div', 'banner banner-warn');
+      banner.innerHTML = '<span><b>Demo mode.</b> Accounts and activity live in this browser only — ' +
+        'nothing is shared between devices and anyone with the browser can edit it. ' +
+        diag.seededUsers + ' of ' + diag.users + ' accounts and ' + fmtInt(diag.seededEvents) +
+        ' of ' + fmtInt(diag.events) + ' events are seeded sample data, marked <b>sample</b> in the tables below. ' +
+        'Connecting a server replaces this without changing the screens.' +
+        (diag.storageWorks ? '' : ' <b>Storage is blocked in this browser, so nothing will survive a reload.</b>') +
+        '</span>';
+      host.appendChild(banner);
+    }
+
+    var tiles = el('div', 'stat-row');
+    [
+      ['Accounts', fmtInt(users.length), users.filter(function (u) { return !u.active; }).length + ' disabled'],
+      ['Active this week', fmtInt(active7.length), fmtPct(active7.length / Math.max(1, users.length)) + ' of accounts'],
+      ['Scans run', fmtInt(scans.length), fmtInt(healths.length) + ' health scores'],
+      ['Rows processed', fmtInt(rowsProcessed), fmtInt(flagged) + ' flagged'],
+      ['Exposure reviewed', fmtMoney(exposure), 'Across all scans'],
+      ['Exports taken', fmtInt(exports_.length), 'Queue and scored output']
+    ].forEach(function (t) {
+      var n = el('div', 'stat');
+      n.appendChild(el('div', 'stat-label', t[0]));
+      n.appendChild(el('div', 'stat-value sm', t[1]));
+      n.appendChild(el('div', 'stat-meta', t[2]));
+      tiles.appendChild(n);
+    });
+    host.appendChild(tiles);
+
+    /* activity */
+    var actCard = el('div', 'card');
+    var ah = el('div', 'card-head');
+    ah.appendChild(el('h3', null, 'Activity — last 30 days'));
+    ah.appendChild(el('span', 'card-note', fmtInt(events.length) + ' events recorded'));
+    actCard.appendChild(ah);
+    var actChart = el('div', 'chart');
+    actCard.appendChild(actChart);
+    renderActivityChart(actChart, events, 30);
+    host.appendChild(actCard);
+
+    /* accounts table */
+    var uCard = el('div', 'card flush');
+    var uh = el('div', 'card-head');
+    uh.style.padding = '14px 16px 0';
+    uh.appendChild(el('h3', null, 'Accounts'));
+    var uExp = el('button', 'btn btn-sm', 'Export');
+    uExp.type = 'button';
+    uExp.addEventListener('click', function () {
+      openExport('accounts_' + Date.now() + '.csv', D.objectsToCSV(users.map(function (u) {
+        var us = userStats(u, events);
+        return {
+          name: u.name, email: u.email, company: u.company, role: u.role,
+          status: u.active ? 'active' : 'disabled',
+          signed_up: new Date(u.createdAt).toISOString(),
+          last_login: u.lastLoginAt ? new Date(u.lastLoginAt).toISOString() : '',
+          logins: u.loginCount, scans: us.scans, health_scores: us.healths,
+          rows_processed: us.rows, sample_data: u.seeded ? 'yes' : 'no'
+        };
+      })), users.length);
+    });
+    uh.appendChild(uExp);
+    uCard.appendChild(uh);
+
+    var uWrap = el('div', 'table-wrap scroll-y');
+    uWrap.style.marginTop = '12px';
+    var ut = el('table', 'data');
+    var uthead = el('thead');
+    var utr = el('tr');
+    ['', 'Account', 'Company', 'Role', 'Signed up', 'Last seen', 'Logins', 'Scans', 'Rows', 'Health', 'Status', ''].forEach(function (h) {
+      utr.appendChild(el('th', null, h));
+    });
+    uthead.appendChild(utr);
+    ut.appendChild(uthead);
+    var utb = el('tbody');
+
+    users.slice().sort(function (a, b) { return (b.lastLoginAt || 0) - (a.lastLoginAt || 0); }).forEach(function (u) {
+      var us = userStats(u, events);
+      var row = el('tr');
+
+      var sc = el('td');
+      sc.style.width = '6px';
+      sc.style.padding = '0 0 0 12px';
+      sc.appendChild(el('div', 'stripe ' + (!u.active ? 'stripe-neutral' : (us.scans ? 'stripe-good' : 'stripe-warning'))));
+      row.appendChild(sc);
+
+      var who = el('td', 'wrap');
+      who.appendChild(el('div', null, u.name));
+      var sub = el('div', 'dim');
+      sub.style.fontSize = '11px';
+      sub.textContent = u.email;
+      who.appendChild(sub);
+      row.appendChild(who);
+
+      row.appendChild(el('td', 'dim', u.company || '—'));
+
+      var rd = el('td');
+      rd.appendChild(el('span', 'chip ' + (u.role === 'admin' ? 'chip-good' : 'chip-neutral'),
+        u.role === 'admin' ? 'admin' : 'owner'));
+      if (u.seeded) rd.appendChild(el('span', 'chip chip-neutral', 'sample'));
+      row.appendChild(rd);
+
+      row.appendChild(el('td', 'dim', fmtTs(u.createdAt)));
+      var seen = el('td', 'dim', fmtAgo(u.lastLoginAt));
+      seen.title = u.lastLoginAt ? fmtTs(u.lastLoginAt) : 'Has never signed in';
+      row.appendChild(seen);
+      row.appendChild(el('td', 'n', fmtInt(u.loginCount)));
+      row.appendChild(el('td', 'n', fmtInt(us.scans)));
+      row.appendChild(el('td', 'n', fmtInt(us.rows)));
+      row.appendChild(el('td', 'n', fmtInt(us.healths)));
+
+      var st = el('td');
+      st.appendChild(el('span', 'chip ' + (u.active ? 'chip-good' : 'chip-critical'), u.active ? 'active' : 'disabled'));
+      row.appendChild(st);
+
+      var act = el('td');
+      if (u.role !== 'admin') {
+        var tg = el('button', 'btn btn-sm', u.active ? 'Disable' : 'Enable');
+        tg.type = 'button';
+        tg.addEventListener('click', function () {
+          try {
+            Auth.setActive(u.id, !u.active);
+            track('admin_toggle_user', { userId: u.id, active: !u.active });
+            renderAdmin();
+          } catch (ex) { alert(ex.message); }
+        });
+        act.appendChild(tg);
+      }
+      row.appendChild(act);
+      utb.appendChild(row);
+    });
+    ut.appendChild(utb);
+    uWrap.appendChild(ut);
+    uCard.appendChild(uWrap);
+    host.appendChild(uCard);
+
+    /* scan + health history side by side */
+    var grid = el('div', 'console-grid');
+    grid.appendChild(historyCard('Scan history', scans, 120, function (e) {
+      var u = byId[e.userId];
+      return [
+        ['when', fmtTs(e.ts), 'dim'],
+        ['who', u ? u.name : 'unknown', null],
+        ['file', e.meta.file || 'upload', 'dim'],
+        ['rows', fmtInt(e.meta.rows), 'n'],
+        ['high', fmtInt(e.meta.high), 'n'],
+        ['exposure', fmtMoney(e.meta.exposure), 'n']
+      ];
+    }, ['When', 'User', 'File', 'Rows', 'High', 'Exposure'], function (e) {
+      return e.meta.high > 0 ? 'stripe-critical' : 'stripe-good';
+    }));
+
+    grid.appendChild(historyCard('Health score history', healths, 120, function (e) {
+      var u = byId[e.userId];
+      return [
+        ['when', fmtTs(e.ts), 'dim'],
+        ['who', u ? u.name : 'unknown', null],
+        ['company', e.meta.company || '—', 'dim'],
+        ['score', e.meta.score != null ? e.meta.score.toFixed(1) : '—', 'n'],
+        ['grade', e.meta.grade || '—', 'dim'],
+        ['pfail', e.meta.failureProb != null ? fmtPct(e.meta.failureProb, 1) : '—', 'n']
+      ];
+    }, ['When', 'User', 'Company', 'Score', 'Grade', 'p(fail)'], function (e) {
+      var sc2 = e.meta.score;
+      if (sc2 == null) return 'stripe-neutral';
+      return sc2 >= 75 ? 'stripe-good' : (sc2 >= 40 ? 'stripe-warning' : 'stripe-critical');
+    }));
+    host.appendChild(grid);
+
+    /* feature usage */
+    var fCard = el('div', 'card');
+    var fh = el('div', 'card-head');
+    fh.appendChild(el('h3', null, 'What gets used'));
+    fh.appendChild(el('span', 'card-note', 'Every recorded event, by type'));
+    fCard.appendChild(fh);
+
+    var counts = {};
+    events.forEach(function (e) { counts[e.type] = (counts[e.type] || 0) + 1; });
+    var LABELS = {
+      login: 'Sign-in', signup: 'Account created', logout: 'Sign-out',
+      scan: 'Transaction scan', health: 'Health score', portfolio: 'Portfolio scoring',
+      export: 'Export taken', retrain: 'Model refit', admin_toggle_user: 'Account enabled or disabled'
+    };
+    var fChart = el('div');
+    renderAttributions(fChart, Object.keys(counts).map(function (k) {
+      return { label: LABELS[k] || k, value: counts[k], hint: 'Events of type "' + k + '"' };
+    }).sort(function (a, b) { return b.value - a.value; }),
+      { unit: 'Events', format: function (v) { return fmtInt(v); } });
+    fCard.appendChild(fChart);
+    fCard.appendChild(el('div', 'hint',
+      'Counts are events, not sessions — a single visit usually produces one sign-in and several scans.'));
+    host.appendChild(fCard);
+
+    /* raw export */
+    var expCard = el('div', 'card');
+    var eh = el('div', 'card-head');
+    eh.appendChild(el('h3', null, 'Raw usage export'));
+    expCard.appendChild(eh);
+    expCard.appendChild(el('div', 'hint',
+      'The full event log with every recorded field, for reporting or for loading into another system.'));
+    var erow = el('div', 'btn-row');
+    erow.style.marginTop = '10px';
+    var csvBtn = el('button', 'btn', 'Export events as CSV');
+    csvBtn.type = 'button';
+    csvBtn.addEventListener('click', function () {
+      openExport('usage_events_' + Date.now() + '.csv', D.objectsToCSV(events.map(function (e) {
+        var u = byId[e.userId];
+        return {
+          timestamp: new Date(e.ts).toISOString(), type: e.type,
+          user_email: u ? u.email : '', user_name: u ? u.name : '', company: u ? u.company : '',
+          rows: e.meta.rows != null ? e.meta.rows : '',
+          high: e.meta.high != null ? e.meta.high : '',
+          medium: e.meta.medium != null ? e.meta.medium : '',
+          exposure: e.meta.exposure != null ? e.meta.exposure : '',
+          score: e.meta.score != null ? e.meta.score : '',
+          failure_probability: e.meta.failureProb != null ? e.meta.failureProb : '',
+          file: e.meta.file || '', sample_data: e.seeded ? 'yes' : 'no'
+        };
+      })), events.length);
+    });
+    erow.appendChild(csvBtn);
+    var jsonBtn = el('button', 'btn', 'Export everything as JSON');
+    jsonBtn.type = 'button';
+    jsonBtn.addEventListener('click', function () {
+      openExport('console_export_' + Date.now() + '.json',
+        JSON.stringify({ exportedAt: nowStamp(), provider: Auth.provider, users: users, events: events }, null, 2),
+        users.length + events.length);
+    });
+    erow.appendChild(jsonBtn);
+    expCard.appendChild(erow);
+    host.appendChild(expCard);
+  }
+
+  function userStats(user, events) {
+    var scans = 0, healths = 0, rows = 0;
+    events.forEach(function (e) {
+      if (e.userId !== user.id) return;
+      if (e.type === 'scan') { scans++; rows += e.meta.rows || 0; }
+      else if (e.type === 'health') healths++;
+    });
+    return { scans: scans, healths: healths, rows: rows };
+  }
+
+  function historyCard(title, events, limit, cellsFn, headers, stripeFn) {
+    var card = el('div', 'card flush');
+    var h = el('div', 'card-head');
+    h.style.padding = '14px 16px 0';
+    h.appendChild(el('h3', null, title));
+    h.appendChild(el('span', 'card-note', fmtInt(events.length) + ' records'));
+    card.appendChild(h);
+
+    if (!events.length) {
+      card.appendChild(el('div', 'empty', 'Nothing recorded yet.'));
+      return card;
+    }
+
+    var wrap = el('div', 'table-wrap scroll-y');
+    wrap.style.marginTop = '12px';
+    var t = el('table', 'data');
+    var thead = el('thead');
+    var tr = el('tr');
+    tr.appendChild(el('th', null, ''));
+    headers.forEach(function (hd) { tr.appendChild(el('th', null, hd)); });
+    thead.appendChild(tr);
+    t.appendChild(thead);
+
+    var tb = el('tbody');
+    events.slice(0, limit).forEach(function (e) {
+      var row = el('tr');
+      var sc = el('td');
+      sc.style.width = '6px';
+      sc.style.padding = '0 0 0 12px';
+      sc.appendChild(el('div', 'stripe ' + stripeFn(e)));
+      row.appendChild(sc);
+      cellsFn(e).forEach(function (c) { row.appendChild(el('td', c[2], c[1])); });
+      tb.appendChild(row);
+    });
+    t.appendChild(tb);
+    wrap.appendChild(t);
+    card.appendChild(wrap);
+    if (events.length > limit) {
+      var note = el('div', 'hint');
+      note.style.padding = '10px 16px';
+      note.textContent = 'Showing the most recent ' + fmtInt(limit) + ' of ' + fmtInt(events.length) + '. Export for the full set.';
+      card.appendChild(note);
+    }
+    return card;
+  }
+
   /* ================================= boot ================================ */
 
   function setStatus(text, busy) {
@@ -2444,10 +3095,15 @@
 
   function boot() {
     initTheme();
-    ['scanner', 'health', 'method'].forEach(function (t) {
+    ['scanner', 'health', 'method', 'admin'].forEach(function (t) {
       var b = $('tab-' + t);
       if (b) b.addEventListener('click', function () { setTab(t); });
     });
+
+    /* The gate decides what is on screen; training runs either way, so the
+       platform is warm by the time someone finishes signing in. */
+    var existing = Auth.currentUser();
+    if (existing) enterApp(existing); else showGate('signin');
 
     setStatus('Fitting fraud models…', true);
     renderScanControls();
@@ -2456,7 +3112,7 @@
     setTimeout(function () {
       trainFraud();
       renderScanControls();
-      loadSampleTransactions();
+      loadSampleTransactions(true);
       setStatus('Fitting failure and narrative models…', true);
 
       setTimeout(function () {
@@ -2465,6 +3121,7 @@
         renderHealthControls();
         computeHealth();
         renderMethodology();
+        if (state.tab === 'admin') renderAdmin();
         var totalFit = state.runLog.filter(function (e) { return e.job === 'fit'; }).reduce(function (a, e) { return a + e.ms; }, 0);
         setStatus(state.runLog.length + ' jobs · ' + totalFit.toFixed(0) + ' ms total fit', false);
       }, 40);

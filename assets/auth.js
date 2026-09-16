@@ -236,6 +236,9 @@
         if (activity < 0.35) return;
 
         var t = ts0 - (ts0 % day) + (8 + Math.floor(rnd() * 10)) * 3600000 + Math.floor(rnd() * 3600000);
+        /* Today's slot can land past the current hour, which would sort seeded
+           rows above real ones and show a future timestamp. */
+        if (t > now) t = now - Math.floor(rnd() * 5400000);
         ev(u, 'login', t, {});
 
         var scans = Math.floor(rnd() * 3);
@@ -243,7 +246,7 @@
           var rows = 120 + Math.floor(rnd() * 2400);
           var high = Math.floor(rows * (0.005 + rnd() * 0.03));
           var medium = high + Math.floor(rows * (0.02 + rnd() * 0.09));
-          ev(u, 'scan', t + (s + 1) * 420000, {
+          ev(u, 'scan', Math.min(now, t + (s + 1) * 420000), {
             file: SEED_FILES[Math.floor(rnd() * SEED_FILES.length)],
             rows: rows, high: high, medium: medium,
             exposure: Math.round(rows * (8 + rnd() * 70)),
@@ -253,15 +256,15 @@
 
         if (rnd() > 0.55) {
           var score = 22 + rnd() * 70;
-          ev(u, 'health', t + 900000, {
+          ev(u, 'health', Math.min(now, t + 900000), {
             company: u.company,
             score: Math.round(score * 10) / 10,
             grade: score >= 90 ? 'Excellent' : score >= 75 ? 'Strong' : score >= 60 ? 'Good' : score >= 40 ? 'Fair' : 'Needs improvement',
             failureProb: Math.round((0.02 + (100 - score) / 100 * 0.5) * 1000) / 1000
           });
         }
-        if (rnd() > 0.82) ev(u, 'portfolio', t + 1500000, { rows: 40 + Math.floor(rnd() * 400) });
-        if (rnd() > 0.86) ev(u, 'export', t + 1800000, { kind: rnd() > 0.5 ? 'queue' : 'scored', rows: 20 + Math.floor(rnd() * 300) });
+        if (rnd() > 0.82) ev(u, 'portfolio', Math.min(now, t + 1500000), { rows: 40 + Math.floor(rnd() * 400) });
+        if (rnd() > 0.86) ev(u, 'export', Math.min(now, t + 1800000), { kind: rnd() > 0.5 ? 'queue' : 'scored', rows: 20 + Math.floor(rnd() * 300) });
       });
     }
 

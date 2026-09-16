@@ -12,7 +12,10 @@
 </head>
 <body>
 
-<div class="layout">
+<!-- Sign-in gate. Filled and shown by app.js when there is no session. -->
+<div class="auth-gate" id="auth-gate" hidden></div>
+
+<div class="layout" id="app-layout" hidden>
 
 <aside class="sidebar">
   <div class="brand">
@@ -38,7 +41,12 @@
     <button class="nav-item" id="tab-method" role="tab" aria-selected="false" aria-controls="panel-method" type="button">
       <span class="nav-num">03</span><span class="nav-label">Methodology</span>
     </button>
+    <button class="nav-item" id="tab-admin" role="tab" aria-selected="false" aria-controls="panel-admin" type="button" hidden>
+      <span class="nav-num">04</span><span class="nav-label">Admin console</span>
+    </button>
   </nav>
+
+  <div class="user-block" id="user-block" hidden></div>
 
   <div class="sidebar-foot">
     <span class="hint mono" id="boot-status"></span>
@@ -108,6 +116,21 @@
     <div class="stack" id="method-body"></div>
   </section>
 
+  <!-- ===================== 04 · ADMIN CONSOLE ===================== -->
+  <section id="panel-admin" role="tabpanel" aria-labelledby="tab-admin" hidden>
+    <div class="section-head">
+      <span class="eyebrow">Section 04 — Admin console</span>
+      <h1>Who is using the platform, and for what</h1>
+      <p class="lede">
+        Every account, every sign-in, every file scanned and every health score run — with the
+        rows processed, the exposure flagged and the trend over the last month. Visible to
+        administrators only.
+      </p>
+    </div>
+
+    <div class="stack" id="admin-body"></div>
+  </section>
+
   <p class="footnote">
     Built as a self-contained browser application: no server, no database, and no external
     machine-learning library. The tree ensembles, the logistic baseline, the transformer encoder
@@ -121,6 +144,7 @@
 
 <script src="assets/ml.js"></script>
 <script src="assets/data.js"></script>
+<script src="assets/auth.js"></script>
 <script src="assets/app.js"></script>
 
 </body>
