@@ -386,11 +386,11 @@
     var dz = el('div', 'dropzone');
     dz.setAttribute('role', 'button');
     dz.setAttribute('tabindex', '0');
-    dz.appendChild(el('div', 'dropzone-title', 'Drop a transaction CSV'));
-    dz.appendChild(el('div', 'dropzone-sub', 'or click to choose a file'));
+    dz.appendChild(el('div', 'dropzone-title', 'Drop a transaction file'));
+    dz.appendChild(el('div', 'dropzone-sub', 'Excel or CSV — or click to choose'));
     var fileInput = el('input');
     fileInput.type = 'file';
-    fileInput.accept = '.csv,text/csv,text/plain';
+    fileInput.accept = '.csv,.xlsx,.xlsm,.xlsb,.xls,text/csv,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel';
     fileInput.id = 'scan-file';
     fileInput.className = 'sr-only';
     dz.addEventListener('click', function () { fileInput.click(); });
@@ -503,15 +503,53 @@
     }
   }
 
-  function readScanFile(file) {
+  /* Reads either a CSV or an Excel workbook and hands back the same shape, so
+     the two upload paths below do not each need to know the difference.
+     Everything is read in the browser; no file is ever sent anywhere. */
+  function readTabularFile(file, onReady, onError) {
+    var fail = onError || function (msg) { alert(msg); };
     var reader = new FileReader();
+
+    reader.onerror = function () { fail('That file could not be read. It may be open in another program.'); };
+
+    if (D.isWorkbookName(file.name)) {
+      reader.onload = function () {
+        var parsed;
+        try {
+          parsed = D.parseWorkbook(reader.result);
+        } catch (e) {
+          fail(e.message);
+          return;
+        }
+        if (!parsed.headers.length) { fail('That sheet has no readable header row.'); return; }
+        onReady(parsed);
+      };
+      /* Fetch the reader first; there is nothing to parse until it is here. */
+      D.loadXlsx().then(function () {
+        reader.readAsArrayBuffer(file);
+      }).catch(function () {
+        fail('Excel support could not be loaded, so this file cannot be opened. ' +
+             'Save it as CSV and upload that instead.');
+      });
+      return;
+    }
+
     reader.onload = function () {
       var parsed = D.parseCSV(reader.result);
-      if (!parsed.headers.length) { alert('That file has no readable header row.'); return; }
+      if (!parsed.headers.length) { fail('That file has no readable header row.'); return; }
+      onReady(parsed);
+    };
+    reader.readAsText(file);
+  }
+
+  function readScanFile(file) {
+    readTabularFile(file, function (parsed) {
       state.scan.rows = parsed.rows;
       state.scan.headers = parsed.headers;
       state.scan.mapping = D.autoMap(parsed.headers, D.TXN_FIELDS);
-      state.scan.source = file.name;
+      state.scan.source = file.name + (parsed.sheet ? ' — ' + parsed.sheet : '');
+      state.scan.sheetNames = parsed.sheetNames || null;
+      state.scan.file = file;
       state.scan.scored = null;
       state.scan.page = 0;
       state.scan.view = 'preview';
@@ -519,8 +557,7 @@
       renderScanResults();
       var cov = scanMappingCoverage();
       if (!cov.missingRequired.length) runScan();
-    };
-    reader.readAsText(file);
+    });
   }
 
   function loadSampleTransactions(auto) {
@@ -1144,12 +1181,12 @@
     var dz = el('div', 'dropzone');
     dz.setAttribute('role', 'button');
     dz.setAttribute('tabindex', '0');
-    dz.appendChild(el('div', 'dropzone-title', 'Drop a financials CSV'));
-    dz.appendChild(el('div', 'dropzone-sub', 'one row per company'));
+    dz.appendChild(el('div', 'dropzone-title', 'Drop a financials file'));
+    dz.appendChild(el('div', 'dropzone-sub', 'Excel or CSV, one row per company'));
     var fi = el('input');
     fi.type = 'file';
     fi.id = 'health-file';
-    fi.accept = '.csv,text/csv,text/plain';
+    fi.accept = '.csv,.xlsx,.xlsm,.xlsb,.xls,text/csv,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel';
     fi.className = 'sr-only';
     dz.addEventListener('click', function () { fi.click(); });
     dz.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fi.click(); } });
@@ -1228,20 +1265,19 @@
   }
 
   function readHealthFile(file) {
-    var reader = new FileReader();
-    reader.onload = function () {
-      var parsed = D.parseCSV(reader.result);
-      if (!parsed.headers.length) { alert('That file has no readable header row.'); return; }
+    readTabularFile(file, function (parsed) {
       state.health.rows = parsed.rows;
       state.health.headers = parsed.headers;
       state.health.mapping = D.autoMap(parsed.headers, D.FIN_FIELDS);
+      state.health.source = file.name + (parsed.sheet ? ' — ' + parsed.sheet : '');
+      state.health.sheetNames = parsed.sheetNames || null;
+      state.health.file = file;
       state.health.portfolio = null;
       renderHealthControls();
       var cov = D.mappingCoverage(state.health.mapping, D.FIN_FIELDS);
       if (!cov.missingRequired.length) runPortfolio();
       else renderHealthResults();
-    };
-    reader.readAsText(file);
+    });
   }
 
   function loadSampleFinancials() {

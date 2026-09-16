@@ -821,6 +821,127 @@
     return str.slice(0, 1) + '••••' + str.slice(-1);
   }
 
+  /* ------------------------------ Workbooks ------------------------------ */
+  /* Businesses keep their figures in Excel, not in CSV, so a product that only
+     accepts CSV asks every customer to convert a file before they can use it.
+
+     SheetJS is loaded from a CDN and may be absent - blocked, offline, or a
+     stricter host. Everything below degrades to "CSV only" with a message that
+     says so, rather than failing at the moment someone drops a file in. */
+
+  /* SheetJS is ~400KB. Most sessions never open a workbook, so it is fetched
+     the first time one is dropped rather than on every page load. The promise
+     is cached, so two quick drops share one download. */
+  var XLSX_URL = 'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
+  var xlsxPromise = null;
+
+  function xlsxAvailable() {
+    return typeof XLSX !== 'undefined' && XLSX && XLSX.read;
+  }
+
+  function loadXlsx() {
+    if (xlsxAvailable()) return Promise.resolve(true);
+    if (xlsxPromise) return xlsxPromise;
+
+    xlsxPromise = new Promise(function (resolve, reject) {
+      var tag = document.createElement('script');
+      tag.src = XLSX_URL;
+      tag.async = true;
+      tag.onload = function () {
+        if (xlsxAvailable()) resolve(true);
+        else reject(new Error('The Excel reader loaded but did not initialise.'));
+      };
+      tag.onerror = function () {
+        /* A blocked CDN, an offline machine, or a host with a stricter policy.
+           The caller turns this into "save it as CSV", which always works. */
+        xlsxPromise = null;
+        reject(new Error('Could not load Excel support.'));
+      };
+      document.head.appendChild(tag);
+    });
+    return xlsxPromise;
+  }
+
+  function isWorkbookName(name) {
+    return /\.(xlsx|xlsm|xlsb|xls)$/i.test(String(name || ''));
+  }
+
+  /* Returns the same shape parseCSV does, so callers cannot tell the two
+     apart. Dates are the one real difference: Excel stores them as serial
+     numbers, and a raw 45746 in a timestamp column is worse than useless, so
+     cells are read as formatted text. */
+  function parseWorkbook(arrayBuffer, opts) {
+    opts = opts || {};
+    if (!xlsxAvailable()) {
+      throw new Error('Excel support did not load. Save the file as CSV and upload that instead.');
+    }
+
+    var wb = XLSX.read(arrayBuffer, { type: 'array', cellDates: true });
+    if (!wb.SheetNames || !wb.SheetNames.length) {
+      throw new Error('That workbook has no sheets in it.');
+    }
+
+    var sheetName = opts.sheet && wb.Sheets[opts.sheet] ? opts.sheet : wb.SheetNames[0];
+    var sheet = wb.Sheets[sheetName];
+
+    /* defval keeps empty cells as empty strings rather than dropping the key,
+       which would leave rows with different shapes. */
+    /* raw:true keeps real Date objects intact. The formatted alternative hands
+       back whatever display format the spreadsheet happened to use, and a cell
+       shown as "9/10/26" loses the time of day entirely - which would push
+       every transaction into the off-hours risk band. */
+    var rows = XLSX.utils.sheet_to_json(sheet, { defval: '', raw: true });
+    if (!rows.length) {
+      throw new Error('Sheet "' + sheetName + '" is empty.');
+    }
+
+    /* sheet_to_json only reports keys that appear in some row; take the header
+       row directly so a column that is empty throughout still shows up in the
+       mapper and can be pointed at. */
+    var headerRow = XLSX.utils.sheet_to_json(sheet, { header: 1, range: 0, defval: '' })[0] || [];
+    var headers = [];
+    headerRow.forEach(function (h, i) {
+      var name = String(h == null ? '' : h).trim();
+      headers.push(name || ('column_' + (i + 1)));
+    });
+    Object.keys(rows[0]).forEach(function (k) {
+      if (headers.indexOf(k) < 0) headers.push(k);
+    });
+
+    /* Everything downstream reads strings, so dates are serialised here - in a
+       form that keeps the time, and that parseDate in the feature builder can
+       read back. */
+    function cellToString(v) {
+      if (v == null) return '';
+      /* Not `instanceof Date`: SheetJS may construct dates in a different
+         realm (an iframe, a worker, a test harness), where instanceof fails
+         against a Date that is perfectly real. Duck-typing survives that. */
+      if (v && typeof v.getTime === 'function' && !isNaN(v.getTime())) {
+        return v.getFullYear() + '-' +
+               String(v.getMonth() + 1).padStart(2, '0') + '-' +
+               String(v.getDate()).padStart(2, '0') + ' ' +
+               String(v.getHours()).padStart(2, '0') + ':' +
+               String(v.getMinutes()).padStart(2, '0') + ':' +
+               String(v.getSeconds()).padStart(2, '0');
+      }
+      return String(v).trim();
+    }
+
+    var normalised = rows.map(function (r) {
+      var out = {};
+      headers.forEach(function (h) { out[h] = cellToString(r[h]); });
+      return out;
+    });
+
+    return {
+      headers: headers,
+      rows: normalised,
+      sheetNames: wb.SheetNames,
+      sheet: sheetName,
+      source: 'workbook'
+    };
+  }
+
   /* ---------------------------- Column mapping --------------------------- */
 
   function normaliseHeader(h) {
@@ -881,6 +1002,10 @@
     gradeOf: gradeOf,
     buildTextCorpus: buildTextCorpus,
     parseCSV: parseCSV,
+    parseWorkbook: parseWorkbook,
+    isWorkbookName: isWorkbookName,
+    xlsxAvailable: xlsxAvailable,
+    loadXlsx: loadXlsx,
     toCSV: toCSV,
     objectsToCSV: objectsToCSV,
     autoMap: autoMap,
