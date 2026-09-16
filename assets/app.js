@@ -542,11 +542,39 @@
     reader.readAsText(file);
   }
 
+  /* Warns about columns the product does not need and should not be handed.
+     Returns null when the file is clean, so callers can append unconditionally. */
+  function sensitiveBanner(report) {
+    if (!report || !report.columns || !report.columns.length) return null;
+
+    var high = report.severity === 'high';
+    var node = el('div', 'banner ' + (high ? 'banner-bad' : 'banner-warn'));
+
+    var list = report.columns.map(function (c) {
+      return '<b>' + c.header + '</b> (' + c.kind + ')';
+    }).join(', ');
+
+    node.innerHTML =
+      '<span><b>' + (high ? 'Sensitive data detected.' : 'Personal data detected.') + '</b> ' +
+      list + '. ' +
+      'The models score behaviour — amount, timing, channel, velocity — and never read an ' +
+      'account identifier, so these columns add nothing to the result. ' +
+      (high
+        ? 'Holding card numbers or government identifiers brings obligations you probably do not want: ' +
+          'remove these columns and upload again.'
+        : 'Consider removing them before sharing this file further.') +
+      ' Nothing you load here leaves your browser either way.</span>';
+    return node;
+  }
+
   function readScanFile(file) {
     readTabularFile(file, function (parsed) {
       state.scan.rows = parsed.rows;
       state.scan.headers = parsed.headers;
       state.scan.mapping = D.autoMap(parsed.headers, D.TXN_FIELDS);
+      /* Checked before anything is scored, so the warning reaches the person
+         while they can still do something about it. */
+      state.scan.sensitive = D.inspectSensitive(parsed.rows, parsed.headers);
       state.scan.source = file.name + (parsed.sheet ? ' — ' + parsed.sheet : '');
       state.scan.sheetNames = parsed.sheetNames || null;
       state.scan.file = file;
@@ -683,6 +711,9 @@
       tiles.appendChild(s);
     });
     host.appendChild(tiles);
+
+    var warn = sensitiveBanner(state.scan.sensitive);
+    if (warn) host.appendChild(warn);
 
     /* imputation notice — honest about what the upload did not carry */
     if (sc.imputed.length) {
@@ -1269,6 +1300,7 @@
       state.health.rows = parsed.rows;
       state.health.headers = parsed.headers;
       state.health.mapping = D.autoMap(parsed.headers, D.FIN_FIELDS);
+      state.health.sensitive = D.inspectSensitive(parsed.rows, parsed.headers);
       state.health.source = file.name + (parsed.sheet ? ' — ' + parsed.sheet : '');
       state.health.sheetNames = parsed.sheetNames || null;
       state.health.file = file;
@@ -1688,6 +1720,9 @@
       host.appendChild(el('div', 'card')).appendChild(el('div', 'empty', 'Load a financials file to score a portfolio.'));
       return;
     }
+    var warn = sensitiveBanner(state.health.sensitive);
+    if (warn) host.appendChild(warn);
+
     var rows = pf.rows;
     var atRisk = rows.filter(function (r) { return r.p >= 0.25; });
     var weak = rows.filter(function (r) { return r.score < 40; });
