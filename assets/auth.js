@@ -467,7 +467,14 @@
         /* FastAPI puts validation failures in `detail`, which may be a string
            or a list of field errors; surface something a person can act on. */
         var msg = data.detail;
-        if (Array.isArray(msg)) msg = msg.map(function (d) { return d.msg || ''; }).join('. ');
+        if (Array.isArray(msg)) {
+          /* Pydantic prefixes its own messages with "Value error, ", which is
+             an implementation detail of the validator and not something a
+             person signing up should be shown. */
+          msg = msg.map(function (d) {
+            return String(d.msg || '').replace(/^Value error,\s*/i, '');
+          }).filter(Boolean).join(' ');
+        }
         throw new Error(msg || ('Request failed (' + res.status + ')'));
       });
     });
