@@ -157,28 +157,30 @@ a { color: var(--accent); }
   position: sticky;
   top: env(safe-area-inset-top, 0px);
   z-index: 40;
-  width: 236px;
+  width: 244px;
   flex: none;
   height: 100vh;
   height: 100dvh;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  padding: 16px 0;
+  gap: 22px;
+  padding: 28px 0 18px;
   background: var(--surface);
   border-right: 1px solid var(--line);
 }
 
-.brand { display: flex; align-items: center; gap: 10px; padding: 0 16px; }
+.brand { display: flex; align-items: center; gap: 11px; padding: 0 18px; margin-bottom: 4px; }
 
 .brand-mark {
-  width: 30px; height: 30px; flex: none;
-  border-radius: 7px;
-  background: var(--accent);
+  width: 34px; height: 34px; flex: none;
+  border-radius: 9px;
+  background: linear-gradient(155deg, var(--accent-hover), var(--accent) 65%);
+  box-shadow: 0 3px 8px -2px color-mix(in srgb, var(--accent) 45%, transparent),
+              inset 0 1px 0 rgba(255,255,255,.14);
   display: grid; place-items: center;
 }
-.brand-mark svg { display: block; }
+.brand-mark svg { display: block; width: 18px; height: 18px; }
 
 .brand-name {
   font-family: var(--font-display);
@@ -221,6 +223,7 @@ a { color: var(--accent); }
   background: var(--accent-soft);
   color: var(--accent-ink);
   font-weight: 600;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--accent-soft) 55%, white 45%);
 }
 /* The rail marks the active section without spending another colour on it. */
 .nav-item[aria-selected="true"]::before {
@@ -234,11 +237,12 @@ a { color: var(--accent); }
   background: var(--accent);
 }
 .nav-num {
-  font-family: var(--font-mono);
-  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--muted);
-  letter-spacing: .06em;
   flex: none;
+  line-height: 0;
 }
 .nav-item[aria-selected="true"] .nav-num { color: var(--accent); }
 
@@ -263,16 +267,9 @@ a { color: var(--accent); }
   border-top: 1px solid var(--line);
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 10px;
   flex-wrap: wrap;
-}
-#boot-status {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  flex: 1 1 auto;
-  min-width: 0;
-  line-height: 1.35;
 }
 
 .icon-btn {
@@ -285,9 +282,15 @@ a { color: var(--accent); }
   color: var(--ink-2);
   border-radius: var(--r-md);
   cursor: pointer;
-  transition: border-color .14s, color .14s;
+  transition: border-color .14s, color .14s, box-shadow .14s, transform .14s;
 }
-.icon-btn:hover { border-color: var(--line-strong); color: var(--ink); }
+.icon-btn:hover {
+  border-color: var(--line-strong);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+.icon-btn:active { transform: translateY(0); }
 
 /* Below this width the rail would eat the working area, so it lies down into
    a scrollable strip across the top and the labels drop away first. */
@@ -317,7 +320,6 @@ a { color: var(--accent); }
     border-top: 0;
     flex: none;
   }
-  #boot-status { display: none; }
 }
 @media (max-width: 560px) {
   .nav-label { display: none; }
@@ -1045,67 +1047,46 @@ table.data .dim { color: var(--muted); }
   text-align: right;
 }
 
-.auth-demo {
-  border: 1px dashed var(--line-strong);
-  border-radius: var(--r-md);
-  padding: 11px 13px;
-  background: var(--surface-2);
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-.auth-demo .eyebrow { color: var(--warning); }
-.demo-cred {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-}
-.demo-cred span { color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; }
-
 /* --------------------------------------------------------- user block */
 
+/* Sits below sidebar-foot, at the very bottom of the rail - the last thing a
+   viewer's eye reaches, since it is "who am I" rather than navigation. */
 .user-block {
-  margin: 0 10px;
-  padding: 10px 11px;
+  margin: 10px 12px 0;
+  padding: 11px 12px;
   border: 1px solid var(--line);
-  border-radius: var(--r-md);
+  border-radius: 10px;
   background: var(--surface-2);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--surface) 60%, white 40%);
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
+  transition: border-color .16s;
 }
+.user-block:hover { border-color: var(--line-strong); }
 
 .avatar {
-  width: 28px; height: 28px;
+  width: 30px; height: 30px;
   flex: none;
-  border-radius: 7px;
-  background: var(--accent);
+  border-radius: 8px;
+  background: linear-gradient(155deg, var(--accent-hover), var(--accent) 65%);
+  box-shadow: 0 2px 6px -2px color-mix(in srgb, var(--accent) 45%, transparent),
+              inset 0 1px 0 rgba(255,255,255,.14);
   color: #fff;
   display: grid;
   place-items: center;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 12px;
+  letter-spacing: .01em;
 }
 :root[data-theme="dark"] .avatar { color: #14110c; }
 
-.user-meta { min-width: 0; flex: 1 1 auto; }
+/* Single line now - the card shows only the signed-in person's name. */
+.user-meta { min-width: 0; flex: 1 1 auto; display: flex; align-items: center; }
 .user-name {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.user-role {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: .09em;
-  text-transform: uppercase;
-  color: var(--muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

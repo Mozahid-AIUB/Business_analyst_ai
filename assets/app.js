@@ -406,14 +406,6 @@
     upCard.appendChild(dz);
     upCard.appendChild(fileInput);
 
-    var br = el('div', 'btn-row');
-    br.style.marginTop = '10px';
-    var sample = el('button', 'btn btn-sm', 'Load sample file');
-    sample.type = 'button';
-    sample.addEventListener('click', function () { loadSampleTransactions(); });
-    br.appendChild(sample);
-    upCard.appendChild(br);
-
     var src = el('div', 'hint');
     src.style.marginTop = '8px';
     src.textContent = state.scan.source ? ('Loaded: ' + state.scan.source + ' — ' + fmtInt(state.scan.rows.length) + ' rows, ' + state.scan.headers.length + ' columns') : '';
@@ -503,11 +495,26 @@
     }
   }
 
+  /* Large files are read entirely into memory before a single row is parsed
+     (FileReader has no streaming mode here), so an unbounded upload can
+     freeze or crash the tab well before any validation runs. 25MB comfortably
+     covers a spreadsheet with hundreds of thousands of rows while catching
+     the mis-clicks (a multi-gigabyte export, a non-tabular file) that would
+     otherwise hang the browser with no explanation. */
+  var MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
+
   /* Reads either a CSV or an Excel workbook and hands back the same shape, so
      the two upload paths below do not each need to know the difference.
      Everything is read in the browser; no file is ever sent anywhere. */
   function readTabularFile(file, onReady, onError) {
     var fail = onError || function (msg) { alert(msg); };
+
+    if (file.size > MAX_UPLOAD_BYTES) {
+      fail('That file is ' + (file.size / (1024 * 1024)).toFixed(1) + 'MB, which is over the 25MB limit. ' +
+           'Split it into smaller files or export a narrower date range and upload again.');
+      return;
+    }
+
     var reader = new FileReader();
 
     reader.onerror = function () { fail('That file could not be read. It may be open in another program.'); };
@@ -586,30 +593,6 @@
       var cov = scanMappingCoverage();
       if (!cov.missingRequired.length) runScan();
     });
-  }
-
-  function loadSampleTransactions(auto) {
-    var rows = D.generateTransactions(900, 5150).map(function (r) {
-      /* Sample file uses deliberately awkward headers so the mapper has
-         something real to solve. */
-      return {
-        'Txn Ref': r.txn_id, 'Posted On': r.timestamp, 'Cust No': r.account_id,
-        'Txn Amount (USD)': r.amount, 'Entry Mode': r.channel, 'Payee Name': r.merchant,
-        'MCC Group': r.merchant_category, 'Payee Age (d)': r.merchant_age_days,
-        'Txn Country': r.country, 'Billing Country': r.home_country,
-        'New Device?': r.device_new ? 'Y' : 'N', 'Trans Count 24H': r.txn_count_24h,
-        'Avg Txn 30D': r.avg_amount_30d, 'Days Since Open': r.account_age_days,
-        'Particulars': r.memo, 'Confirmed Fraud': r.is_fraud
-      };
-    });
-    state.scan.rows = rows;
-    state.scan.headers = Object.keys(rows[0]);
-    state.scan.mapping = D.autoMap(state.scan.headers, D.TXN_FIELDS);
-    state.scan.source = 'transactions_sample.csv';
-    state.scan.scored = null;
-    state.scan.page = 0;
-    renderScanControls();
-    runScan({ silent: !!auto });
   }
 
   function runScan(opts) {
@@ -1063,24 +1046,37 @@
 
   /* ========================= SECTION 2 — HEALTH ========================== */
 
+  /* No default value: these are a real company's figures, and a plausible-
+     looking number sitting in the box before anyone has typed anything reads
+     as somebody's actual data. The placeholder shows the expected scale
+     instead, and the field is genuinely empty until the person fills it in. */
   var MANUAL_FIELDS = [
-    { key: 'annual_revenue', label: 'Annual revenue', unit: 'USD', value: 4200000, step: 10000 },
-    { key: 'net_profit', label: 'Net profit', unit: 'USD', value: 268000, step: 5000 },
-    { key: 'total_assets', label: 'Total assets', unit: 'USD', value: 3150000, step: 10000 },
-    { key: 'total_liabilities', label: 'Total liabilities', unit: 'USD', value: 1980000, step: 10000 },
-    { key: 'current_assets', label: 'Current assets', unit: 'USD', value: 1120000, step: 10000 },
-    { key: 'current_liabilities', label: 'Current liabilities', unit: 'USD', value: 1040000, step: 10000 },
-    { key: 'interest_expense', label: 'Annual interest expense', unit: 'USD', value: 142000, step: 1000 }
+    { key: 'annual_revenue', label: 'Annual revenue', unit: 'USD', placeholder: 'e.g. 4200000', step: 10000 },
+    { key: 'net_profit', label: 'Net profit', unit: 'USD', placeholder: 'e.g. 268000', step: 5000 },
+    { key: 'total_assets', label: 'Total assets', unit: 'USD', placeholder: 'e.g. 3150000', step: 10000 },
+    { key: 'total_liabilities', label: 'Total liabilities', unit: 'USD', placeholder: 'e.g. 1980000', step: 10000 },
+    { key: 'current_assets', label: 'Current assets', unit: 'USD', placeholder: 'e.g. 1120000', step: 10000 },
+    { key: 'current_liabilities', label: 'Current liabilities', unit: 'USD', placeholder: 'e.g. 1040000', step: 10000 },
+    { key: 'interest_expense', label: 'Annual interest expense', unit: 'USD', placeholder: 'e.g. 142000', step: 1000 }
   ];
+
+  /* True once every required number field has a real value typed into it -
+     the score has no honest answer to give before then. */
+  function manualFormComplete() {
+    return MANUAL_FIELDS.every(function (m) {
+      var node = $('fin-' + m.key);
+      return node && node.value.trim() !== '';
+    });
+  }
 
   function readManual() {
     var f = {};
     MANUAL_FIELDS.forEach(function (m) {
       var node = $('fin-' + m.key);
-      f[m.key] = node ? D.num(node.value, m.value) : m.value;
+      f[m.key] = D.num(node ? node.value : '', 0);
     });
-    f.cash_reserve_months = $('fin-cash') ? +$('fin-cash').value : 2.8;
-    f.revenue_growth_pct = $('fin-growth') ? +$('fin-growth').value : 6;
+    f.cash_reserve_months = $('fin-cash') ? +$('fin-cash').value : 0;
+    f.revenue_growth_pct = $('fin-growth') ? +$('fin-growth').value : 0;
     return f;
   }
 
@@ -1127,26 +1123,32 @@
       var inp = el('input');
       inp.type = 'number';
       inp.id = 'fin-' + m.key;
-      inp.value = m.value;
+      inp.placeholder = m.placeholder;
       inp.step = m.step;
       inp.addEventListener('input', scheduleHealth);
       f.appendChild(inp);
       grid.appendChild(f);
     });
 
+    /* A range input has no empty state, so "not set yet" is tracked
+       separately and the field reads as a dash until the person moves it -
+       0 months of cash or 0% growth are real, specific claims this form must
+       not make on someone's behalf. */
     var cashF = el('div', 'field');
     var cashL = el('label');
     cashL.setAttribute('for', 'fin-cash');
     cashL.appendChild(document.createTextNode('Cash reserve'));
-    var cashV = el('span', 'field-unit', '2.8 months');
+    var cashV = el('span', 'field-unit', 'not set');
     cashV.id = 'fin-cash-val';
     cashL.appendChild(cashV);
     cashF.appendChild(cashL);
     var cash = el('input');
     cash.type = 'range';
     cash.id = 'fin-cash';
-    cash.min = 0; cash.max = 18; cash.step = 0.1; cash.value = 2.8;
+    cash.min = 0; cash.max = 18; cash.step = 0.1; cash.value = 0;
+    cash.dataset.touched = 'false';
     cash.addEventListener('input', function () {
+      cash.dataset.touched = 'true';
       cashV.textContent = (+cash.value).toFixed(1) + ' months';
       scheduleHealth();
     });
@@ -1157,15 +1159,17 @@
     var grL = el('label');
     grL.setAttribute('for', 'fin-growth');
     grL.appendChild(document.createTextNode('Revenue growth (YoY)'));
-    var grV = el('span', 'field-unit', '+6.0%');
+    var grV = el('span', 'field-unit', 'not set');
     grV.id = 'fin-growth-val';
     grL.appendChild(grV);
     grF.appendChild(grL);
     var gr = el('input');
     gr.type = 'range';
     gr.id = 'fin-growth';
-    gr.min = -50; gr.max = 80; gr.step = 0.5; gr.value = 6;
+    gr.min = -50; gr.max = 80; gr.step = 0.5; gr.value = 0;
+    gr.dataset.touched = 'false';
     gr.addEventListener('input', function () {
+      gr.dataset.touched = 'true';
       grV.textContent = (gr.value > 0 ? '+' : '') + (+gr.value).toFixed(1) + '%';
       scheduleHealth();
     });
@@ -1182,7 +1186,6 @@
     note.id = 'fin-note';
     note.rows = 3;
     note.placeholder = 'Paste board notes, audit remarks or credit-committee commentary…';
-    note.value = 'Covenant waiver requested from lenders and supplier payments delayed beyond terms, although gross margin expanded on pricing discipline.';
     note.addEventListener('input', scheduleHealth);
     noteF.appendChild(note);
     grid.appendChild(noteF);
@@ -1230,14 +1233,6 @@
     fi.addEventListener('change', function () { if (fi.files[0]) readHealthFile(fi.files[0]); });
     card.appendChild(dz);
     card.appendChild(fi);
-
-    var br = el('div', 'btn-row');
-    br.style.marginTop = '10px';
-    var sample = el('button', 'btn btn-sm', 'Load sample file');
-    sample.type = 'button';
-    sample.addEventListener('click', loadSampleFinancials);
-    br.appendChild(sample);
-    card.appendChild(br);
     host.appendChild(card);
 
     var mapCard = el('div', 'card');
@@ -1312,25 +1307,6 @@
     });
   }
 
-  function loadSampleFinancials() {
-    var rows = D.generateCompanies(220, 4242).map(function (r) {
-      return {
-        'Entity': r.company_name, 'Industry': r.sector,
-        'Turnover FY': r.annual_revenue, 'PAT': r.net_profit,
-        'Asset Total': r.total_assets, 'Liability Total': r.total_liabilities,
-        'Curr Assets': r.current_assets, 'Curr Liabilities': r.current_liabilities,
-        'Cash Runway (mo)': r.cash_reserve_months, 'YoY Growth %': r.revenue_growth_pct,
-        'Finance Cost': r.interest_expense
-      };
-    });
-    state.health.rows = rows;
-    state.health.headers = Object.keys(rows[0]);
-    state.health.mapping = D.autoMap(state.health.headers, D.FIN_FIELDS);
-    state.health.portfolio = null;
-    renderHealthControls();
-    runPortfolio();
-  }
-
   function runPortfolio() {
     if (!state.business) return;
     var m = state.health.mapping;
@@ -1377,6 +1353,11 @@
 
   function computeHealth() {
     if (!state.business) return;
+    if (state.health.mode === 'manual' && !manualFormComplete()) {
+      state.health.result = null;
+      renderHealthResults();
+      return;
+    }
     var f = readManual();
     var built = D.financialsToFeatures(f);
     var hs = D.healthScore(built.ratios);
@@ -1407,12 +1388,20 @@
       metrics: { healthScore: hs.total, failureProb: probs.ensemble }
     });
 
-    track('health', {
-      company: 'manual entry',
-      score: Math.round(hs.total * 10) / 10,
-      grade: hs.grade.label,
-      failureProb: Math.round(probs.ensemble * 1000) / 1000
-    });
+    /* This recalculates on every keystroke once the form is complete, which
+       is the point of a live preview - but a usage record per keystroke would
+       misrepresent one scoring session as dozens. Only a materially different
+       result (score has moved by at least half a point) is worth a new row. */
+    var scoreRounded = Math.round(hs.total * 10) / 10;
+    if (state.health.lastTrackedScore == null || Math.abs(state.health.lastTrackedScore - scoreRounded) >= 0.5) {
+      state.health.lastTrackedScore = scoreRounded;
+      track('health', {
+        company: 'manual entry',
+        score: scoreRounded,
+        grade: hs.grade.label,
+        failureProb: Math.round(probs.ensemble * 1000) / 1000
+      });
+    }
 
     state.health.result = {
       financials: f, ratios: built.ratios, vector: built.vector,
@@ -2311,13 +2300,14 @@
 
   function setTab(tab) {
     state.tab = tab;
-    ['dashboard', 'scanner', 'health', 'method'].forEach(function (t) {
+    ['dashboard', 'scanner', 'health', 'method', 'activity'].forEach(function (t) {
       var btn = $('tab-' + t), panel = $('panel-' + t);
       if (btn) btn.setAttribute('aria-selected', t === tab ? 'true' : 'false');
       if (panel) panel.hidden = t !== tab;
     });
     if (tab === 'dashboard') renderDashboard();
     if (tab === 'method') renderMethodology();
+    if (tab === 'activity') renderActivity();
     if (tab === 'health' && !state.health.result && state.health.mode === 'manual') computeHealth();
     window.scrollTo(0, 0);
   }
@@ -2332,11 +2322,6 @@
   }
 
   /* -------------------------------- gate -------------------------------- */
-
-  var DEMO_ACCOUNTS = [
-    { email: 'admin@rebintech.com', password: 'admin1234', role: 'Administrator' },
-    { email: 'customer@demo.com', password: 'customer1234', role: 'Customer' }
-  ];
 
   var EYE_OPEN = '<svg width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true">' +
     '<path d="M1.8 10S5 4.8 10 4.8 18.2 10 18.2 10 15 15.2 10 15.2 1.8 10 1.8 10Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>' +
@@ -2578,32 +2563,6 @@
 
     panel.appendChild(form);
 
-    if (Auth.isDemo) {
-      var demo = el('div', 'auth-demo');
-      demo.appendChild(el('span', 'eyebrow', 'Demo mode — not a real login'));
-      demo.appendChild(el('div', 'hint',
-        'Accounts live in this browser only. They are not shared with other devices, ' +
-        'and anyone can edit them. Use either account below, or create your own to see the flow.'));
-      DEMO_ACCOUNTS.forEach(function (a) {
-        var row = el('div', 'demo-cred');
-        row.appendChild(el('span', null, a.email + ' · ' + a.password));
-        var use = el('button', 'btn btn-sm', a.role);
-        use.type = 'button';
-        use.addEventListener('click', function () {
-          /* In signup mode this rebuilds the gate as sign-in, so the confirm
-             field and the meter are gone by the time anything is submitted -
-             these are existing accounts, there is nothing to confirm. */
-          if (session.mode !== 'signin') { showGate('signin'); return; }
-          emailIn.value = a.email;
-          passIn.value = a.password;
-          submit.click();
-        });
-        row.appendChild(use);
-        demo.appendChild(row);
-      });
-      panel.appendChild(demo);
-    }
-
     card.appendChild(panel);
     gate.appendChild(card);
     emailIn.focus();
@@ -2620,9 +2579,6 @@
 
     var meta = el('div', 'user-meta');
     meta.appendChild(el('div', 'user-name', session.user.name));
-    meta.appendChild(el('div', 'user-role',
-      (session.user.role === 'admin' ? 'Staff' : 'Customer') +
-      (session.user.company && session.user.company !== '—' ? ' · ' + session.user.company : '')));
     block.appendChild(meta);
 
     var out = el('button', 'icon-btn');
@@ -2667,15 +2623,27 @@
      me next" from this account's recorded activity - deliberately not from the
      platform-wide figures, which belong to staff and live on the other page. */
 
+  /* Bumped on every call and captured per-request, so that if two overlapping
+     calls ever happen again a slower, older one recognises it has been
+     superseded and discards its result instead of painting over - or being
+     painted over by - the newer call. Guards the symptom; the fix is not
+     calling this twice in the first place. */
+  var dashboardRenderToken = 0;
+
   function renderDashboard() {
     var host = $('dashboard-body');
     if (!host || !session.user) return;
     clear(host);
 
+    var token = ++dashboardRenderToken;
     Promise.resolve()
       .then(function () { return Auth.events({ userId: session.user.id }); })
       .catch(function () { return []; })
-      .then(function (mine) { paintDashboard(host, mine || []); });
+      .then(function (mine) {
+        if (token !== dashboardRenderToken) return;
+        clear(host);
+        paintDashboard(host, mine || []);
+      });
   }
 
   function paintDashboard(host, mine) {
@@ -2735,62 +2703,82 @@
       actions.appendChild(c);
     });
     host.appendChild(actions);
+  }
 
-    var recent = el('div', 'card flush');
-    var rh = el('div', 'card-head');
-    rh.style.padding = '14px 16px 0';
-    rh.appendChild(el('h3', null, 'Your recent activity'));
-    recent.appendChild(rh);
+  var ACTIVITY_LABELS = {
+    login: 'Signed in', signup: 'Account created', logout: 'Signed out',
+    scan: 'Scanned a file', health: 'Scored a business', portfolio: 'Scored a portfolio',
+    export: 'Took an export', retrain: 'Refitted the models'
+  };
 
-    if (!mine.length) {
-      recent.appendChild(el('div', 'empty', 'Nothing yet. Scan a file and it will appear here.'));
-    } else {
-      var LABELS = {
-        login: 'Signed in', signup: 'Account created', logout: 'Signed out',
-        scan: 'Scanned a file', health: 'Scored a business', portfolio: 'Scored a portfolio',
-        export: 'Took an export', retrain: 'Refitted the models'
-      };
-      var wrap = el('div', 'table-wrap scroll-y');
-      wrap.style.marginTop = '12px';
-      var t = el('table', 'data');
-      var thead = el('thead');
-      var tr = el('tr');
-      ['When', 'Action', 'Detail'].forEach(function (h) { tr.appendChild(el('th', null, h)); });
-      thead.appendChild(tr);
-      t.appendChild(thead);
-      var tb = el('tbody');
-      mine.slice(0, 40).forEach(function (e) {
-        var row = el('tr');
-        row.appendChild(el('td', 'dim', fmtTs(e.ts)));
-        row.appendChild(el('td', null, LABELS[e.type] || e.type));
-        var detail = '';
-        if (e.type === 'scan') detail = (e.meta.file || 'upload') + ' · ' + fmtInt(e.meta.rows) + ' rows · ' + fmtInt(e.meta.high) + ' high risk';
-        else if (e.type === 'health') detail = 'Score ' + (e.meta.score != null ? e.meta.score.toFixed(1) : '—') + ' · ' + (e.meta.grade || '');
-        else if (e.type === 'portfolio') detail = fmtInt(e.meta.rows) + ' companies';
-        else if (e.type === 'export') detail = fmtInt(e.meta.rows) + ' records';
-        row.appendChild(el('td', 'wrap dim', detail));
-        tb.appendChild(row);
-      });
-      t.appendChild(tb);
-      wrap.appendChild(t);
-      recent.appendChild(wrap);
+  /* Shared by the dashboard's short preview and the full Activity tab, so the
+     two never drift into describing the same event differently. */
+  function renderActivityTable(host, events, limit) {
+    clear(host);
+    if (!events.length) {
+      host.appendChild(el('div', 'empty', 'Nothing yet. Scan a file and it will appear here.'));
+      return;
     }
-    host.appendChild(recent);
+    var wrap = el('div', 'table-wrap scroll-y');
+    var t = el('table', 'data');
+    var thead = el('thead');
+    var tr = el('tr');
+    ['When', 'Action', 'Detail'].forEach(function (h) { tr.appendChild(el('th', null, h)); });
+    thead.appendChild(tr);
+    t.appendChild(thead);
+    var tb = el('tbody');
+    events.slice(0, limit).forEach(function (e) {
+      var row = el('tr');
+      row.appendChild(el('td', 'dim', fmtTs(e.ts)));
+      row.appendChild(el('td', null, ACTIVITY_LABELS[e.type] || e.type));
+      var detail = '';
+      if (e.type === 'scan') detail = (e.meta.file || 'upload') + ' · ' + fmtInt(e.meta.rows) + ' rows · ' + fmtInt(e.meta.high) + ' high risk';
+      else if (e.type === 'health') detail = 'Score ' + (e.meta.score != null ? e.meta.score.toFixed(1) : '—') + ' · ' + (e.meta.grade || '');
+      else if (e.type === 'portfolio') detail = fmtInt(e.meta.rows) + ' companies';
+      else if (e.type === 'export') detail = fmtInt(e.meta.rows) + ' records';
+      row.appendChild(el('td', 'wrap dim', detail));
+      tb.appendChild(row);
+    });
+    t.appendChild(tb);
+    wrap.appendChild(t);
+    host.appendChild(wrap);
+    if (events.length > limit) {
+      host.appendChild(el('div', 'hint', 'Showing ' + limit + ' of ' + fmtInt(events.length) + '.'));
+    }
+  }
+
+  /* ============================== ACTIVITY TAB ============================ */
+
+  function renderActivity() {
+    var host = $('activity-body');
+    if (!host || !session.user) return;
+    clear(host);
+    host.appendChild(el('div', 'empty', 'Loading…'));
+
+    Promise.resolve()
+      .then(function () { return Auth.events({ userId: session.user.id }); })
+      .catch(function () { return []; })
+      .then(function (mine) {
+        clear(host);
+        var card = el('div', 'card flush');
+        var ch = el('div', 'card-head');
+        ch.style.padding = '14px 16px 0';
+        ch.appendChild(el('h3', null, 'Full history'));
+        ch.appendChild(el('span', 'card-note', fmtInt(mine.length) + ' events'));
+        card.appendChild(ch);
+        var body = el('div');
+        body.style.marginTop = '8px';
+        card.appendChild(body);
+        renderActivityTable(body, mine, 200);
+        host.appendChild(card);
+      });
   }
 
   /* ================================= boot ================================ */
 
-  function setStatus(text, busy) {
-    var n = $('boot-status');
-    if (!n) return;
-    clear(n);
-    if (busy) n.appendChild(el('span', 'spinner'));
-    n.appendChild(document.createTextNode(text));
-  }
-
   function boot() {
     initTheme();
-    ['dashboard', 'scanner', 'health', 'method'].forEach(function (t) {
+    ['dashboard', 'scanner', 'health', 'method', 'activity'].forEach(function (t) {
       var b = $('tab-' + t);
       if (b) b.addEventListener('click', function () { setTab(t); });
     });
@@ -2804,15 +2792,15 @@
         if (existing) enterApp(existing); else showGate('signin');
       });
 
-    setStatus('Fitting fraud models…', true);
     renderScanControls();
     renderScanResults();
 
     setTimeout(function () {
       trainFraud();
       renderScanControls();
-      loadSampleTransactions(true);
-      setStatus('Fitting failure and narrative models…', true);
+      /* A fresh sign-in shows a genuinely empty scanner - nothing is loaded
+         on the account's behalf until it uploads a file of its own. */
+      renderScanResults();
 
       setTimeout(function () {
         trainBusiness();
@@ -2820,9 +2808,11 @@
         renderHealthControls();
         computeHealth();
         renderMethodology();
-        if (state.tab === 'dashboard') renderDashboard();
-        var totalFit = state.runLog.filter(function (e) { return e.job === 'fit'; }).reduce(function (a, e) { return a + e.ms; }, 0);
-        setStatus(state.runLog.length + ' jobs · ' + totalFit.toFixed(0) + ' ms total fit', false);
+        /* Dashboard rendering belongs to setTab/enterApp, which already ran
+           once the sign-in check resolved. Calling it again here raced that
+           first render - both are async, so the second could paint before
+           the first's clear(host) landed, doubling every card on screen. */
+        if (state.tab === 'activity') renderActivity();
       }, 40);
     }, 40);
   }

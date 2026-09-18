@@ -154,19 +154,6 @@
     var exposure = scans.reduce(function (a, e) { return a + (e.meta.exposure || 0); }, 0);
     var flagged = scans.reduce(function (a, e) { return a + (e.meta.high || 0) + (e.meta.medium || 0); }, 0);
 
-    if (Auth.isDemo) {
-      var diag = Auth.diagnostics();
-      var banner = el('div', 'banner banner-warn');
-      banner.innerHTML = '<span><b>Demo mode.</b> Accounts and activity live in this browser only — ' +
-        'nothing is shared between devices and anyone with the browser can edit it. ' +
-        diag.seededUsers + ' of ' + diag.users + ' accounts and ' + fmtInt(diag.seededEvents) +
-        ' of ' + fmtInt(diag.events) + ' events are seeded sample data, marked <b>sample</b> in the tables below. ' +
-        'Connecting a server replaces this without changing the screens.' +
-        (diag.storageWorks ? '' : ' <b>Storage is blocked in this browser, so nothing will survive a reload.</b>') +
-        '</span>';
-      host.appendChild(banner);
-    }
-
     var tiles = el('div', 'stat-row');
     [
       ['Accounts', fmtInt(users.length), users.filter(function (u) { return !u.active; }).length + ' disabled'],

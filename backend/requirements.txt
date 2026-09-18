@@ -25,6 +25,11 @@ python-multipart==0.0.32
 # DATABASE_URL points at Postgres, so it ships in the image.
 psycopg[binary]==3.2.12
 
+# MySQL/MariaDB driver, pure Python - no C build step, which matters on a
+# shared host with no compiler access. Needed the moment DATABASE_URL uses
+# mysql+pymysql://.
+PyMySQL==1.1.1
+
 # Tests
 pytest==9.1.1
 httpx==0.28.1

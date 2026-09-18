@@ -88,7 +88,7 @@ class Settings(BaseSettings):
             if self.database_url.startswith("sqlite"):
                 raise RuntimeError(
                     "SQLite is not supported in production. Point DATABASE_URL "
-                    "at PostgreSQL."
+                    "at PostgreSQL or MySQL."
                 )
 
 

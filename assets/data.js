@@ -969,11 +969,21 @@
           }
           var ht = h.n.split('_'), at = a.split('_');
           var overlap = ht.filter(function (t) { return t.length > 2 && at.indexOf(t) >= 0; }).length;
-          if (overlap) score = Math.max(score, 30 + overlap * 14);
+          /* Score by the fraction of the header's tokens an alias explains,
+             not the raw overlap count, so a short, unrelated header (e.g.
+             "avg_txn_30d") cannot reach the acceptance floor just because one
+             of its tokens happens to recur across many aliases. */
+          if (overlap) score = Math.max(score, 30 + (overlap / ht.length) * 55);
         }
         if (score > 0 && (!best || score > best.score)) best = { raw: h.raw, score: score };
       });
-      if (best && best.score >= 45) {
+      /* Below this, the match is a coincidental partial/token overlap rather
+         than a real synonym - accepting it silently maps unrelated columns
+         (a transaction file's "Avg Txn 30D" onto "Annual revenue") and the
+         analyst may not notice before scoring runs. Leaving it unmapped is
+         safer: mappingCoverage() then flags it as missing and the dropdown
+         still offers every header for a manual pick. */
+      if (best && best.score >= 65) {
         mapping[field.key] = best.raw;
         used[best.raw] = true;
       }

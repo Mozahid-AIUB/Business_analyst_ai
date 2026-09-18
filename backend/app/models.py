@@ -30,9 +30,9 @@ from .database import Base
 
 
 class GUID(TypeDecorator):
-    """UUID that is native on PostgreSQL and a 36-char string on SQLite.
+    """UUID that is native on PostgreSQL and a 36-char string on SQLite/MySQL.
 
-    Keeping the Python side a real `uuid.UUID` on both backends means no
+    Keeping the Python side a real `uuid.UUID` on every backend means no
     endpoint or test has to care which database it is talking to.
     """
 
@@ -57,8 +57,9 @@ class GUID(TypeDecorator):
         return value if isinstance(value, uuid.UUID) else uuid.UUID(str(value))
 
 
-# JSONB gives PostgreSQL indexable, deduplicated storage; plain JSON is all
-# SQLite offers and is sufficient for local work.
+# JSONB gives PostgreSQL indexable, deduplicated storage; MySQL 5.7+ and
+# MariaDB 10.2+ have their own native JSON column type, which this dialect
+# variant reaches automatically; SQLite falls back to plain JSON (text).
 JSONType = JSON().with_variant(JSONB(), "postgresql")
 
 
