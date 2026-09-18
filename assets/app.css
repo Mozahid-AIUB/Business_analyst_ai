@@ -1009,9 +1009,15 @@ table.data .dim { color: var(--muted); }
 }
 
 /* The reveal button overlaps the input's right edge, so the input carries
-   enough right padding that a long password never runs under it. */
+   enough right padding that a long password never runs under it. Edge and
+   Chrome both draw their own reveal icon in that same corner on a password
+   field with a value in it, which then sits on top of ours - the three
+   selectors below are each browser's hook for switching it off. */
 .pw-wrap { position: relative; display: block; }
 .pw-input { padding-right: 38px; }
+.pw-input::-ms-reveal, .pw-input::-ms-clear { display: none; }
+.pw-input::-webkit-credentials-auto-fill-button,
+.pw-input::-webkit-textfield-decoration-container { display: none !important; }
 .pw-toggle {
   position: absolute;
   top: 50%;
