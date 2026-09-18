@@ -550,7 +550,7 @@
 
     var back = el('div', 'hint');
     var link = el('a', null, 'Go to the customer application');
-    link.href = 'index.html';
+    link.href = '/';
     back.appendChild(link);
     panel.appendChild(back);
 
