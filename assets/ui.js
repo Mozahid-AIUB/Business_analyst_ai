@@ -229,7 +229,7 @@
      preference is a per-viewer convenience: every access is wrapped, because
      it throws in a private window and comes back empty after cleared data. */
 
-  var THEME_KEY = 'sentinel-theme';
+  var THEME_KEY = 'business-analytics-theme';
 
   var THEME_ICONS =
     '<svg class="theme-icon-dark" width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true">' +

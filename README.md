@@ -1,4 +1,4 @@
-# Sentinel Risk Desk
+# Business Analytics
 
 An AI-powered business risk and intelligence platform. One web app, three
 working sections: a fraud transaction scanner, a business financial health

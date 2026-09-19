@@ -1,4 +1,4 @@
-# Sentinel Risk Desk — Auth API
+# Business Analytics — Auth API
 
 The server-side replacement for `assets/auth.js`, which kept accounts in
 `localStorage` and therefore enforced nothing: every check ran on the client,

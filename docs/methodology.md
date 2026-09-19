@@ -1,6 +1,6 @@
 # Research methodology and implementation
 
-Long-form reference for the seven methods behind Sentinel Risk Desk. Section 3
+Long-form reference for the seven methods behind Business Analytics. Section 3
 of the application shows the same material with live figures attached; this
 document explains the reasoning and points at the code.
 

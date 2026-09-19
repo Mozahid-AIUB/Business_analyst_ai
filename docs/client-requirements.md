@@ -1,4 +1,4 @@
-# What we need to move Sentinel Risk Desk to your hosting
+# What we need to move Business Analytics to your hosting
 
 The application is built and working. To turn it into a live product with
 business-owner accounts and an admin console, we need the items below.
@@ -73,7 +73,7 @@ guess.
 
 12. **Logo** — SVG preferred, otherwise PNG with a transparent background.
 13. **Brand colours** — hex codes if you have them.
-14. **The product name to display.** It currently reads *Sentinel Risk Desk*.
+14. **The product name to display.** It currently reads *Business Analytics*.
     Tell us if it should carry your name or the end client's instead.
 15. **Footer details** — company legal name, support email, and links to your
     site if you want them.

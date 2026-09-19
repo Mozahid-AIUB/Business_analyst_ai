@@ -28,9 +28,9 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(
-    title="Sentinel Risk Desk - Auth API",
+    title="Business Analytics - Auth API",
     description=(
-        "Accounts and sessions for Sentinel Risk Desk. Scoring is not served "
+        "Accounts and sessions for Business Analytics. Scoring is not served "
         "here: the models run client-side so customer data never leaves the "
         "browser."
     ),

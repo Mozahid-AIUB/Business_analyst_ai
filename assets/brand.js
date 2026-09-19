@@ -28,7 +28,7 @@
 
   var BRAND = {
     /* The product. Rename freely - nothing derives meaning from these. */
-    name: 'Sentinel Risk Desk',
+    name: 'Business Analytics',
     tagline: 'Risk & Intelligence',
     consoleName: 'Staff console',
 

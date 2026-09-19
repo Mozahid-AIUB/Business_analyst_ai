@@ -1,5 +1,5 @@
 /* ============================================================================
-   app.js - Sentinel Risk Desk
+   app.js - Business Analytics
    Wires the models in ml.js and the data layer in data.js to the three
    working sections of the platform, and records every fit and scoring batch
    in the run log that Section 3 publishes.

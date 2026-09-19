@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Business Analytics — Free Tools</title>
+<meta name="description" content="Basic fraud risk and business health checks, free and without an account. Create a free account for the full scoring platform.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body data-page="landing">
+
+<!-- Public marketing shell: a horizontal bar instead of the customer app's
+     vertical nav rail, the same way admin.html repurposes .sidebar. No
+     sign-in is required for anything on this page. -->
+<header class="sidebar" style="position:sticky;top:0;width:auto;height:auto;flex-direction:row;align-items:center;gap:18px;padding:12px 22px;border-right:0;border-bottom:1px solid var(--line);">
+  <div class="brand" style="padding:0;margin-bottom:0;">
+    <div class="brand-mark">
+      <svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M10 1.8 3.2 4.6v5.1c0 4 2.9 7.4 6.8 8.5 3.9-1.1 6.8-4.5 6.8-8.5V4.6L10 1.8Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M6.9 10.1l2.1 2.2 4.1-4.6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <div class="brand-name" data-brand="name">Business Analytics</div>
+      <div class="brand-sub">Risk &amp; Intelligence</div>
+    </div>
+  </div>
+
+  <nav class="nav" role="tablist" aria-label="Public sections" style="flex-direction:row;padding:0;gap:2px;">
+    <button class="nav-item" id="pub-tab-tools" role="tab" aria-selected="true" aria-controls="pub-panel-tools" type="button">
+      <span class="nav-label">Free Tools</span>
+    </button>
+    <button class="nav-item" id="pub-tab-method" role="tab" aria-selected="false" aria-controls="pub-panel-method" type="button">
+      <span class="nav-label">Research &amp; Methodology</span>
+    </button>
+    <button class="nav-item" id="pub-tab-about" role="tab" aria-selected="false" aria-controls="pub-panel-about" type="button">
+      <span class="nav-label">About</span>
+    </button>
+  </nav>
+
+  <div class="sidebar-foot" style="margin-top:0;margin-left:auto;padding:0;border-top:0;flex:none;display:flex;align-items:center;gap:10px;">
+    <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch to dark theme">
+      <svg class="theme-icon-dark" width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M16.5 12.3A7 7 0 0 1 7.7 3.5a7 7 0 1 0 8.8 8.8Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+      </svg>
+      <svg class="theme-icon-light" width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true" hidden>
+        <circle cx="10" cy="10" r="3.6" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M10 1.6v2M10 16.4v2M18.4 10h-2M3.6 10h-2M15.9 4.1l-1.4 1.4M5.5 14.5l-1.4 1.4M15.9 15.9l-1.4-1.4M5.5 5.5 4.1 4.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <a class="btn btn-primary btn-sm" href="index.html">Sign In</a>
+  </div>
+</header>
+
+<main class="main"><div class="page">
+
+  <!-- ========================= FREE TOOLS ========================= -->
+  <section id="pub-panel-tools" role="tabpanel" aria-labelledby="pub-tab-tools">
+    <div class="section-head">
+      <span class="eyebrow">Open to everyone</span>
+      <h1>Basic risk tools — no account required</h1>
+      <p class="lede">
+        An AI-powered business risk and intelligence platform: a fraud transaction scanner,
+        a business financial health score, and the research methodology that connects them.
+        Try our basic checks below to get a quick sense of risk. Create a free account
+        anytime for deeper insights — CSV uploads, portfolio scoring, model explainability
+        and saved history.
+      </p>
+    </div>
+
+    <div class="workbench">
+      <div class="stack">
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Basic Fraud Risk Check</h3>
+            <span class="card-note">Check a single transaction</span>
+          </div>
+          <div class="stack" id="fraud-controls"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Basic Business Health Check</h3>
+            <span class="card-note">Five figures, one score</span>
+          </div>
+          <div class="stack" id="bhealth-controls"></div>
+        </div>
+
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <div class="card-head"><h3>What each tab includes</h3></div>
+          <div class="rec-list">
+            <div class="rec">
+              <div class="rec-title">Free Tools</div>
+              <div class="rec-body">Basic business and fraud checks without sign-in.</div>
+            </div>
+            <div class="rec">
+              <div class="rec-title">Research &amp; Methodology</div>
+              <div class="rec-body">Models, datasets, metrics, explainability.</div>
+            </div>
+            <div class="rec">
+              <div class="rec-title">About</div>
+              <div class="rec-body">Mission, who it helps, and contact/team info.</div>
+            </div>
+            <div class="rec">
+              <div class="rec-title">Sign In</div>
+              <div class="rec-body">Full dashboard, CSV upload, saved reports, advanced insights.</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="fraud-results"></div>
+        <div id="bhealth-results"></div>
+      </div>
+    </div>
+
+    <div class="banner" style="align-items:center;justify-content:space-between;margin-top:18px;">
+      <div>
+        <b>Want deeper analysis?</b> Create an account for full features.
+      </div>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="index.html">Create free account</a>
+        <a class="btn btn-sm" href="index.html">Already have an account? Sign in</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= RESEARCH & METHODOLOGY ========================= -->
+  <section id="pub-panel-method" role="tabpanel" aria-labelledby="pub-tab-method" hidden>
+    <div class="section-head">
+      <span class="eyebrow">Research &amp; methodology</span>
+      <h1>How the platform decides</h1>
+      <p class="lede">
+        Seven methods, implemented and not just described: Random Forest, gradient-boosted
+        trees, logistic regression, a small transformer encoder, SHAP, LIME, and the
+        evaluation metrics that hold them all to account. Sign in to see the live run log —
+        real hyperparameters, real held-out metrics, and every scoring job this session
+        has executed.
+      </p>
+    </div>
+    <div class="stack">
+      <div class="rec-list">
+        <div class="rec">
+          <div class="rec-title">Random Forest</div>
+          <div class="rec-body">Bootstrap resampling, feature subsampling per split, out-of-bag AUC.</div>
+        </div>
+        <div class="rec">
+          <div class="rec-title">Gradient-boosted trees</div>
+          <div class="rec-body">Second-order gradients and hessians, structure-score split gain, shrinkage.</div>
+        </div>
+        <div class="rec">
+          <div class="rec-title">Logistic regression</div>
+          <div class="rec-body">Standardised features, L2 penalty, the interpretable baseline.</div>
+        </div>
+        <div class="rec">
+          <div class="rec-title">SHAP &amp; LIME</div>
+          <div class="rec-body">Permutation Shapley values and a proximity-weighted local surrogate.</div>
+        </div>
+      </div>
+      <a class="btn btn-primary" href="index.html" style="align-self:flex-start;">Sign in for the full methodology view</a>
+    </div>
+  </section>
+
+  <!-- ========================= ABOUT ========================= -->
+  <section id="pub-panel-about" role="tabpanel" aria-labelledby="pub-tab-about" hidden>
+    <div class="section-head">
+      <span class="eyebrow">About</span>
+      <h1>Risk decisions, made with the reasons attached</h1>
+      <p class="lede">
+        Business Analytics helps small and mid-size businesses catch fraud earlier and
+        understand their own financial health, without needing a data science team to
+        interpret the result. Every score comes with the reasons behind it.
+      </p>
+    </div>
+    <div class="stack">
+      <div class="card">
+        <div class="card-head"><h3>Get in touch</h3></div>
+        <p class="hint">Questions about the platform or a full account? Sign in to reach the team from your dashboard, or start with the free tools above.</p>
+      </div>
+    </div>
+  </section>
+
+</div></main>
+
+<script src="assets/brand.js"></script>
+<script src="assets/ui.js"></script>
+<!-- data.js reads BRI.ML at load time for its random-number helpers, so
+     ml.js has to come first, same ordering as admin.html. -->
+<script src="assets/ml.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/auth.js"></script>
+<script src="assets/landing.js"></script>
+
+</body>
+</html>
