@@ -1,7 +1,8 @@
 /* ============================================================================
    ui.js - BRI.UI
-   The presentation layer shared by the two pages this product ships:
-   index.html (the customer application) and admin.html (the staff console).
+   The presentation layer shared by the pages this product ships:
+   app.html (the customer application), admin.html (the staff console) and
+   index.html (the public landing page).
 
    Nothing here knows about fraud, financials or accounts. It is DOM plumbing,
    number formatting, the tooltip layer, the attribution bar chart, the modal

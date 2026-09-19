@@ -1,5 +1,5 @@
 /* ============================================================================
-   landing.js - the public "Free Tools" page (landing.html)
+   landing.js - the public "Free Tools" page (index.html, the site root)
 
    Not part of the customer application and not gated by sign-in. Both checks
    here run entirely on the deterministic, non-ML parts of the platform

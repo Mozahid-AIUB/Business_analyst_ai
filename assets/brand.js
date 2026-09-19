@@ -2,12 +2,11 @@
    brand.js - BRI.Brand
    Every piece of naming the product shows, in one place.
 
-   The final name has not been chosen yet, so nothing else in the codebase
-   writes it down. Change the values here and the sign-in screen, both
-   sidebars, both page titles and the footer all follow. The <title> tags in
-   index.html and admin.html are the one thing a script cannot set before the
-   browser paints them, so they are overwritten on load rather than hardcoded
-   twice.
+   The name is set here and nothing else in the codebase writes it down.
+   Change the values here and the sign-in screen, every sidebar, every page
+   title and the footer all follow. The <title> tags in app.html, admin.html
+   and index.html are the one thing a script cannot set before the browser
+   paints them, so they are overwritten on load rather than hardcoded twice.
 
    WHO IS WHO
    ----------

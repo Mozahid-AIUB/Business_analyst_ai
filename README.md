@@ -4,8 +4,9 @@ An AI-powered business risk and intelligence platform. One web app, three
 working sections: a fraud transaction scanner, a business financial health
 score, and the research methodology that connects them.
 
-Everything runs in the browser. There is no server and no account to create —
-open `index.html` and the platform is live.
+`index.html` is the public landing page — a fraud check and a business
+health check anyone can try with no account. `app.html` is the full
+scoring platform, behind sign-in.
 
 **Hosted demo:** https://claude.ai/artifact/Qtcugw6h2nWdAuNb2D3btA
 
@@ -97,13 +98,20 @@ solve.
 
 ```
 Business_Analytics/
-├── index.html                  Entry point — all three sections
-├── build.js                    Produces the hosted variant (see Deploying)
+├── index.html                  Public landing page — free tools, no sign-in
+├── app.html                    The full platform — all three sections, behind sign-in
+├── admin.html                  Staff console
+├── build.js                    Produces the hosted variant of app.html (see Deploying)
 ├── README.md                   This file
 ├── assets/
 │   ├── ml.js                   Models, explainers, evaluation
 │   ├── data.js                 Generators, CSV I/O, column mapping, features
-│   ├── app.js                  UI, charts, scoring pipeline, run log
+│   ├── app.js                  UI, charts, scoring pipeline, run log (app.html)
+│   ├── landing.js              Free-tools checks (index.html)
+│   ├── admin.js                Staff console (admin.html)
+│   ├── auth.js                 Accounts and sessions
+│   ├── brand.js                Product name, applied everywhere
+│   ├── ui.js                   Shared DOM/formatting helpers
 │   └── app.css                 Design system, light and dark
 ├── samples/
 │   ├── transactions_sample.csv   900 rows, awkward headers, 3.2% labelled fraud
@@ -116,7 +124,8 @@ Business_Analytics/
 
 ## Running it
 
-Open `index.html` in any modern browser. Nothing to install.
+Open `index.html` for the public landing page, or `app.html` for the full
+platform (requires an account). Nothing to install.
 
 To serve it over HTTP instead (useful for loading it on another device on the
 same network):
@@ -129,9 +138,12 @@ Then visit `http://localhost:8000`.
 
 ## Deploying
 
-Everything is static, so any static host works — Netlify, Vercel, GitHub Pages,
-Cloudflare Pages, or plain nginx. Upload `index.html`, `assets/` and
-`samples/`; there is no build command and no environment configuration.
+Everything static is one static host away — Netlify, Vercel, GitHub Pages,
+Cloudflare Pages, or plain nginx. Upload `index.html`, `app.html`,
+`admin.html`, `assets/` and `samples/`; there is no build command and no
+environment configuration for the frontend (the account system needs the
+backend in `backend/` running and reachable at the URL `assets/auth.js`
+points to).
 
 Some hosts supply their own `<!doctype>`/`<head>`/`<body>` wrapper and expect
 only the page content. For those, run:
@@ -140,9 +152,9 @@ only the page content. For those, run:
 node build.js
 ```
 
-which writes `dist/artifact.html` — the same page with the document wrapper
+which writes `dist/artifact.html` — `app.html` with the document wrapper
 stripped, still pointing at `assets/` by the same relative paths. Re-run it
-after any edit to `index.html`.
+after any edit to `app.html`.
 
 ## Verifying the models yourself
 

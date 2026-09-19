@@ -1,7 +1,7 @@
 /* ============================================================================
    build.js — produce the hosted variant of the page.
 
-   `index.html` is a complete standalone document: open it from disk and it
+   `app.html` is a complete standalone document: open it from disk and it
    works. Some hosts (including Claude Artifacts) supply their own
    <!doctype>/<head>/<body> wrapper and expect only the page content, which
    would otherwise end up nested inside a second document.
@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 
 const root = __dirname;
-const src = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const src = fs.readFileSync(path.join(root, 'app.html'), 'utf8');
 
 const pick = (re) => (src.match(re) || []).join('\n');
 
@@ -27,7 +27,7 @@ const styles = pick(/<link[^>]+rel=["']stylesheet["'][^>]*href=["'](?!https?:)[^
 
 const bodyMatch = src.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
 if (!bodyMatch) {
-  console.error('build: could not find a <body> in index.html');
+  console.error('build: could not find a <body> in app.html');
   process.exit(1);
 }
 
