@@ -1607,6 +1607,437 @@
     return { label: 'Stable', chip: 'chip-good', stripe: 'stripe-good' };
   }
 
+  /* ===================== health score overview visuals ==================== */
+  /* Four charts aimed at a non-technical viewer, sitting alongside the score
+     gauge and pillar bars: a radar of the underlying ratios, a comparison of
+     what each model estimated, a bridge from assets to net worth, and a flow
+     from pillar to the specific numbers behind it. None of them recompute
+     anything - they only re-draw data renderHealthResults already has. */
+
+  /* Same 0..1 band shape as data.js's band(), just returning a fraction
+     instead of a 0..25 score - kept in lockstep with healthScore() so this
+     chart never disagrees with the pillar bars sitting above it. */
+  function band01(value, lo, hi) { return ML.clamp((value - lo) / (hi - lo), 0, 1); }
+
+  /* The 5 radar axes. Profitability/liquidity/solvency/growth reuse the exact
+     lo/hi bounds healthScore() (data.js) scores the four pillars with.
+     Solvency is inverted to "low leverage" (1 - debt_to_assets) so further-out
+     on every axis reads as "healthier" with no axis pointing the wrong way.
+     Efficiency has no existing band in healthScore - asset_turnover of 2.0x
+     (revenue = 2x total assets) is a reasonable, generous "full mark" for a
+     typical small business, chosen for this chart only. */
+  function radarAxesFor(ratios) {
+    return [
+      { key: 'profitability', label: 'Profitability',
+        value: band01(ratios.net_margin, -0.10, 0.18),
+        tip: 'Profitability: ' + fmtPct(ratios.net_margin, 1) + ' net margin' },
+      { key: 'liquidity', label: 'Liquidity',
+        value: 0.6 * band01(ratios.cash_months, 0, 6) + 0.4 * band01(ratios.current_ratio, 0.6, 2.2),
+        tip: 'Liquidity: ' + ratios.cash_months.toFixed(1) + ' months cash on hand, current ratio ' + ratios.current_ratio.toFixed(2) },
+      { key: 'leverage', label: 'Low leverage',
+        value: 0.65 * band01(1 - ratios.debt_to_assets, 0.10, 0.80) + 0.35 * band01(ratios.coverage, 0.8, 6),
+        tip: 'Low leverage: debt is ' + fmtPct(ratios.debt_to_assets, 0) + ' of assets, interest covered ' + ratios.coverage.toFixed(1) + 'x by earnings' },
+      { key: 'growth', label: 'Growth',
+        value: 0.7 * band01(ratios.growth, -0.15, 0.25) + 0.3 * band01(ratios.roa, -0.05, 0.14),
+        tip: 'Growth: revenue growing ' + fmtPct(ratios.growth, 1) + ' a year, ' + fmtPct(ratios.roa, 1) + ' return on assets' },
+      { key: 'efficiency', label: 'Efficiency',
+        value: ML.clamp(ratios.asset_turnover / 2.0, 0, 1),
+        tip: 'Efficiency: every $1 of assets generates ' + fmtMoney(ratios.asset_turnover) + ' of revenue a year' }
+    ];
+  }
+
+  function renderHealthRadar(container, ratios) {
+    clear(container);
+    var wrap = el('div', 'radar-wrap');
+    var axes = radarAxesFor(ratios);
+    var n = axes.length;
+    var size = 260, cx = size / 2, cy = size / 2 + 6, R = 86;
+    var s = svg('svg', { viewBox: '0 0 ' + size + ' ' + size, role: 'img' });
+    s.setAttribute('aria-label', 'Financial profile radar across profitability, liquidity, low leverage, growth and efficiency');
+
+    function pt(i, frac) {
+      var a = -Math.PI / 2 + i * (2 * Math.PI / n);
+      return { x: cx + Math.cos(a) * R * frac, y: cy + Math.sin(a) * R * frac };
+    }
+
+    [1 / 3, 2 / 3, 1].forEach(function (frac) {
+      var ring = axes.map(function (_, i) { return pt(i, frac); });
+      var d = ring.map(function (p, i) { return (i ? 'L' : 'M') + p.x.toFixed(1) + ' ' + p.y.toFixed(1); }).join(' ') + ' Z';
+      s.appendChild(svg('path', { d: d, class: 'radar-grid-ring' }));
+    });
+
+    axes.forEach(function (_, i) {
+      var p = pt(i, 1);
+      s.appendChild(svg('line', { x1: cx, y1: cy, x2: p.x, y2: p.y, class: 'radar-axis-line' }));
+    });
+
+    axes.forEach(function (a, i) {
+      var p = pt(i, 1.24);
+      var anchor = Math.abs(p.x - cx) < 4 ? 'middle' : (p.x > cx ? 'start' : 'end');
+      var t = svg('text', { x: p.x, y: p.y, 'text-anchor': anchor, class: 'radar-label' });
+      t.textContent = a.label;
+      s.appendChild(t);
+    });
+
+    var shapePts = axes.map(function (a, i) { return pt(i, a.value); });
+    var shapeD = shapePts.map(function (p, i) { return (i ? 'L' : 'M') + p.x.toFixed(1) + ' ' + p.y.toFixed(1); }).join(' ') + ' Z';
+    s.appendChild(svg('path', { d: shapeD, class: 'radar-shape' }));
+
+    axes.forEach(function (a, i) {
+      var p = shapePts[i];
+      var v = svg('circle', { cx: p.x, cy: p.y, r: 4, class: 'radar-vertex' });
+      attachTip(v, function () {
+        return '<div class="t-title">' + a.label + '</div>' +
+               '<div class="t-row"><span>' + a.tip + '</span></div>' +
+               '<div class="t-row"><span>Score</span><b>' + Math.round(a.value * 100) + ' / 100</b></div>';
+      });
+      s.appendChild(v);
+    });
+
+    wrap.appendChild(s);
+    container.appendChild(wrap);
+  }
+
+  /* Same cut points as riskLevelOf() above - a bar's colour must always
+     agree with what the rest of the app would call that number. */
+  function mcSeverityColour(p) {
+    if (p >= 0.45) return 'var(--critical)';
+    if (p >= 0.25) return 'var(--serious)';
+    if (p >= 0.12) return 'var(--warning)';
+    return 'var(--good)';
+  }
+
+  var MODEL_COMPARE_ROWS = [
+    { key: 'rf', name: 'Random Forest', blurb: 'Averages many decision trees, each trained on a different random slice of similar businesses.' },
+    { key: 'gbt', name: 'XGBoost', blurb: 'Builds its estimate step by step, with each step focused on correcting the last one’s mistakes.' },
+    { key: 'lr', name: 'Logistic baseline', blurb: 'A simple, transparent formula used as a sanity check against the two more complex models.' },
+    { key: 'ensemble', name: 'Blended estimate', blurb: 'The average of Random Forest and XGBoost - this is the number that sets the reported risk level.', isEnsemble: true }
+  ];
+
+  /* Spread is measured across the three independent base models only - the
+     ensemble is derived from two of them, so folding it in would double
+     count agreement. */
+  function modelAgreementMessage(rf, gbt, lr) {
+    var spread = Math.max(rf, gbt, lr) - Math.min(rf, gbt, lr);
+    if (spread < 0.05) return 'Three independent methods analyzed your numbers and landed in the same place — when they agree this closely, you can trust the result more.';
+    if (spread >= 0.15) return 'These methods see somewhat different levels of risk in your numbers, which is exactly why we blend them into one estimate rather than relying on any single one.';
+    return 'Three independent methods analyzed your numbers and mostly agree, with some minor differences — the blended estimate below balances them out.';
+  }
+
+  function renderModelComparison(container, probs, grade) {
+    clear(container);
+    if (!probs) { container.appendChild(el('div', 'empty', 'No model results available.')); return; }
+    var wrap = el('div', 'mc-wrap chart');
+    var head = el('div', 'mc-head');
+    head.appendChild(el('h4', 'mc-title', 'How the models compare'));
+    if (grade && grade.label) head.appendChild(el('span', 'mc-grade', grade.label + ' overall'));
+    wrap.appendChild(head);
+
+    var W = 420, H = 160;
+    var rowH = H / MODEL_COMPARE_ROWS.length;
+    var padL = 8, padR = 74, padTop = 6, padBottom = 6;
+    var trackH = rowH - padTop - padBottom;
+    var maxTrackW = W - padL - padR;
+
+    var s = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img' });
+    s.setAttribute('aria-label', 'Failure-risk estimate from each model, plus the blended result');
+
+    [0, 0.25, 0.5, 0.75, 1].forEach(function (f) {
+      var x = padL + f * maxTrackW;
+      s.appendChild(svg('line', { x1: x, y1: 2, x2: x, y2: H - 2, class: 'grid-line' }));
+    });
+
+    MODEL_COMPARE_ROWS.forEach(function (row, i) {
+      var v = probs[row.key];
+      if (v == null || isNaN(v)) return;
+      var y = i * rowH + padTop;
+      var barH = row.isEnsemble ? trackH * 0.82 : trackH * 0.58;
+      var barY = y + (trackH - barH) / 2;
+      var barW = Math.max(2, v * maxTrackW);
+      var colour = mcSeverityColour(v);
+
+      if (row.isEnsemble) {
+        s.appendChild(svg('rect', { x: 0, y: y - 1, width: W, height: trackH + 2, fill: 'var(--surface-2)', rx: 3 }));
+      }
+
+      s.appendChild(svg('rect', { x: padL, y: barY, width: maxTrackW, height: barH, rx: 3, fill: 'var(--surface-3)' }));
+      var bar = svg('rect', { x: padL, y: barY, width: barW, height: barH, rx: 3, fill: colour });
+      s.appendChild(bar);
+      (function (label, value, blurb) {
+        attachTip(bar, function () {
+          return '<div class="t-title">' + label + '</div>' +
+                 '<div class="t-row"><span>' + blurb + '</span></div>' +
+                 '<div class="t-row"><span>Estimated risk</span><b>' + fmtPct(value, 1) + '</b></div>';
+        });
+      })(row.name, v, row.blurb);
+
+      var label = svg('text', { x: padL + 2, y: barY - 4, class: 'mc-label' + (row.isEnsemble ? ' mc-label-strong' : '') });
+      label.textContent = row.name;
+      s.appendChild(label);
+
+      var valText = svg('text', { x: W - padR + 8, y: barY + barH / 2 + 3.5, class: 'mc-value' + (row.isEnsemble ? ' mc-value-strong' : '') });
+      valText.textContent = fmtPct(v, 1);
+      s.appendChild(valText);
+    });
+
+    wrap.appendChild(s);
+    wrap.appendChild(el('div', 'hint mc-note', modelAgreementMessage(probs.rf, probs.gbt, probs.lr)));
+    container.appendChild(wrap);
+  }
+
+  /* Deliberately a 3-bar bridge (Assets -> minus Liabilities -> Net worth),
+     not a full multi-step waterfall - clarity beats completeness for a first
+     time viewer of this chart shape. */
+  function waterfallStepsFor(ratios) {
+    var assets = ratios.assets, liabs = ratios.liabilities;
+    var netWorth = ratios.net_worth != null ? ratios.net_worth : (assets - liabs);
+    return [
+      { key: 'assets', label: 'Total Assets', from: 0, to: assets, kind: 'total' },
+      { key: 'liabilities', label: 'Liabilities', from: assets, to: netWorth, kind: 'drop' },
+      { key: 'networth', label: 'Net Worth', from: 0, to: netWorth, kind: 'total' }
+    ];
+  }
+
+  function renderBalanceWaterfall(container, ratios) {
+    clear(container);
+    var wrap = el('div', 'waterfall-wrap');
+    var bars = waterfallStepsFor(ratios);
+
+    var allYs = [];
+    bars.forEach(function (b) { allYs.push(b.from, b.to); });
+    allYs.push(0);
+    var dataMax = Math.max.apply(null, allYs);
+    var dataMin = Math.min.apply(null, allYs);
+    var span = (dataMax - dataMin) || 1;
+    var yMax = dataMax + span * 0.18;
+    var yMin = Math.min(0, dataMin - span * 0.18);
+
+    var W = 380, H = 220, padL = 56, padR = 14, padT = 18, padB = 40;
+    var plotW = W - padL - padR, plotH = H - padT - padB;
+    function yOf(v) { return padT + plotH - ((v - yMin) / (yMax - yMin)) * plotH; }
+
+    var s = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img' });
+    s.setAttribute('aria-label', 'Bridge from total assets, minus liabilities, to net worth');
+
+    var STEPS = 4;
+    for (var i = 0; i <= STEPS; i++) {
+      var v = yMin + (yMax - yMin) * (i / STEPS);
+      var y = yOf(v);
+      s.appendChild(svg('line', { x1: padL, y1: y, x2: W - padR, y2: y, class: 'grid-line' }));
+      var t = svg('text', { x: padL - 8, y: y + 3, 'text-anchor': 'end' });
+      t.textContent = fmtMoney(v, 0);
+      s.appendChild(t);
+    }
+
+    var y0 = yOf(0);
+    s.appendChild(svg('line', { x1: padL, y1: y0, x2: W - padR, y2: y0, class: 'axis-line' }));
+
+    var n = bars.length;
+    var slot = plotW / n;
+    var barW = slot * 0.5;
+
+    var WF_TIPS = {
+      assets: 'Total Assets: everything the business owns - cash, equipment, inventory, and money it is owed.',
+      liabilities: 'Liabilities: everything the business owes - loans, unpaid bills, and other debts.',
+      networth: 'Net Worth: what would be left over if the business sold everything it owns and paid off everything it owes.'
+    };
+
+    var centers = [];
+    bars.forEach(function (b, i) {
+      var cx = padL + slot * i + slot / 2;
+      centers.push(cx);
+      var top = Math.max(b.from, b.to), bottom = Math.min(b.from, b.to);
+      var x = cx - barW / 2;
+      var yTop = yOf(top), yBottom = yOf(bottom);
+      var h = Math.max(1.5, yBottom - yTop);
+
+      var fill;
+      if (b.kind === 'drop') fill = 'var(--critical)';
+      else fill = (b.to > 0 ? 'var(--good)' : 'var(--critical)');
+
+      var rect = svg('rect', { x: x, y: yTop, width: barW, height: h, rx: 3, fill: fill });
+      s.appendChild(rect);
+
+      (function (b, tipText) {
+        attachTip(rect, function () {
+          var deltaRow = b.kind === 'drop'
+            ? '<div class="t-row"><span>Change</span><b>-' + fmtMoney(Math.abs(b.to - b.from), 0) + '</b></div>'
+            : '<div class="t-row"><span>Amount</span><b>' + fmtMoney(b.to, 0) + '</b></div>';
+          return '<div class="t-title">' + b.label + '</div>' +
+                 '<div class="t-row"><span>' + tipText + '</span></div>' + deltaRow;
+        });
+      })(b, WF_TIPS[b.key]);
+
+      var labelY = b.kind === 'drop' ? yTop - 6 : (b.to >= 0 ? yTop - 6 : yBottom + 14);
+      var valText = b.kind === 'drop'
+        ? '-' + fmtMoney(Math.abs(b.to - b.from), 0)
+        : fmtMoney(b.to, 0);
+      var lab = svg('text', { x: cx, y: labelY, 'text-anchor': 'middle', class: 'wf-value' });
+      lab.textContent = valText;
+      s.appendChild(lab);
+
+      var nameLab = svg('text', { x: cx, y: H - padB + 16, 'text-anchor': 'middle', class: 'wf-name' });
+      nameLab.textContent = b.label;
+      s.appendChild(nameLab);
+    });
+
+    var bridge1Y = yOf(bars[0].to);
+    s.appendChild(svg('line', { x1: centers[0] + barW / 2, y1: bridge1Y, x2: centers[1] - barW / 2, y2: bridge1Y, class: 'wf-bridge' }));
+    var bridge2Y = yOf(bars[1].to);
+    s.appendChild(svg('line', { x1: centers[1] + barW / 2, y1: bridge2Y, x2: centers[2] - barW / 2, y2: bridge2Y, class: 'wf-bridge' }));
+
+    wrap.appendChild(s);
+
+    if (ratios.current_assets != null && ratios.current_liabilities != null) {
+      var note = el('div', 'wf-note');
+      note.textContent = 'Short-term: ' + fmtMoney(ratios.current_assets, 0) + ' due in from customers/cash vs ' +
+        fmtMoney(ratios.current_liabilities, 0) + ' due out within a year.';
+      wrap.appendChild(note);
+    }
+
+    container.appendChild(wrap);
+  }
+
+  /* Same score->colour bands renderHealthResults uses for the pillar bars,
+     copied verbatim so this chart never disagrees with the bars above it. */
+  function pflowPillarColour(score) {
+    if (score >= 18) return 'var(--good)';
+    if (score >= 11) return 'var(--s1)';
+    if (score >= 6) return 'var(--warning)';
+    return 'var(--critical)';
+  }
+
+  /* Which pillar each of the 10 FIN_FEATURES keys most naturally belongs to.
+     net_margin/cash_months/current_ratio/debt_to_assets/coverage/growth/roa
+     are read straight off the healthScore() formula. The other three aren't
+     in that formula at all - a judgment call, not a fact pulled from source:
+       equity_ratio    -> solvency  (inverse leverage, the same balance-sheet
+                           cushion debt_to_assets measures)
+       asset_turnover   -> growth   (a returns-efficiency number, grouped with
+                           growth & ROA rather than liquidity or solvency)
+       working_capital  -> liquidity (a short-term buffer alongside cash
+                           runway and the current ratio) */
+  var FEATURE_PILLAR = {
+    net_margin: 'profitability', debt_to_assets: 'solvency', current_ratio: 'liquidity',
+    cash_months: 'liquidity', growth: 'growth', roa: 'growth', equity_ratio: 'solvency',
+    coverage: 'solvency', asset_turnover: 'growth', working_capital: 'liquidity'
+  };
+
+  /* r.shap.phi is the SHAP contribution to FAILURE probability, not to the
+     health score - so the sign reads backwards from what you'd guess.
+     phi < 0 means "pushed failure risk DOWN" i.e. helping the business. */
+  function pflowIsHelping(phi) { return phi < 0; }
+
+  function pflowCubicPath(x1, y1, x2, y2) {
+    var mx = (x1 + x2) / 2;
+    return 'M' + x1.toFixed(1) + ' ' + y1.toFixed(1) +
+      ' C ' + mx.toFixed(1) + ' ' + y1.toFixed(1) + ', ' +
+      mx.toFixed(1) + ' ' + y2.toFixed(1) + ', ' +
+      x2.toFixed(1) + ' ' + y2.toFixed(1);
+  }
+
+  /* pillars: r.health.pillars (4, ordered profitability/liquidity/solvency/
+     growth). shapPhi: r.shap.phi (10, FIN_FEATURES order). featureDefs:
+     D.FIN_FEATURES (10, same order as shapPhi). */
+  function renderPillarFlow(container, pillars, shapPhi, featureDefs) {
+    clear(container);
+    var wrap = el('div', 'pflow-wrap');
+
+    var groups = pillars.map(function (p) {
+      var feats = [];
+      featureDefs.forEach(function (fd, i) {
+        if (FEATURE_PILLAR[fd.key] === p.key) feats.push({ def: fd, phi: shapPhi[i] });
+      });
+      return { pillar: p, feats: feats };
+    });
+
+    var totalFeats = groups.reduce(function (a, g) { return a + g.feats.length; }, 0);
+    var W = 480, H = Math.max(340, totalFeats * 30 + groups.length * 14 + 20);
+    var leftX = 90, rightX = W - 90;
+    var s = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img' });
+    s.setAttribute('aria-label', 'Flow from the four score pillars to the financial numbers driving each one');
+
+    var groupHeight = groups.map(function (g) { return Math.max(1, g.feats.length) * 30; });
+    var totalGroupHeight = groupHeight.reduce(function (a, b) { return a + b; }, 0);
+    var gap = groups.length > 1 ? (H - totalGroupHeight) / (groups.length + 1) : (H - totalGroupHeight) / 2;
+
+    var pillarY = [];
+    var featPos = [];
+    var cursorY = gap;
+    groups.forEach(function (g, gi) {
+      var gh = groupHeight[gi];
+      var groupTop = cursorY;
+      pillarY.push(groupTop + gh / 2);
+      g.feats.forEach(function (f, fi) {
+        featPos.push({ gi: gi, fi: fi, x: rightX, y: groupTop + fi * 30 + 15, feat: f });
+      });
+      cursorY += gh + gap;
+    });
+
+    var maxAbsPhi = Math.max.apply(null, shapPhi.map(Math.abs)) || 1;
+    var MAX_STROKE = 6, MIN_STROKE = 1;
+    featPos.forEach(function (fp) {
+      var gi = fp.gi, y1 = pillarY[gi], y2 = fp.y;
+      var phi = fp.feat.phi;
+      var helping = pflowIsHelping(phi);
+      var w = MIN_STROKE + (Math.abs(phi) / maxAbsPhi) * (MAX_STROKE - MIN_STROKE);
+      var path = svg('path', {
+        d: pflowCubicPath(leftX, y1, rightX, y2),
+        class: 'pflow-link ' + (helping ? 'pflow-link-good' : 'pflow-link-bad'),
+        'stroke-width': w.toFixed(2)
+      });
+      var label = fp.feat.def.label;
+      attachTip(path, function () {
+        return '<div class="t-title">' + label + '</div>' +
+          '<div class="t-row"><span>' + (helping ? 'Helping your score' : 'A concern for your score') + '</span></div>' +
+          '<div class="t-row"><span>SHAP (failure prob.)</span><b>' + (phi >= 0 ? '+' : '') + phi.toFixed(4) + '</b></div>';
+      });
+      s.appendChild(path);
+    });
+
+    var NODE_W = 130, NODE_H = 34;
+    groups.forEach(function (g, gi) {
+      var p = g.pillar, y = pillarY[gi];
+      var node = svg('g', { class: 'pflow-node', transform: 'translate(' + (leftX - NODE_W / 2) + ',' + (y - NODE_H / 2) + ')' });
+      var color = pflowPillarColour(p.score);
+      node.appendChild(svg('rect', { x: 0, y: 0, width: NODE_W, height: NODE_H, rx: 8, class: 'pflow-pillar-box', style: 'fill:' + color }));
+      var t1 = svg('text', { x: NODE_W / 2, y: 14, 'text-anchor': 'middle', class: 'pflow-pillar-label' });
+      t1.textContent = p.label;
+      var t2 = svg('text', { x: NODE_W / 2, y: 27, 'text-anchor': 'middle', class: 'pflow-pillar-score' });
+      t2.textContent = p.score.toFixed(1) + ' / 25';
+      node.appendChild(t1);
+      node.appendChild(t2);
+      attachTip(node, function () {
+        return '<div class="t-title">' + p.label + '</div>' +
+          '<div class="t-row"><span>' + p.detail + '</span></div>' +
+          '<div class="t-row"><span>Score</span><b>' + p.score.toFixed(1) + ' / 25</b></div>';
+      });
+      s.appendChild(node);
+    });
+
+    featPos.forEach(function (fp) {
+      var fd = fp.feat.def, phi = fp.feat.phi, helping = pflowIsHelping(phi);
+      var rw = 168, rh = 26;
+      var node = svg('g', { class: 'pflow-node', transform: 'translate(' + (rightX - rw / 2) + ',' + (fp.y - rh / 2) + ')' });
+      node.appendChild(svg('rect', { x: 0, y: 0, width: rw, height: rh, rx: 6, class: 'pflow-feat-box ' + (helping ? 'pflow-feat-good' : 'pflow-feat-bad') }));
+      var dot = svg('circle', { cx: 12, cy: rh / 2, r: 4, class: helping ? 'pflow-dot-good' : 'pflow-dot-bad' });
+      node.appendChild(dot);
+      var txt = svg('text', { x: 24, y: rh / 2 + 4, class: 'pflow-feat-label' });
+      txt.textContent = fd.label;
+      node.appendChild(txt);
+      attachTip(node, function () {
+        return '<div class="t-title">' + fd.label + '</div>' +
+          '<div class="t-row"><span>' + fd.hint + '</span></div>' +
+          '<div class="t-row"><span>' + (helping ? 'Helping your score' : 'A concern for your score') + '</span><b>' +
+          (phi >= 0 ? '+' : '') + phi.toFixed(4) + '</b></div>';
+      });
+      s.appendChild(node);
+    });
+
+    wrap.appendChild(s);
+    container.appendChild(wrap);
+  }
+
   function renderHealthResults() {
     var host = $('health-results');
     clear(host);
@@ -1663,6 +2094,48 @@
     gw.appendChild(scale);
     top.appendChild(gw);
     host.appendChild(top);
+
+    /* four overview visuals for a non-technical reader: the ratio profile at
+       a glance, how the three models compare, where net worth comes from,
+       and which specific numbers are behind each pillar. None recompute
+       anything - they only re-draw data already sitting in r. */
+    var visualsGrid = el('div', 'health-visuals');
+
+    var radarCard = el('div', 'card');
+    var radarHead = el('div', 'card-head');
+    radarHead.appendChild(el('h3', null, 'Financial profile'));
+    radarHead.appendChild(el('span', 'card-note', '5-ratio view'));
+    radarCard.appendChild(radarHead);
+    var radarHost = el('div');
+    radarCard.appendChild(radarHost);
+    renderHealthRadar(radarHost, r.ratios);
+    visualsGrid.appendChild(radarCard);
+
+    var mcCard = el('div', 'card');
+    renderModelComparison(mcCard, r.probs, r.health.grade);
+    visualsGrid.appendChild(mcCard);
+
+    var wfCard = el('div', 'card');
+    var wfHead = el('div', 'card-head');
+    wfHead.appendChild(el('h3', null, 'Where net worth comes from'));
+    wfHead.appendChild(el('span', 'card-note', 'Assets − liabilities'));
+    wfCard.appendChild(wfHead);
+    var wfHost = el('div');
+    wfCard.appendChild(wfHost);
+    renderBalanceWaterfall(wfHost, r.ratios);
+    visualsGrid.appendChild(wfCard);
+
+    var pflowCard = el('div', 'card');
+    var pflowHead = el('div', 'card-head');
+    pflowHead.appendChild(el('h3', null, 'What is behind each pillar'));
+    pflowHead.appendChild(el('span', 'card-note', 'SHAP · ' + r.shap.nPerm + ' permutations'));
+    pflowCard.appendChild(pflowHead);
+    var pflowHost = el('div');
+    pflowCard.appendChild(pflowHost);
+    renderPillarFlow(pflowHost, r.health.pillars, r.shap.phi, D.FIN_FEATURES);
+    visualsGrid.appendChild(pflowCard);
+
+    host.appendChild(visualsGrid);
 
     /* model panel */
     var tiles = el('div', 'stat-row');
