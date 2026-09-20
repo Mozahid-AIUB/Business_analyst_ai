@@ -53,10 +53,20 @@
 
   /* ============================ severity bands =========================== */
 
+  /* Five bands instead of three: the two operating thresholds from the
+     held-out split (bestF1 = "high", bestF2 = "medium") still anchor the
+     ones that drive investigation queues, but a raw high/medium/low collapses
+     everything above the F1 cut into one bucket and everything below the F2
+     cut into another - too coarse to tell "barely elevated" from "extreme"
+     apart at a glance. Critical and Very low are added a fixed multiple
+     above/below those two anchors, so the split stays proportional to
+     whatever the model actually learned rather than a hardcoded score. */
   function bandOf(p, thresholds) {
-    if (p >= thresholds.high) return { key: 'high', label: 'High', chip: 'chip-critical', stripe: 'stripe-critical' };
+    if (p >= thresholds.high * 1.6) return { key: 'critical', label: 'Critical', chip: 'chip-critical', stripe: 'stripe-critical' };
+    if (p >= thresholds.high) return { key: 'high', label: 'High', chip: 'chip-serious', stripe: 'stripe-serious' };
     if (p >= thresholds.medium) return { key: 'medium', label: 'Medium', chip: 'chip-warning', stripe: 'stripe-warning' };
-    return { key: 'low', label: 'Low', chip: 'chip-good', stripe: 'stripe-good' };
+    if (p >= thresholds.medium * 0.5) return { key: 'low', label: 'Low', chip: 'chip-good', stripe: 'stripe-good' };
+    return { key: 'verylow', label: 'Very low', chip: 'chip-neutral', stripe: 'stripe-neutral' };
   }
 
   /* ============================= chart helpers =========================== */
@@ -91,8 +101,9 @@
       var lo = i / bins, hi = (i + 1) / bins;
       var mid = (lo + hi) / 2;
       var band = bandOf(mid, thresholds);
+      var BAND_COLOUR = { critical: 'var(--critical)', high: 'var(--serious)', medium: 'var(--warning)', low: 'var(--good)', verylow: 'var(--line-strong)' };
       var h = (counts[i] / maxC) * plotH;
-      var colour = band.key === 'high' ? 'var(--critical)' : (band.key === 'medium' ? 'var(--warning)' : 'var(--s1)');
+      var colour = BAND_COLOUR[band.key];
       var rect = svg('rect', {
         x: padL + i * bw + 1, y: padT + plotH - h,
         width: Math.max(1, bw - 2), height: Math.max(h, counts[i] > 0 ? 1.5 : 0),
@@ -670,20 +681,22 @@
     }
 
     var rows = sc.rows;
+    var critical = rows.filter(function (r) { return r.band.key === 'critical'; });
     var high = rows.filter(function (r) { return r.band.key === 'high'; });
     var med = rows.filter(function (r) { return r.band.key === 'medium'; });
     var scores = rows.map(function (r) { return r.p; });
     var valueAtRisk = rows.reduce(function (a, r) { return a + r.exposure; }, 0);
-    var flaggedValue = high.concat(med).reduce(function (a, r) { return a + r.meta.amount; }, 0);
+    var flaggedValue = critical.concat(high, med).reduce(function (a, r) { return a + r.meta.amount; }, 0);
     var totalValue = rows.reduce(function (a, r) { return a + r.meta.amount; }, 0);
 
     /* headline tiles */
     var tiles = el('div', 'stat-row');
     [
       ['Transactions', fmtInt(rows.length), fmtMoney(totalValue) + ' total value'],
+      ['Critical risk', fmtInt(critical.length), fmtPct(critical.length / rows.length) + ' of file'],
       ['High risk', fmtInt(high.length), fmtPct(high.length / rows.length) + ' of file'],
       ['Medium risk', fmtInt(med.length), fmtPct(med.length / rows.length) + ' of file'],
-      ['Average risk score', ML.mean(scores).toFixed(3), 'Base rate ' + fmtPct(state.fraud.baseRate)],
+      ['Average risk score', fmtPct(ML.mean(scores)), 'Base rate ' + fmtPct(state.fraud.baseRate)],
       ['Value at risk', fmtMoney(valueAtRisk), 'Expected loss, amount × risk'],
       ['Flagged exposure', fmtMoney(flaggedValue), 'Face value of flagged rows']
     ].forEach(function (t) {
@@ -698,8 +711,21 @@
     var warn = sensitiveBanner(state.scan.sensitive);
     if (warn) host.appendChild(warn);
 
-    /* imputation notice — honest about what the upload did not carry */
-    if (sc.imputed.length) {
+    /* imputation notice — honest about what the upload did not carry.
+       9 fields are imputable in total (see the imputed-field list in
+       buildTxnFeatures); once most of them are missing the score is mostly
+       neutral defaults wearing the shape of a real risk number, and that is
+       worth a harder stop than the usual "some fields were filled in" note. */
+    if (sc.imputed.length >= 6) {
+      var bad = el('div', 'banner banner-bad');
+      bad.innerHTML = '<span><b>This data is not enough to reliably measure fraud risk.</b> ' +
+        sc.imputed.length + ' of 9 behavioural signals (' +
+        sc.imputed.map(function (k) {
+          var f = D.TXN_FIELDS.filter(function (x) { return x.key === k; })[0];
+          return f ? f.label : k;
+        }).join(', ') + ') are missing from this file, so most of the score is neutral defaults, not observed behaviour. Treat any risk band below as a rough placeholder, and add the missing columns for a real read.</span>';
+      host.appendChild(bad);
+    } else if (sc.imputed.length) {
       var b = el('div', 'banner banner-warn');
       b.innerHTML = '<span><b>' + sc.imputed.length + ' field' + (sc.imputed.length > 1 ? 's' : '') + ' imputed.</b> ' +
         sc.imputed.map(function (k) {
@@ -719,7 +745,7 @@
     distCard.appendChild(distChart);
     renderHistogram(distChart, scores, state.fraud.thresholds);
     var lg = el('div', 'legend');
-    [['High', 'var(--critical)'], ['Medium', 'var(--warning)'], ['Low', 'var(--s1)']].forEach(function (p) {
+    [['Critical', 'var(--critical)'], ['High', 'var(--serious)'], ['Medium', 'var(--warning)'], ['Low', 'var(--good)'], ['Very low', 'var(--line-strong)']].forEach(function (p) {
       var sp = el('span');
       var i = el('i');
       i.style.background = p[1];
@@ -755,7 +781,7 @@
 
     if (state.scan.view === 'preview') renderPreviewTable(body);
     else if (state.scan.view === 'scored') renderScoredTable(body, rows);
-    else renderQueueTable(body, high.concat(med));
+    else renderQueueTable(body, critical.concat(high, med));
 
     host.appendChild(viewCard);
   }
@@ -820,7 +846,7 @@
       row.appendChild(el('td', 'n', fmtMoney(r.meta.amount)));
       row.appendChild(el('td', null, r.meta.channel || '—'));
       row.appendChild(el('td', null, r.meta.country || '—'));
-      row.appendChild(el('td', 'n', r.p.toFixed(3)));
+      row.appendChild(el('td', 'n', fmtPct(r.p, 1)));
       var bd = el('td');
       bd.appendChild(el('span', 'chip ' + r.band.chip, r.band.label));
       row.appendChild(bd);
@@ -866,7 +892,7 @@
       row.appendChild(el('td', 'mono dim', r.meta.account_id || '—'));
       row.appendChild(el('td', 'n', fmtMoney(r.meta.amount)));
       var rk = el('td');
-      rk.appendChild(el('span', 'chip ' + r.band.chip, r.p.toFixed(3)));
+      rk.appendChild(el('span', 'chip ' + r.band.chip, fmtPct(r.p, 1) + ' · ' + r.band.label));
       row.appendChild(rk);
       row.appendChild(el('td', 'n', fmtMoney(r.exposure)));
       row.appendChild(el('td', 'wrap dim', r.drivers.slice(0, 3).filter(function (d) { return d.value > 0.001; }).map(function (d) { return d.label; }).join(' · ') || 'Composite score'));
@@ -897,7 +923,7 @@
     var body = el('div');
 
     var head = el('div', 'stat-row');
-    [['Risk score', r.p.toFixed(3)], ['Band', r.band.label], ['Amount', fmtMoney(r.meta.amount)], ['Expected loss', fmtMoney(r.exposure)]].forEach(function (t) {
+    [['Risk score', fmtPct(r.p, 1)], ['Band', r.band.label], ['Amount', fmtMoney(r.meta.amount)], ['Expected loss', fmtMoney(r.exposure)]].forEach(function (t) {
       var s = el('div', 'stat');
       s.appendChild(el('div', 'stat-label', t[0]));
       s.appendChild(el('div', 'stat-value sm', t[1]));
@@ -1014,7 +1040,7 @@
     if (!sc) return;
     var isQueue = state.scan.view === 'queue';
     var rows = isQueue
-      ? sc.rows.filter(function (r) { return r.band.key !== 'low'; }).sort(function (a, b) { return b.exposure - a.exposure; })
+      ? sc.rows.filter(function (r) { return r.band.key !== 'low' && r.band.key !== 'verylow'; }).sort(function (a, b) { return b.exposure - a.exposure; })
       : sc.rows.slice().sort(function (a, b) { return b.p - a.p; });
 
     var out = rows.map(function (r, i) {
