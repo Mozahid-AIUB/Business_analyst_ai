@@ -101,7 +101,6 @@
       var lo = i / bins, hi = (i + 1) / bins;
       var mid = (lo + hi) / 2;
       var band = bandOf(mid, thresholds);
-      var BAND_COLOUR = { critical: 'var(--critical)', high: 'var(--serious)', medium: 'var(--warning)', low: 'var(--good)', verylow: 'var(--line-strong)' };
       var h = (counts[i] / maxC) * plotH;
       var colour = BAND_COLOUR[band.key];
       var rect = svg('rect', {
@@ -136,6 +135,133 @@
       s.appendChild(t);
     });
     container.appendChild(s);
+  }
+
+  /* --------------------------- risk-level donut --------------------------- */
+  /* A file's risk mix in one shape, for anyone who would rather read a wedge
+     than a table of counts. Same five bands and colours as the histogram and
+     the row chips, so the donut, the bars and every "Critical"/"High" chip
+     on the page always agree with each other. */
+
+  var BAND_ORDER = ['critical', 'high', 'medium', 'low', 'verylow'];
+  var BAND_LABEL = { critical: 'Critical', high: 'High', medium: 'Medium', low: 'Low', verylow: 'Very low' };
+  var BAND_COLOUR = { critical: 'var(--critical)', high: 'var(--serious)', medium: 'var(--warning)', low: 'var(--good)', verylow: 'var(--line-strong)' };
+
+  function renderRiskDonut(container, rows) {
+    clear(container);
+    var counts = { critical: 0, high: 0, medium: 0, low: 0, verylow: 0 };
+    rows.forEach(function (r) { counts[r.band.key]++; });
+    var total = rows.length || 1;
+
+    var size = 168, cx = size / 2, cy = size / 2, rOuter = 76, rInner = 46;
+    var s = svg('svg', { viewBox: '0 0 ' + size + ' ' + size, role: 'img' });
+    s.setAttribute('aria-label', 'Share of scored transactions in each risk band');
+
+    var angle = -Math.PI / 2; /* start at 12 o'clock */
+    var any = false;
+    BAND_ORDER.forEach(function (key) {
+      var n = counts[key];
+      if (!n) return;
+      any = true;
+      var frac = n / total;
+      var a0 = angle, a1 = angle + frac * Math.PI * 2;
+      angle = a1;
+      var large = (a1 - a0) > Math.PI ? 1 : 0;
+      var x0o = cx + rOuter * Math.cos(a0), y0o = cy + rOuter * Math.sin(a0);
+      var x1o = cx + rOuter * Math.cos(a1), y1o = cy + rOuter * Math.sin(a1);
+      var x1i = cx + rInner * Math.cos(a1), y1i = cy + rInner * Math.sin(a1);
+      var x0i = cx + rInner * Math.cos(a0), y0i = cy + rInner * Math.sin(a0);
+      /* A full-circle single band has no visible arc endpoints to sweep
+         between, so it is drawn as two half-circles instead of one path. */
+      var path;
+      if (frac >= 0.9999) {
+        path = svg('circle', { cx: cx, cy: cy, r: (rOuter + rInner) / 2, fill: 'none', stroke: BAND_COLOUR[key], 'stroke-width': rOuter - rInner });
+      } else {
+        var d = 'M ' + x0o.toFixed(2) + ' ' + y0o.toFixed(2) +
+          ' A ' + rOuter + ' ' + rOuter + ' 0 ' + large + ' 1 ' + x1o.toFixed(2) + ' ' + y1o.toFixed(2) +
+          ' L ' + x1i.toFixed(2) + ' ' + y1i.toFixed(2) +
+          ' A ' + rInner + ' ' + rInner + ' 0 ' + large + ' 0 ' + x0i.toFixed(2) + ' ' + y0i.toFixed(2) + ' Z';
+        path = svg('path', { d: d, fill: BAND_COLOUR[key] });
+      }
+      attachTip(path, function () {
+        return '<div class="t-title">' + BAND_LABEL[key] + '</div>' +
+          '<div class="t-row"><span>Transactions</span><b>' + fmtInt(n) + '</b></div>' +
+          '<div class="t-row"><span>Share of file</span><b>' + fmtPct(frac, 1) + '</b></div>';
+      });
+      s.appendChild(path);
+    });
+
+    if (!any) {
+      s.appendChild(svg('circle', { cx: cx, cy: cy, r: (rOuter + rInner) / 2, fill: 'none', stroke: 'var(--line)', 'stroke-width': rOuter - rInner }));
+    }
+
+    var flagged = counts.critical + counts.high + counts.medium;
+    var centre = svg('text', { x: cx, y: cy - 2, 'text-anchor': 'middle', class: 'donut-num' });
+    centre.textContent = fmtPct(flagged / total, 0);
+    s.appendChild(centre);
+    var sub = svg('text', { x: cx, y: cy + 15, 'text-anchor': 'middle', class: 'donut-sub' });
+    sub.textContent = 'flagged';
+    s.appendChild(sub);
+
+    var wrap = el('div', 'donut-wrap');
+    wrap.appendChild(s);
+    var legend = el('div', 'legend');
+    BAND_ORDER.forEach(function (key) {
+      if (!counts[key]) return;
+      var sp = el('span');
+      var i = el('i');
+      i.style.background = BAND_COLOUR[key];
+      sp.appendChild(i);
+      sp.appendChild(document.createTextNode(BAND_LABEL[key] + ' — ' + fmtPct(counts[key] / total, 0)));
+      legend.appendChild(sp);
+    });
+    wrap.appendChild(legend);
+    container.appendChild(wrap);
+  }
+
+  /* ----------------------------- top drivers ------------------------------ */
+  /* Which behavioural signal moved the score the most, averaged across every
+     scored row - the file-level version of the per-case SHAP bars, for
+     anyone who wants "what is this file mostly getting flagged for" without
+     opening a single transaction. */
+
+  function renderTopDrivers(container, rows, featureDefs) {
+    clear(container);
+    if (!rows.length) { container.appendChild(el('div', 'empty', 'No scored rows yet.')); return; }
+
+    var sums = new Array(featureDefs.length).fill(0);
+    rows.forEach(function (r) {
+      r.drivers.forEach(function (d) {
+        var idx = featureDefs.findIndex(function (f) { return f.key === d.key; });
+        if (idx >= 0) sums[idx] += Math.max(0, d.value);
+      });
+    });
+    var items = featureDefs.map(function (f, i) { return { label: f.label, hint: f.hint, value: sums[i] / rows.length }; })
+      .sort(function (a, b) { return b.value - a.value; })
+      .slice(0, 6);
+
+    var maxV = Math.max.apply(null, items.map(function (i) { return i.value; })) || 1;
+    var list = el('div', 'stack');
+    items.forEach(function (it) {
+      var bl = el('div', 'barline');
+      var bh = el('div', 'barline-head');
+      bh.appendChild(el('span', null, it.label));
+      bh.appendChild(el('span', 'v', it.value.toFixed(3)));
+      bl.appendChild(bh);
+      var track = el('div', 'bartrack');
+      var fill = el('div', 'barfill');
+      fill.style.width = Math.max(2, (it.value / maxV) * 100) + '%';
+      fill.style.background = 'var(--serious)';
+      track.appendChild(fill);
+      attachTip(track, function () {
+        return '<div class="t-title">' + it.label + '</div>' +
+          '<div class="t-row"><span>' + it.hint + '</span></div>' +
+          '<div class="t-row"><span>Average pull toward risk</span><b>+' + it.value.toFixed(4) + '</b></div>';
+      });
+      bl.appendChild(track);
+      list.appendChild(bl);
+    });
+    container.appendChild(list);
   }
 
   /* -------------------------------- ROC ---------------------------------- */
@@ -755,6 +881,32 @@
     });
     distCard.appendChild(lg);
     host.appendChild(distCard);
+
+    /* two overview visuals for anyone who would rather read a shape than a
+       table: the risk mix at a glance, and what is mostly causing it. */
+    var overviewRow = el('div', 'scan-overview');
+
+    var donutCard = el('div', 'card');
+    var donutHead = el('div', 'card-head');
+    donutHead.appendChild(el('h3', null, 'Risk mix'));
+    donutHead.appendChild(el('span', 'card-note', 'Share of file'));
+    donutCard.appendChild(donutHead);
+    var donutHost = el('div');
+    donutCard.appendChild(donutHost);
+    renderRiskDonut(donutHost, rows);
+    overviewRow.appendChild(donutCard);
+
+    var driverCard = el('div', 'card');
+    var driverHead = el('div', 'card-head');
+    driverHead.appendChild(el('h3', null, 'What is driving the risk'));
+    driverHead.appendChild(el('span', 'card-note', 'Averaged across all scored rows'));
+    driverCard.appendChild(driverHead);
+    var driverHost = el('div');
+    driverCard.appendChild(driverHost);
+    renderTopDrivers(driverHost, rows, D.TXN_FEATURES);
+    overviewRow.appendChild(driverCard);
+
+    host.appendChild(overviewRow);
 
     /* views */
     var viewCard = el('div', 'card flush');

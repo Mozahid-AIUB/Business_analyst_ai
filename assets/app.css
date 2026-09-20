@@ -352,6 +352,14 @@ a { color: var(--accent); }
    earlier than the viewport width alone would suggest. */
 @media (max-width: 1160px) { .workbench { grid-template-columns: 1fr; } }
 
+.scan-overview {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) 1fr;
+  gap: 14px;
+  margin-top: 14px;
+}
+@media (max-width: 720px) { .scan-overview { grid-template-columns: 1fr; } }
+
 .stack { display: flex; flex-direction: column; gap: 14px; }
 
 /* ------------------------------------------------------------------ cards */
@@ -714,6 +722,23 @@ table.data .dim { color: var(--muted); }
   letter-spacing: -.03em;
 }
 .gauge-outof { font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); margin-top: 3px; }
+
+/* ----------------------------------------------------------------- donut */
+
+.donut-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.donut-num {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 600;
+  fill: var(--ink);
+}
+.donut-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  fill: var(--muted);
+}
 
 .grade-scale { display: flex; flex-direction: column; gap: 3px; font-size: 11px; }
 .grade-scale div { display: flex; align-items: center; gap: 7px; color: var(--muted); }
