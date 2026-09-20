@@ -145,7 +145,14 @@
 
   var BAND_ORDER = ['critical', 'high', 'medium', 'low', 'verylow'];
   var BAND_LABEL = { critical: 'Critical', high: 'High', medium: 'Medium', low: 'Low', verylow: 'Very low' };
-  var BAND_COLOUR = { critical: 'var(--critical)', high: 'var(--serious)', medium: 'var(--warning)', low: 'var(--good)', verylow: 'var(--line-strong)' };
+  /* Low and Very low are both "safe", so both get the same good-risk green
+     rather than fading Very low to grey (which reads as "unknown", not
+     "safest"); Very low is the fuller, more saturated shade of the two so
+     the two still read as distinct bands at a glance. */
+  var BAND_COLOUR = {
+    critical: 'var(--critical)', high: 'var(--serious)', medium: 'var(--warning)',
+    low: 'color-mix(in srgb, var(--good) 55%, var(--surface-3))', verylow: 'var(--good)'
+  };
 
   function renderRiskDonut(container, rows) {
     clear(container);
@@ -236,27 +243,32 @@
         if (idx >= 0) sums[idx] += Math.max(0, d.value);
       });
     });
-    var items = featureDefs.map(function (f, i) { return { label: f.label, hint: f.hint, value: sums[i] / rows.length }; })
-      .sort(function (a, b) { return b.value - a.value; })
+    /* Raw contribution magnitudes (thousandths of a probability) read as
+       noise to a non-technical viewer, so each driver is shown as its share
+       of the total pull across every feature - a percentage that always
+       sums to 100% and needs no unit explained. */
+    var total = sums.reduce(function (a, b) { return a + b; }, 0) || 1;
+    var items = featureDefs.map(function (f, i) { return { label: f.label, hint: f.hint, share: sums[i] / total }; })
+      .sort(function (a, b) { return b.share - a.share; })
       .slice(0, 6);
 
-    var maxV = Math.max.apply(null, items.map(function (i) { return i.value; })) || 1;
+    var maxShare = Math.max.apply(null, items.map(function (i) { return i.share; })) || 1;
     var list = el('div', 'stack');
     items.forEach(function (it) {
       var bl = el('div', 'barline');
       var bh = el('div', 'barline-head');
       bh.appendChild(el('span', null, it.label));
-      bh.appendChild(el('span', 'v', it.value.toFixed(3)));
+      bh.appendChild(el('span', 'v', fmtPct(it.share, 0)));
       bl.appendChild(bh);
       var track = el('div', 'bartrack');
       var fill = el('div', 'barfill');
-      fill.style.width = Math.max(2, (it.value / maxV) * 100) + '%';
+      fill.style.width = Math.max(2, (it.share / maxShare) * 100) + '%';
       fill.style.background = 'var(--serious)';
       track.appendChild(fill);
       attachTip(track, function () {
         return '<div class="t-title">' + it.label + '</div>' +
           '<div class="t-row"><span>' + it.hint + '</span></div>' +
-          '<div class="t-row"><span>Average pull toward risk</span><b>+' + it.value.toFixed(4) + '</b></div>';
+          '<div class="t-row"><span>Share of total risk pull</span><b>' + fmtPct(it.share, 1) + '</b></div>';
       });
       bl.appendChild(track);
       list.appendChild(bl);
@@ -871,7 +883,7 @@
     distCard.appendChild(distChart);
     renderHistogram(distChart, scores, state.fraud.thresholds);
     var lg = el('div', 'legend');
-    [['Critical', 'var(--critical)'], ['High', 'var(--serious)'], ['Medium', 'var(--warning)'], ['Low', 'var(--good)'], ['Very low', 'var(--line-strong)']].forEach(function (p) {
+    BAND_ORDER.map(function (k) { return [BAND_LABEL[k], BAND_COLOUR[k]]; }).forEach(function (p) {
       var sp = el('span');
       var i = el('i');
       i.style.background = p[1];
