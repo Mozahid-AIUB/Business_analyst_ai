@@ -2395,6 +2395,8 @@
     });
     host.appendChild(tiles);
 
+    renderPortfolioVisuals(host, rows);
+
     var card = el('div', 'card flush');
     var ch = el('div', 'card-head');
     ch.style.padding = '14px 16px 0';
@@ -2461,6 +2463,95 @@
     note.textContent = 'Weakest ' + fmtInt(Math.min(250, rows.length)) + ' of ' + fmtInt(rows.length) + ' companies, worst first.';
     card.appendChild(note);
     host.appendChild(card);
+  }
+
+  /* Portfolio-wide versions of the same four charts renderHealthResults
+     shows for one manually entered company - averaged/summed across every
+     scored row instead of read from a single r. A radar of average ratios,
+     a comparison of each model's mean estimate, a bridge built from total
+     assets/liabilities across the file, and a pillar flow built from SHAP
+     values averaged over a sample of the portfolio (permutation SHAP on
+     every row would stall on a few hundred companies, so a fixed-size
+     random sample stands in for the full file - large enough to be stable,
+     small enough to stay interactive). */
+  function renderPortfolioVisuals(host, rows) {
+    var visualsGrid = el('div', 'health-visuals');
+
+    var avgRatios = {};
+    Object.keys(rows[0].ratios).forEach(function (k) {
+      avgRatios[k] = ML.mean(rows.map(function (r) { return r.ratios[k]; }));
+    });
+    /* Sums, not averages, for the balance-sheet figures the waterfall reads -
+       "total assets across the portfolio" is the number that answers "where
+       does this portfolio's combined net worth come from", where an average
+       dollar figure would not mean anything on its own. */
+    ['assets', 'liabilities', 'net_worth', 'current_assets', 'current_liabilities'].forEach(function (k) {
+      avgRatios[k] = rows.reduce(function (a, r) { return a + (r.ratios[k] || 0); }, 0);
+    });
+
+    var radarCard = el('div', 'card');
+    var radarHead = el('div', 'card-head');
+    radarHead.appendChild(el('h3', null, 'Financial profile'));
+    radarHead.appendChild(el('span', 'card-note', 'Portfolio average'));
+    radarCard.appendChild(radarHead);
+    var radarHost = el('div');
+    radarCard.appendChild(radarHost);
+    renderHealthRadar(radarHost, avgRatios);
+    visualsGrid.appendChild(radarCard);
+
+    var suite = state.business;
+    var avgProbs = {
+      rf: ML.mean(rows.map(function (r) { return suite.rf.predictProba(r.vector); })),
+      gbt: ML.mean(rows.map(function (r) { return suite.gbt.predictProba(r.vector); })),
+      lr: ML.mean(rows.map(function (r) { return suite.lr.predictProba(r.vector); })),
+      ensemble: ML.mean(rows.map(function (r) { return r.p; }))
+    };
+    var avgScore = ML.mean(rows.map(function (r) { return r.score; }));
+    var mcCard = el('div', 'card');
+    renderModelComparison(mcCard, avgProbs, D.gradeOf(avgScore));
+    visualsGrid.appendChild(mcCard);
+
+    var wfCard = el('div', 'card');
+    var wfHead = el('div', 'card-head');
+    wfHead.appendChild(el('h3', null, 'Where net worth comes from'));
+    wfHead.appendChild(el('span', 'card-note', 'Portfolio totals'));
+    wfCard.appendChild(wfHead);
+    var wfHost = el('div');
+    wfCard.appendChild(wfHost);
+    renderBalanceWaterfall(wfHost, avgRatios);
+    visualsGrid.appendChild(wfCard);
+
+    var SAMPLE_N = 40;
+    var sampleRnd = ML.mulberry32(2026);
+    var sample = rows.length <= SAMPLE_N ? rows : rows.slice().sort(function () { return sampleRnd() - 0.5; }).slice(0, SAMPLE_N);
+    var background = sample.map(function (r) { return r.vector; });
+    var phiSum = new Array(D.FIN_FEATURES.length).fill(0);
+    sample.forEach(function (r) {
+      var shap = ML.shapValues(suite.ensemble, r.vector, background, 40, 2);
+      shap.phi.forEach(function (v, i) { phiSum[i] += v; });
+    });
+    var avgPhi = phiSum.map(function (v) { return v / sample.length; });
+    var avgPillars = [0, 1, 2, 3].map(function (i) {
+      var keys = ['profitability', 'liquidity', 'solvency', 'growth'];
+      var labels = ['Profitability', 'Liquidity', 'Solvency', 'Growth & returns'];
+      return {
+        key: keys[i], label: labels[i],
+        score: ML.mean(rows.map(function (r) { return r.pillars[i].score; })),
+        detail: 'Portfolio average'
+      };
+    });
+
+    var pflowCard = el('div', 'card');
+    var pflowHead = el('div', 'card-head');
+    pflowHead.appendChild(el('h3', null, 'What is behind each pillar'));
+    pflowHead.appendChild(el('span', 'card-note', 'SHAP · ' + sample.length + '-company sample'));
+    pflowCard.appendChild(pflowHead);
+    var pflowHost = el('div');
+    pflowCard.appendChild(pflowHost);
+    renderPillarFlow(pflowHost, avgPillars, avgPhi, D.FIN_FEATURES);
+    visualsGrid.appendChild(pflowCard);
+
+    host.appendChild(visualsGrid);
   }
 
   /* ======================= SECTION 3 — METHODOLOGY ====================== */
