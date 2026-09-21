@@ -368,6 +368,52 @@ a { color: var(--accent); }
 }
 @media (max-width: 860px) { .health-visuals { grid-template-columns: 1fr; } }
 
+/* -------------------------------------------------------- plain summary */
+
+.plain-summary { margin-bottom: 14px; border-color: var(--accent); border-width: 1.5px; }
+.plain-summary-verdict { font-size: 14px; line-height: 1.6; color: var(--ink); margin-top: 4px; }
+.plain-summary-verdict b { color: var(--accent-ink); }
+.plain-summary-action {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  background: var(--accent-soft);
+}
+.plain-summary-action-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  font-weight: 600;
+  flex: none;
+  padding-top: 1px;
+}
+
+.chart-plain-note { margin-top: 8px; font-style: italic; }
+
+/* ---------------------------------------------------- advanced details */
+
+.advanced-details { margin-top: 14px; }
+.advanced-details summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-2);
+  padding: 10px 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  list-style: none;
+}
+.advanced-details summary::-webkit-details-marker { display: none; }
+.advanced-details summary::before { content: '▸ '; }
+.advanced-details[open] summary::before { content: '▾ '; }
+.advanced-details summary:hover { border-color: var(--line-strong); color: var(--ink); }
+
 .stack { display: flex; flex-direction: column; gap: 14px; }
 
 /* ------------------------------------------------------------------ cards */

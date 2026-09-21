@@ -2089,6 +2089,72 @@
     return top;
   }
 
+  /* One plain-language card above the charts, for a reader who wants the
+     verdict and the single next step and nothing else. Every other panel on
+     this page (radar, model comparison, SHAP flow) stays available below for
+     whoever wants the detail behind this - this card exists so nobody has to
+     read those to leave with an answer. No model names, no jargon: "the
+     business" and a plain description of the weakest pillar, not "XGBoost"
+     or "SHAP". VERDICT_COPY keys match riskLevelOf()'s four labels exactly,
+     so this card's tone never contradicts the risk chip sitting next to it. */
+  var VERDICT_COPY = {
+    Stable: 'in solid shape',
+    Watch: 'generally sound, with one area worth watching',
+    Elevated: 'under real strain in at least one area',
+    Critical: 'at serious risk without a change of course'
+  };
+
+  function renderPlainSummary(health, risk, topAction) {
+    var card = el('div', 'card plain-summary');
+    var head = el('div', 'card-head');
+    head.appendChild(el('h3', null, 'In plain terms'));
+    card.appendChild(head);
+
+    var weakest = health.pillars.slice().sort(function (a, b) { return a.score - b.score; })[0];
+    var verdict = el('p', 'plain-summary-verdict');
+    verdict.innerHTML = 'This business is <b>' + (VERDICT_COPY[risk.label] || risk.label.toLowerCase()) +
+      '</b>, scoring <b>' + health.total.toFixed(0) + ' out of 100</b>. The area needing the most attention is <b>' +
+      weakest.label.toLowerCase() + '</b>.';
+    card.appendChild(verdict);
+
+    if (topAction) {
+      var action = el('div', 'plain-summary-action');
+      action.appendChild(el('div', 'plain-summary-action-label', 'Next step'));
+      var body = el('div');
+      body.appendChild(el('div', 'rec-title', topAction.title));
+      body.appendChild(el('div', 'rec-body', topAction.body));
+      action.appendChild(body);
+      card.appendChild(action);
+    }
+
+    return card;
+  }
+
+  /* One plain sentence under the radar, naming its weakest and strongest
+     axis in words rather than asking the reader to judge a pentagon shape
+     by eye. Reuses radarAxesFor's own 0..1 normalization, so this sentence
+     can never point at a different axis than the shape actually shows. */
+  function radarPlainNote(ratios) {
+    var axes = radarAxesFor(ratios);
+    var weakest = axes.slice().sort(function (a, b) { return a.value - b.value; })[0];
+    var strongest = axes.slice().sort(function (a, b) { return b.value - a.value; })[0];
+    if (weakest.key === strongest.key) return 'This business scores evenly across all five areas.';
+    return 'Strongest in ' + strongest.label.toLowerCase() + ', weakest in ' + weakest.label.toLowerCase() + '.';
+  }
+
+  /* One plain sentence under the balance-sheet bridge, since "$139.50M then
+     -$40.76M then $98.74M" needs a reader to do the leverage math themselves
+     to know if that is good. debt_to_assets is the same ratio the solvency
+     pillar already scores on, so this line can't disagree with the pillar
+     bars sitting above it. */
+  function waterfallPlainNote(ratios) {
+    var pct = ratios.debt_to_assets;
+    if (ratios.assets <= 0) return '';
+    if (pct < 0.4) return 'Assets outweigh debts by a wide margin (' + fmtPct(1 - pct, 0) + ' of assets are debt-free) — a healthy cushion.';
+    if (pct < 0.65) return fmtPct(pct, 0) + ' of assets are financed by debt — a manageable, if not light, level of leverage.';
+    return fmtPct(pct, 0) + ' of assets are financed by debt — a heavy load that leaves little room for a downturn.';
+  }
+
   function renderHealthResults() {
     var host = $('health-results');
     clear(host);
@@ -2098,11 +2164,14 @@
     if (!r) { host.appendChild(el('div', 'card')).appendChild(el('div', 'empty', 'Enter the figures to calculate a score.')); return; }
 
     host.appendChild(renderScoreGaugeCard(r.health, riskLevelOf(r.probs.ensemble)));
+    host.appendChild(renderPlainSummary(r.health, riskLevelOf(r.probs.ensemble), recommendations(r)[0]));
 
-    /* four overview visuals for a non-technical reader: the ratio profile at
-       a glance, how the three models compare, where net worth comes from,
-       and which specific numbers are behind each pillar. None recompute
-       anything - they only re-draw data already sitting in r. */
+    /* Two visuals stay in view for a first-time, non-technical reader: the
+       ratio profile and where net worth comes from, both followed by a
+       plain-language verdict line so nobody has to interpret the shape
+       themselves. Model comparison and the pillar-to-driver flow move into
+       "Advanced details" below, collapsed by default - real information for
+       whoever wants it, not the first thing a business owner has to get past. */
     var visualsGrid = el('div', 'health-visuals');
 
     var radarCard = el('div', 'card');
@@ -2113,11 +2182,8 @@
     var radarHost = el('div');
     radarCard.appendChild(radarHost);
     renderHealthRadar(radarHost, r.ratios);
+    radarCard.appendChild(el('div', 'hint chart-plain-note', radarPlainNote(r.ratios)));
     visualsGrid.appendChild(radarCard);
-
-    var mcCard = el('div', 'card');
-    renderModelComparison(mcCard, r.probs, r.health.grade);
-    visualsGrid.appendChild(mcCard);
 
     var wfCard = el('div', 'card');
     var wfHead = el('div', 'card-head');
@@ -2127,7 +2193,20 @@
     var wfHost = el('div');
     wfCard.appendChild(wfHost);
     renderBalanceWaterfall(wfHost, r.ratios);
+    wfCard.appendChild(el('div', 'hint chart-plain-note', waterfallPlainNote(r.ratios)));
     visualsGrid.appendChild(wfCard);
+
+    host.appendChild(visualsGrid);
+
+    var advDetails = el('details', 'advanced-details');
+    var advSummary = el('summary', null, 'Advanced details — model comparison and score drivers');
+    advDetails.appendChild(advSummary);
+    var advGrid = el('div', 'health-visuals');
+    advGrid.style.marginTop = '14px';
+
+    var mcCard = el('div', 'card');
+    renderModelComparison(mcCard, r.probs, r.health.grade);
+    advGrid.appendChild(mcCard);
 
     var pflowCard = el('div', 'card');
     var pflowHead = el('div', 'card-head');
@@ -2137,9 +2216,10 @@
     var pflowHost = el('div');
     pflowCard.appendChild(pflowHost);
     renderPillarFlow(pflowHost, r.health.pillars, r.shap.phi, D.FIN_FEATURES);
-    visualsGrid.appendChild(pflowCard);
+    advGrid.appendChild(pflowCard);
 
-    host.appendChild(visualsGrid);
+    advDetails.appendChild(advGrid);
+    host.appendChild(advDetails);
 
     /* model panel */
     var tiles = el('div', 'stat-row');
@@ -2490,12 +2570,9 @@
         detail: 'Portfolio average'
       };
     });
-    host.appendChild(renderScoreGaugeCard(
-      { total: avgScore, pillars: avgPillars, grade: D.gradeOf(avgScore) },
-      riskLevelOf(avgFailureProb)
-    ));
-
-    var visualsGrid = el('div', 'health-visuals');
+    var avgHealth = { total: avgScore, pillars: avgPillars, grade: D.gradeOf(avgScore) };
+    var avgRisk = riskLevelOf(avgFailureProb);
+    host.appendChild(renderScoreGaugeCard(avgHealth, avgRisk));
 
     var avgRatios = {};
     Object.keys(rows[0].ratios).forEach(function (k) {
@@ -2509,6 +2586,16 @@
       avgRatios[k] = rows.reduce(function (a, r) { return a + (r.ratios[k] || 0); }, 0);
     });
 
+    /* recommendations() reads r.ratios, r.health.pillars and (in its no-
+       issues-found fallback) r.probs.ensemble off a single-company result;
+       a portfolio has no one company, so its own averages stand in for all
+       three here, giving "the next step" for the portfolio as a whole
+       rather than any individual row. */
+    var topAction = recommendations({ ratios: avgRatios, health: avgHealth, probs: { ensemble: avgFailureProb } })[0];
+    host.appendChild(renderPlainSummary(avgHealth, avgRisk, topAction));
+
+    var visualsGrid = el('div', 'health-visuals');
+
     var radarCard = el('div', 'card');
     var radarHead = el('div', 'card-head');
     radarHead.appendChild(el('h3', null, 'Financial profile'));
@@ -2517,18 +2604,8 @@
     var radarHost = el('div');
     radarCard.appendChild(radarHost);
     renderHealthRadar(radarHost, avgRatios);
+    radarCard.appendChild(el('div', 'hint chart-plain-note', radarPlainNote(avgRatios)));
     visualsGrid.appendChild(radarCard);
-
-    var suite = state.business;
-    var avgProbs = {
-      rf: ML.mean(rows.map(function (r) { return suite.rf.predictProba(r.vector); })),
-      gbt: ML.mean(rows.map(function (r) { return suite.gbt.predictProba(r.vector); })),
-      lr: ML.mean(rows.map(function (r) { return suite.lr.predictProba(r.vector); })),
-      ensemble: avgFailureProb
-    };
-    var mcCard = el('div', 'card');
-    renderModelComparison(mcCard, avgProbs, D.gradeOf(avgScore));
-    visualsGrid.appendChild(mcCard);
 
     var wfCard = el('div', 'card');
     var wfHead = el('div', 'card-head');
@@ -2538,7 +2615,18 @@
     var wfHost = el('div');
     wfCard.appendChild(wfHost);
     renderBalanceWaterfall(wfHost, avgRatios);
+    wfCard.appendChild(el('div', 'hint chart-plain-note', waterfallPlainNote(avgRatios)));
     visualsGrid.appendChild(wfCard);
+
+    host.appendChild(visualsGrid);
+
+    var suite = state.business;
+    var avgProbs = {
+      rf: ML.mean(rows.map(function (r) { return suite.rf.predictProba(r.vector); })),
+      gbt: ML.mean(rows.map(function (r) { return suite.gbt.predictProba(r.vector); })),
+      lr: ML.mean(rows.map(function (r) { return suite.lr.predictProba(r.vector); })),
+      ensemble: avgFailureProb
+    };
 
     var SAMPLE_N = 40;
     var sampleRnd = ML.mulberry32(2026);
@@ -2551,6 +2639,16 @@
     });
     var avgPhi = phiSum.map(function (v) { return v / sample.length; });
 
+    var advDetails = el('details', 'advanced-details');
+    var advSummary = el('summary', null, 'Advanced details — model comparison and score drivers');
+    advDetails.appendChild(advSummary);
+    var advGrid = el('div', 'health-visuals');
+    advGrid.style.marginTop = '14px';
+
+    var mcCard = el('div', 'card');
+    renderModelComparison(mcCard, avgProbs, avgHealth.grade);
+    advGrid.appendChild(mcCard);
+
     var pflowCard = el('div', 'card');
     var pflowHead = el('div', 'card-head');
     pflowHead.appendChild(el('h3', null, 'What is behind each pillar'));
@@ -2559,9 +2657,10 @@
     var pflowHost = el('div');
     pflowCard.appendChild(pflowHost);
     renderPillarFlow(pflowHost, avgPillars, avgPhi, D.FIN_FEATURES);
-    visualsGrid.appendChild(pflowCard);
+    advGrid.appendChild(pflowCard);
 
-    host.appendChild(visualsGrid);
+    advDetails.appendChild(advGrid);
+    host.appendChild(advDetails);
   }
 
   /* ======================= SECTION 3 — METHODOLOGY ====================== */
