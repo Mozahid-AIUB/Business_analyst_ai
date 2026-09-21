@@ -472,7 +472,7 @@ a { color: var(--accent); }
 @media (max-width: 900px) { .team-grid { grid-template-columns: 1fr; } }
 .team-card { display: flex; flex-direction: column; }
 .team-photo {
-  width: 104px; height: 104px;
+  width: 136px; height: 136px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--surface-2);
