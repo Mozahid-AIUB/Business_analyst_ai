@@ -2038,17 +2038,10 @@
     container.appendChild(wrap);
   }
 
-  function renderHealthResults() {
-    var host = $('health-results');
-    clear(host);
-    if (state.health.mode === 'csv') { renderPortfolio(host); return; }
-
-    var r = state.health.result;
-    if (!r) { host.appendChild(el('div', 'card')).appendChild(el('div', 'empty', 'Enter the figures to calculate a score.')); return; }
-
-    var risk = riskLevelOf(r.probs.ensemble);
-
-    /* headline: score ring + pillars */
+  /* The score-ring + pillar-bars headline card, shared by the manual
+     single-company view and the CSV portfolio view - health: {total,
+     pillars, grade}, risk: riskLevelOf(...)'s return shape. */
+  function renderScoreGaugeCard(health, risk) {
     var top = el('div', 'card');
     var th = el('div', 'card-head');
     th.appendChild(el('h3', null, 'Business health score'));
@@ -2058,13 +2051,13 @@
     var gw = el('div', 'gauge-wrap');
     var gauge = el('div', 'gauge');
     gw.appendChild(gauge);
-    renderGauge(gauge, r.health.total, r.health.grade);
+    renderGauge(gauge, health.total, health.grade);
 
     var right = el('div');
     right.style.flex = '1 1 260px';
     right.style.minWidth = '240px';
     var pillars = el('div', 'stack');
-    r.health.pillars.forEach(function (p) {
+    health.pillars.forEach(function (p) {
       var bl = el('div', 'barline');
       var hd = el('div', 'barline-head');
       hd.appendChild(el('span', null, p.label));
@@ -2084,7 +2077,7 @@
 
     var scale = el('div', 'grade-scale');
     [['excellent', 'Excellent', 90], ['strong', 'Strong', 75], ['good', 'Good', 60], ['fair', 'Fair', 40], ['weak', 'Needs improvement', 0]].forEach(function (g) {
-      var d = el('div', r.health.grade.key === g[0] ? 'on' : null);
+      var d = el('div', health.grade.key === g[0] ? 'on' : null);
       var dot = el('span', 'grade-dot');
       dot.style.background = GRADE_COLOUR[g[0]];
       d.appendChild(dot);
@@ -2093,7 +2086,18 @@
     });
     gw.appendChild(scale);
     top.appendChild(gw);
-    host.appendChild(top);
+    return top;
+  }
+
+  function renderHealthResults() {
+    var host = $('health-results');
+    clear(host);
+    if (state.health.mode === 'csv') { renderPortfolio(host); return; }
+
+    var r = state.health.result;
+    if (!r) { host.appendChild(el('div', 'card')).appendChild(el('div', 'empty', 'Enter the figures to calculate a score.')); return; }
+
+    host.appendChild(renderScoreGaugeCard(r.health, riskLevelOf(r.probs.ensemble)));
 
     /* four overview visuals for a non-technical reader: the ratio profile at
        a glance, how the three models compare, where net worth comes from,
@@ -2475,6 +2479,22 @@
      random sample stands in for the full file - large enough to be stable,
      small enough to stay interactive). */
   function renderPortfolioVisuals(host, rows) {
+    var avgScore = ML.mean(rows.map(function (r) { return r.score; }));
+    var avgFailureProb = ML.mean(rows.map(function (r) { return r.p; }));
+    var avgPillars = [0, 1, 2, 3].map(function (i) {
+      var keys = ['profitability', 'liquidity', 'solvency', 'growth'];
+      var labels = ['Profitability', 'Liquidity', 'Solvency', 'Growth & returns'];
+      return {
+        key: keys[i], label: labels[i],
+        score: ML.mean(rows.map(function (r) { return r.pillars[i].score; })),
+        detail: 'Portfolio average'
+      };
+    });
+    host.appendChild(renderScoreGaugeCard(
+      { total: avgScore, pillars: avgPillars, grade: D.gradeOf(avgScore) },
+      riskLevelOf(avgFailureProb)
+    ));
+
     var visualsGrid = el('div', 'health-visuals');
 
     var avgRatios = {};
@@ -2504,9 +2524,8 @@
       rf: ML.mean(rows.map(function (r) { return suite.rf.predictProba(r.vector); })),
       gbt: ML.mean(rows.map(function (r) { return suite.gbt.predictProba(r.vector); })),
       lr: ML.mean(rows.map(function (r) { return suite.lr.predictProba(r.vector); })),
-      ensemble: ML.mean(rows.map(function (r) { return r.p; }))
+      ensemble: avgFailureProb
     };
-    var avgScore = ML.mean(rows.map(function (r) { return r.score; }));
     var mcCard = el('div', 'card');
     renderModelComparison(mcCard, avgProbs, D.gradeOf(avgScore));
     visualsGrid.appendChild(mcCard);
@@ -2531,15 +2550,6 @@
       shap.phi.forEach(function (v, i) { phiSum[i] += v; });
     });
     var avgPhi = phiSum.map(function (v) { return v / sample.length; });
-    var avgPillars = [0, 1, 2, 3].map(function (i) {
-      var keys = ['profitability', 'liquidity', 'solvency', 'growth'];
-      var labels = ['Profitability', 'Liquidity', 'Solvency', 'Growth & returns'];
-      return {
-        key: keys[i], label: labels[i],
-        score: ML.mean(rows.map(function (r) { return r.pillars[i].score; })),
-        detail: 'Portfolio average'
-      };
-    });
 
     var pflowCard = el('div', 'card');
     var pflowHead = el('div', 'card-head');
