@@ -15,9 +15,12 @@
 
 <!-- Public marketing shell: a horizontal bar instead of the customer app's
      vertical nav rail, the same way admin.html repurposes .sidebar. No
-     sign-in is required for anything on this page. -->
-<header class="sidebar" style="position:sticky;top:0;width:auto;height:auto;flex-direction:row;align-items:center;gap:18px;padding:12px 22px;border-right:0;border-bottom:1px solid var(--line);">
-  <div class="brand" style="padding:0;margin-bottom:0;">
+     sign-in is required for anything on this page. .public-header/.public-nav
+     are a dedicated compact variant (see app.css) since seven nav items plus
+     the brand block need to wrap cleanly at narrower widths, which the
+     vertical rail's own .nav-item styling was never built to do. -->
+<header class="sidebar public-header" style="position:sticky;top:0;width:auto;height:auto;flex-direction:row;align-items:center;gap:14px;padding:10px 20px;border-right:0;border-bottom:1px solid var(--line);">
+  <div class="brand">
     <div class="brand-mark">
       <svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true">
         <path d="M10 1.8 3.2 4.6v5.1c0 4 2.9 7.4 6.8 8.5 3.9-1.1 6.8-4.5 6.8-8.5V4.6L10 1.8Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
@@ -30,31 +33,17 @@
     </div>
   </div>
 
-  <nav class="nav" role="tablist" aria-label="Public sections" style="flex-direction:row;padding:0;gap:2px;flex-wrap:wrap;">
-    <button class="nav-item" id="pub-tab-home" role="tab" aria-selected="true" aria-controls="pub-panel-home" type="button">
-      <span class="nav-label">Home</span>
-    </button>
-    <button class="nav-item" id="pub-tab-fraud" role="tab" aria-selected="false" aria-controls="pub-panel-fraud" type="button">
-      <span class="nav-label">Fraud Detection</span>
-    </button>
-    <button class="nav-item" id="pub-tab-failure" role="tab" aria-selected="false" aria-controls="pub-panel-failure" type="button">
-      <span class="nav-label">Business Failure Prediction</span>
-    </button>
-    <button class="nav-item" id="pub-tab-method" role="tab" aria-selected="false" aria-controls="pub-panel-method" type="button">
-      <span class="nav-label">Research &amp; Methodology</span>
-    </button>
-    <button class="nav-item" id="pub-tab-about" role="tab" aria-selected="false" aria-controls="pub-panel-about" type="button">
-      <span class="nav-label">About the Platform</span>
-    </button>
-    <button class="nav-item" id="pub-tab-team" role="tab" aria-selected="false" aria-controls="pub-panel-team" type="button">
-      <span class="nav-label">Development Team</span>
-    </button>
-    <button class="nav-item" id="pub-tab-contact" role="tab" aria-selected="false" aria-controls="pub-panel-contact" type="button">
-      <span class="nav-label">Contact</span>
-    </button>
+  <nav class="public-nav" role="tablist" aria-label="Public sections">
+    <button class="public-nav-item" id="pub-tab-home" role="tab" aria-selected="true" aria-controls="pub-panel-home" type="button">Home</button>
+    <button class="public-nav-item" id="pub-tab-fraud" role="tab" aria-selected="false" aria-controls="pub-panel-fraud" type="button">Fraud Detection</button>
+    <button class="public-nav-item" id="pub-tab-failure" role="tab" aria-selected="false" aria-controls="pub-panel-failure" type="button">Business Failure Prediction</button>
+    <button class="public-nav-item" id="pub-tab-method" role="tab" aria-selected="false" aria-controls="pub-panel-method" type="button">Research &amp; Methodology</button>
+    <button class="public-nav-item" id="pub-tab-about" role="tab" aria-selected="false" aria-controls="pub-panel-about" type="button">About the Platform</button>
+    <button class="public-nav-item" id="pub-tab-team" role="tab" aria-selected="false" aria-controls="pub-panel-team" type="button">Development Team</button>
+    <button class="public-nav-item" id="pub-tab-contact" role="tab" aria-selected="false" aria-controls="pub-panel-contact" type="button">Contact</button>
   </nav>
 
-  <div class="sidebar-foot" style="margin-top:0;margin-left:auto;padding:0;border-top:0;flex:none;display:flex;align-items:center;gap:10px;">
+  <div class="sidebar-foot" style="margin-top:0;margin-left:0;padding:0;border-top:0;flex:none;display:flex;align-items:center;gap:10px;">
     <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch to dark theme">
       <svg class="theme-icon-dark" width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true">
         <path d="M16.5 12.3A7 7 0 0 1 7.7 3.5a7 7 0 1 0 8.8 8.8Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
@@ -323,6 +312,7 @@
 
     <div class="team-grid">
       <div class="card team-card">
+        <img class="team-photo" src="assets/team/raf.jpg" alt="Istiaque Mahmud" width="96" height="96">
         <div class="card-head"><h3>Istiaque Mahmud</h3></div>
         <div class="team-role">Co-Developer | MBA Graduate, MSU Texas</div>
         <p class="hint">
@@ -333,6 +323,7 @@
       </div>
 
       <div class="card team-card">
+        <img class="team-photo" src="assets/team/rahul.jpg" alt="Dipon Das Rahul" width="96" height="96">
         <div class="card-head"><h3>Dipon Das Rahul</h3></div>
         <div class="team-role">Co-Developer | MBA Graduate, MSU Texas</div>
         <p class="hint">
@@ -343,6 +334,7 @@
       </div>
 
       <div class="card team-card">
+        <img class="team-photo" src="assets/team/sayed.jpg" alt="Sayer Bin Shafi" width="96" height="96">
         <div class="card-head"><h3>Sayer Bin Shafi</h3></div>
         <div class="team-role">Co-Developer | MBA Graduate, MSU Texas</div>
         <p class="hint">
@@ -379,15 +371,27 @@
       <div class="rec-list">
         <div class="rec">
           <div class="rec-title">Istiaque Mahmud</div>
-          <div class="rec-body"><a href="mailto:imr.rafat@gmail.com">imr.rafat@gmail.com</a></div>
+          <div class="rec-body">
+            <a href="mailto:imr.rafat@gmail.com">imr.rafat@gmail.com</a>
+            &nbsp;·&nbsp;
+            <a href="https://wa.me/19409015173" target="_blank" rel="noopener">WhatsApp: +1 (940) 901-5173</a>
+          </div>
         </div>
         <div class="rec">
           <div class="rec-title">Dipon Das Rahul</div>
-          <div class="rec-body"><a href="mailto:dipondasrahul@gmail.com">dipondasrahul@gmail.com</a></div>
+          <div class="rec-body">
+            <a href="mailto:dipondasrahul@gmail.com">dipondasrahul@gmail.com</a>
+            &nbsp;·&nbsp;
+            <a href="https://wa.me/19409017007" target="_blank" rel="noopener">WhatsApp: +1 (940) 901-7007</a>
+          </div>
         </div>
         <div class="rec">
           <div class="rec-title">Sayer Bin Shafi</div>
-          <div class="rec-body"><a href="mailto:sayershafi@gmail.com">sayershafi@gmail.com</a></div>
+          <div class="rec-body">
+            <a href="mailto:sayershafi@gmail.com">sayershafi@gmail.com</a>
+            &nbsp;·&nbsp;
+            <a href="https://wa.me/19403864534" target="_blank" rel="noopener">WhatsApp: +1 (940) 386-4534</a>
+          </div>
         </div>
       </div>
       <div class="card">
