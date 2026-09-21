@@ -14,3 +14,7 @@ Thumbs.db
 
 # Scratch left by extraction work
 assets/*.tmp
+
+# Original, full-size source photos - only the resized copies in
+# assets/team/ are actually served by the site
+image/
