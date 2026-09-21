@@ -27,8 +27,8 @@
 
   var BRAND = {
     /* The product. Rename freely - nothing derives meaning from these. */
-    name: 'Business Analytics',
-    tagline: 'Risk & Intelligence',
+    name: 'Business Risk Intelligence Platform',
+    tagline: 'Intelligent Fraud Detection, Risk Assessment & Business Failure Prediction',
     consoleName: 'Staff console',
 
     /* The company that operates the platform and holds the staff accounts. */

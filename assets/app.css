@@ -188,6 +188,7 @@ a { color: var(--accent); }
   font-size: 15px;
   letter-spacing: -.02em;
   line-height: 1.1;
+  color: var(--ink);
 }
 .brand-sub {
   font-family: var(--font-mono);
