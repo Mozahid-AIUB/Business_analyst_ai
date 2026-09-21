@@ -310,7 +310,7 @@ a { color: var(--accent); }
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 26px;
+  gap: 20px;
   padding: 0;
   flex: 1 1 auto;
   min-width: 0;
