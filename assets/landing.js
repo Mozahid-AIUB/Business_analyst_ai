@@ -1,13 +1,15 @@
 /* ============================================================================
-   landing.js - the public "Free Tools" page (index.html, the site root)
+   landing.js - the public site (index.html, the site root)
 
-   Not part of the customer application and not gated by sign-in. Both checks
-   here run entirely on the deterministic, non-ML parts of the platform
-   (buildTxnFeatures's derived ratios and the four-pillar health score) -
-   no model training, no network call, so a first-time visitor gets an answer
-   immediately. The full ensemble, SHAP/LIME explainability and portfolio
-   scoring stay behind sign-in, which is what the "Create free account"
-   banner on this page points at.
+   Not part of the customer application and not gated by sign-in. Seven tabs:
+   Home, the two no-login checks (Fraud Detection, Business Failure
+   Prediction), Research & Methodology, About the Platform, Development Team,
+   and Contact. Both checks run entirely on the deterministic, non-ML parts of
+   the platform (buildTxnFeatures's derived ratios and the four-pillar health
+   score) - no model training, no network call, so a first-time visitor gets
+   an answer immediately. The full ensemble, SHAP/LIME explainability and
+   portfolio scoring stay behind sign-in, which is what the "Create free
+   account" banner on the tool tabs points at.
    ========================================================================== */
 (function () {
   'use strict';
@@ -17,17 +19,24 @@
 
   /* ============================== navigation ============================= */
 
-  var TABS = ['tools', 'method', 'about'];
+  var TABS = ['home', 'fraud', 'failure', 'method', 'about', 'team', 'contact'];
 
   function setTab(name) {
     TABS.forEach(function (t) {
       $('pub-panel-' + t).hidden = t !== name;
       $('pub-tab-' + t).setAttribute('aria-selected', t === name ? 'true' : 'false');
     });
+    window.scrollTo(0, 0);
   }
 
   TABS.forEach(function (t) {
     $('pub-tab-' + t).addEventListener('click', function () { setTab(t); });
+  });
+
+  /* Home page's two shortcut buttons jump straight to the matching tool tab
+     instead of duplicating the forms inline on Home itself. */
+  document.querySelectorAll('[data-goto]').forEach(function (btn) {
+    btn.addEventListener('click', function () { setTab(btn.getAttribute('data-goto')); });
   });
 
   /* ========================= basic fraud risk check ======================= */

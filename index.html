@@ -30,15 +30,27 @@
     </div>
   </div>
 
-  <nav class="nav" role="tablist" aria-label="Public sections" style="flex-direction:row;padding:0;gap:2px;">
-    <button class="nav-item" id="pub-tab-tools" role="tab" aria-selected="true" aria-controls="pub-panel-tools" type="button">
-      <span class="nav-label">Free Tools</span>
+  <nav class="nav" role="tablist" aria-label="Public sections" style="flex-direction:row;padding:0;gap:2px;flex-wrap:wrap;">
+    <button class="nav-item" id="pub-tab-home" role="tab" aria-selected="true" aria-controls="pub-panel-home" type="button">
+      <span class="nav-label">Home</span>
+    </button>
+    <button class="nav-item" id="pub-tab-fraud" role="tab" aria-selected="false" aria-controls="pub-panel-fraud" type="button">
+      <span class="nav-label">Fraud Detection</span>
+    </button>
+    <button class="nav-item" id="pub-tab-failure" role="tab" aria-selected="false" aria-controls="pub-panel-failure" type="button">
+      <span class="nav-label">Business Failure Prediction</span>
     </button>
     <button class="nav-item" id="pub-tab-method" role="tab" aria-selected="false" aria-controls="pub-panel-method" type="button">
       <span class="nav-label">Research &amp; Methodology</span>
     </button>
     <button class="nav-item" id="pub-tab-about" role="tab" aria-selected="false" aria-controls="pub-panel-about" type="button">
-      <span class="nav-label">About</span>
+      <span class="nav-label">About the Platform</span>
+    </button>
+    <button class="nav-item" id="pub-tab-team" role="tab" aria-selected="false" aria-controls="pub-panel-team" type="button">
+      <span class="nav-label">Development Team</span>
+    </button>
+    <button class="nav-item" id="pub-tab-contact" role="tab" aria-selected="false" aria-controls="pub-panel-contact" type="button">
+      <span class="nav-label">Contact</span>
     </button>
   </nav>
 
@@ -58,15 +70,15 @@
 
 <main class="main"><div class="page">
 
-  <!-- ========================= FREE TOOLS ========================= -->
-  <section id="pub-panel-tools" role="tabpanel" aria-labelledby="pub-tab-tools">
+  <!-- ========================= HOME ========================= -->
+  <section id="pub-panel-home" role="tabpanel" aria-labelledby="pub-tab-home">
     <div class="section-head">
       <span class="eyebrow">Open to everyone</span>
       <h1>Basic risk tools — no account required</h1>
       <p class="lede">
         An AI-powered business risk and intelligence platform: a fraud transaction scanner,
         a business financial health score, and the research methodology that connects them.
-        Try our basic checks below to get a quick sense of risk. Create a free account
+        Try our basic checks free, no sign-in required. Create a free account
         anytime for deeper insights — CSV uploads, portfolio scoring, model explainability
         and saved history.
       </p>
@@ -74,23 +86,16 @@
 
     <div class="workbench">
       <div class="stack">
-
         <div class="card">
-          <div class="card-head">
-            <h3>Basic Fraud Risk Check</h3>
-            <span class="card-note">Check a single transaction</span>
-          </div>
-          <div class="stack" id="fraud-controls"></div>
+          <div class="card-head"><h3>Fraud Detection</h3></div>
+          <p class="hint">Check a single transaction for signs of fraud — no account needed.</p>
+          <button class="btn btn-primary btn-block" type="button" style="margin-top:10px;" data-goto="fraud">Open Fraud Detection</button>
         </div>
-
         <div class="card">
-          <div class="card-head">
-            <h3>Basic Business Health Check</h3>
-            <span class="card-note">Five figures, one score</span>
-          </div>
-          <div class="stack" id="bhealth-controls"></div>
+          <div class="card-head"><h3>Business Failure Prediction</h3></div>
+          <p class="hint">Five figures, one score — a quick read on a company's financial health.</p>
+          <button class="btn btn-primary btn-block" type="button" style="margin-top:10px;" data-goto="failure">Open Business Failure Prediction</button>
         </div>
-
       </div>
 
       <div class="stack">
@@ -98,16 +103,28 @@
           <div class="card-head"><h3>What each tab includes</h3></div>
           <div class="rec-list">
             <div class="rec">
-              <div class="rec-title">Free Tools</div>
-              <div class="rec-body">Basic business and fraud checks without sign-in.</div>
+              <div class="rec-title">Fraud Detection</div>
+              <div class="rec-body">Basic transaction risk check without sign-in.</div>
+            </div>
+            <div class="rec">
+              <div class="rec-title">Business Failure Prediction</div>
+              <div class="rec-body">Basic financial health check without sign-in.</div>
             </div>
             <div class="rec">
               <div class="rec-title">Research &amp; Methodology</div>
               <div class="rec-body">Models, datasets, metrics, explainability.</div>
             </div>
             <div class="rec">
-              <div class="rec-title">About</div>
-              <div class="rec-body">Mission, who it helps, and contact/team info.</div>
+              <div class="rec-title">About the Platform</div>
+              <div class="rec-body">Mission, who it helps, and how it works.</div>
+            </div>
+            <div class="rec">
+              <div class="rec-title">Development Team</div>
+              <div class="rec-body">Who built the platform, and their roles.</div>
+            </div>
+            <div class="rec">
+              <div class="rec-title">Contact</div>
+              <div class="rec-body">Reach the team directly.</div>
             </div>
             <div class="rec">
               <div class="rec-title">Sign In</div>
@@ -115,9 +132,6 @@
             </div>
           </div>
         </div>
-
-        <div id="fraud-results"></div>
-        <div id="bhealth-results"></div>
       </div>
     </div>
 
@@ -128,6 +142,76 @@
       <div class="btn-row">
         <a class="btn btn-primary" href="/login">Create free account</a>
         <a class="btn btn-sm" href="/login">Already have an account? Sign in</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= FRAUD DETECTION ========================= -->
+  <section id="pub-panel-fraud" role="tabpanel" aria-labelledby="pub-tab-fraud" hidden>
+    <div class="section-head">
+      <span class="eyebrow">Open to everyone</span>
+      <h1>Fraud Detection</h1>
+      <p class="lede">
+        Check a single transaction for signs of fraud. No account required. Sign in for the
+        full transaction scanner — CSV upload, an entire file scored at once, and model
+        explainability behind every result.
+      </p>
+    </div>
+
+    <div class="workbench">
+      <div class="stack">
+        <div class="card">
+          <div class="card-head">
+            <h3>Basic Fraud Risk Check</h3>
+            <span class="card-note">Check a single transaction</span>
+          </div>
+          <div class="stack" id="fraud-controls"></div>
+        </div>
+      </div>
+      <div class="stack">
+        <div id="fraud-results"></div>
+      </div>
+    </div>
+
+    <div class="banner" style="align-items:center;justify-content:space-between;margin-top:18px;">
+      <div><b>Want the full scanner?</b> Sign in to upload a CSV and score every transaction at once.</div>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="/login">Create free account</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= BUSINESS FAILURE PREDICTION ========================= -->
+  <section id="pub-panel-failure" role="tabpanel" aria-labelledby="pub-tab-failure" hidden>
+    <div class="section-head">
+      <span class="eyebrow">Open to everyone</span>
+      <h1>Business Failure Prediction</h1>
+      <p class="lede">
+        Type in five figures and get a health score out of 100. No account required. Sign in
+        for the full nine-field model, a failure-probability estimate, and the model comparison,
+        radar and driver charts behind the number.
+      </p>
+    </div>
+
+    <div class="workbench">
+      <div class="stack">
+        <div class="card">
+          <div class="card-head">
+            <h3>Basic Business Health Check</h3>
+            <span class="card-note">Five figures, one score</span>
+          </div>
+          <div class="stack" id="bhealth-controls"></div>
+        </div>
+      </div>
+      <div class="stack">
+        <div id="bhealth-results"></div>
+      </div>
+    </div>
+
+    <div class="banner" style="align-items:center;justify-content:space-between;margin-top:18px;">
+      <div><b>Want the full model?</b> Sign in for the complete nine-field score and explainability.</div>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="/login">Create free account</a>
       </div>
     </div>
   </section>
@@ -168,10 +252,10 @@
     </div>
   </section>
 
-  <!-- ========================= ABOUT ========================= -->
+  <!-- ========================= ABOUT THE PLATFORM ========================= -->
   <section id="pub-panel-about" role="tabpanel" aria-labelledby="pub-tab-about" hidden>
     <div class="section-head">
-      <span class="eyebrow">About</span>
+      <span class="eyebrow">About the platform</span>
       <h1>Risk decisions, made with the reasons attached</h1>
       <p class="lede">
         This platform helps small and mid-size businesses catch fraud earlier and
@@ -179,10 +263,136 @@
         interpret the result. Every score comes with the reasons behind it.
       </p>
     </div>
+
     <div class="stack">
       <div class="card">
-        <div class="card-head"><h3>Get in touch</h3></div>
-        <p class="hint">Questions about the platform or a full account? Sign in to reach the team from your dashboard, or start with the free tools above.</p>
+        <div class="card-head"><h3>Our mission</h3></div>
+        <p class="hint">
+          Financial fraud and business failure rarely announce themselves in advance — by the
+          time either is obvious, the damage is usually already done. This platform exists to
+          surface that risk earlier, in plain language, so a business owner or analyst can act
+          on it instead of discovering it after the fact.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Who it's for</h3></div>
+        <p class="hint">
+          Built for small and mid-size businesses, finance teams and analysts who need a fast,
+          honest read on transaction risk or financial health — without paying for enterprise
+          fraud tooling or hiring a data science team to interpret a black-box score.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>How it works</h3></div>
+        <p class="hint">
+          Two products, one platform. The <b>fraud scanner</b> derives twelve behavioural
+          features from every transaction — timing, channel, cross-border activity, velocity —
+          and scores each one through a Random Forest and gradient-boosted ensemble. The
+          <b>business health score</b> turns a company's financials into four transparent
+          pillars — profitability, liquidity, solvency, growth — plus a machine-learned
+          failure-probability estimate. Both come with SHAP and LIME explanations, so every
+          score names the reasons behind it rather than asking for trust.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>What makes it different</h3></div>
+        <p class="hint">
+          The models are real, not page text — Random Forest and gradient-boosted trees are
+          implemented from scratch and run in the browser every time the platform scores,
+          alongside a logistic baseline kept deliberately visible for comparison. No transaction
+          or financial data ever leaves the browser to reach a server, which keeps the product
+          outside PCI-DSS scope and removes any server-side breach surface for that data
+          entirely.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= DEVELOPMENT TEAM ========================= -->
+  <section id="pub-panel-team" role="tabpanel" aria-labelledby="pub-tab-team" hidden>
+    <div class="section-head">
+      <span class="eyebrow">Development team</span>
+      <h1>Development Team</h1>
+      <p class="lede">
+        Three co-developers, one platform — from research methodology to the working product.
+      </p>
+    </div>
+
+    <div class="team-grid">
+      <div class="card team-card">
+        <div class="card-head"><h3>Istiaque Mahmud</h3></div>
+        <div class="team-role">Co-Developer | MBA Graduate, MSU Texas</div>
+        <p class="hint">
+          Contributes to research integration, AI/ML model development, system design, testing,
+          and implementation, with a focus on fraud detection and business failure prediction.
+        </p>
+        <a class="team-email" href="mailto:imr.rafat@gmail.com">imr.rafat@gmail.com</a>
+      </div>
+
+      <div class="card team-card">
+        <div class="card-head"><h3>Dipon Das Rahul</h3></div>
+        <div class="team-role">Co-Developer | MBA Graduate, MSU Texas</div>
+        <p class="hint">
+          Contributes to AI/ML implementation, platform development, system integration, testing,
+          and data-driven fraud and business risk assessment features.
+        </p>
+        <a class="team-email" href="mailto:dipondasrahul@gmail.com">dipondasrahul@gmail.com</a>
+      </div>
+
+      <div class="card team-card">
+        <div class="card-head"><h3>Sayer Bin Shafi</h3></div>
+        <div class="team-role">Co-Developer | MBA Graduate, MSU Texas</div>
+        <p class="hint">
+          Contributes to platform development, AI/ML implementation, system integration, testing,
+          and deployment of fraud detection and business failure prediction features.
+        </p>
+        <a class="team-email" href="mailto:sayershafi@gmail.com">sayershafi@gmail.com</a>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <div class="card-head"><h3>About the Team</h3></div>
+      <p class="hint">
+        The three co-developers are MBA graduates of Midwestern State University (MSU Texas)
+        who collaborated on the design, development, testing, and implementation of the
+        platform. The team focuses on transforming research-based methodologies into practical
+        AI-driven tools for financial fraud detection and small-business failure prediction.
+      </p>
+    </div>
+  </section>
+
+  <!-- ========================= CONTACT ========================= -->
+  <section id="pub-panel-contact" role="tabpanel" aria-labelledby="pub-tab-contact" hidden>
+    <div class="section-head">
+      <span class="eyebrow">Contact</span>
+      <h1>Get in touch</h1>
+      <p class="lede">
+        Questions about the platform, the research behind it, or setting up a full account?
+        Reach any of the co-developers directly.
+      </p>
+    </div>
+
+    <div class="stack">
+      <div class="rec-list">
+        <div class="rec">
+          <div class="rec-title">Istiaque Mahmud</div>
+          <div class="rec-body"><a href="mailto:imr.rafat@gmail.com">imr.rafat@gmail.com</a></div>
+        </div>
+        <div class="rec">
+          <div class="rec-title">Dipon Das Rahul</div>
+          <div class="rec-body"><a href="mailto:dipondasrahul@gmail.com">dipondasrahul@gmail.com</a></div>
+        </div>
+        <div class="rec">
+          <div class="rec-title">Sayer Bin Shafi</div>
+          <div class="rec-body"><a href="mailto:sayershafi@gmail.com">sayershafi@gmail.com</a></div>
+        </div>
+      </div>
+      <div class="card">
+        <p class="hint">Already have an account? Sign in and reach the team from your dashboard for account-specific questions.</p>
+        <a class="btn btn-primary" href="/login" style="margin-top:10px;">Sign In</a>
       </div>
     </div>
   </section>
