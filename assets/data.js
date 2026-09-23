@@ -663,6 +663,19 @@
 
   /* ================================ CSV I/O ============================== */
 
+  /* Excel's "CSV" export is frequently Windows-1252 (or another ANSI
+     codepage), not UTF-8, so decoding an ArrayBuffer as UTF-8 first and
+     checking for mojibake (the U+FFFD replacement character, which UTF-8
+     decoding emits for any byte sequence it can't interpret) catches the
+     common case before falling back to a Windows-1252 re-decode. */
+  function decodeTextBuffer(buffer) {
+    var bytes = new Uint8Array(buffer);
+    var utf8 = new TextDecoder('utf-8').decode(bytes);
+    if (utf8.indexOf('�') === -1) return utf8;
+    try { return new TextDecoder('windows-1252').decode(bytes); }
+    catch (e) { return utf8; }
+  }
+
   /* RFC4180-style parser: handles quoted fields, embedded commas, escaped
      quotes and both newline conventions. Delimiter is sniffed from the header. */
   function parseCSV(text) {
@@ -1012,6 +1025,7 @@
     gradeOf: gradeOf,
     buildTextCorpus: buildTextCorpus,
     parseCSV: parseCSV,
+    decodeTextBuffer: decodeTextBuffer,
     parseWorkbook: parseWorkbook,
     isWorkbookName: isWorkbookName,
     xlsxAvailable: xlsxAvailable,

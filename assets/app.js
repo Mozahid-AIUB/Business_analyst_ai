@@ -691,11 +691,11 @@
     }
 
     reader.onload = function () {
-      var parsed = D.parseCSV(reader.result);
+      var parsed = D.parseCSV(D.decodeTextBuffer(reader.result));
       if (!parsed.headers.length) { fail('That file has no readable header row.'); return; }
       onReady(parsed);
     };
-    reader.readAsText(file);
+    reader.readAsArrayBuffer(file);
   }
 
   /* Warns about columns the product does not need and should not be handed.
